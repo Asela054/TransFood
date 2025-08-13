@@ -359,8 +359,8 @@ class Finishgoodbominfo extends CI_Model{
             $respondmatecate=$this->db->get();
             $materialcategoryID=$respondmatecate->row(0)->tbl_material_category_idtbl_material_category;
 
-            $sqlmaterial="SELECT `tbl_material_info`.`idtbl_material_info`, `tbl_material_info`.`materialinfocode`, `tbl_material_code`.`materialname`, `tbl_unit`.`unitcode` FROM `tbl_material_info` LEFT JOIn `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_material_info`.`tbl_material_code_idtbl_material_code` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`tbl_material_category_idtbl_material_category`=? AND `tbl_material_info`.`status`=?";
-            $respondmaterial=$this->db->query($sqlmaterial, array($materialcategoryID, 1));
+            $sqlmaterial="SELECT `tbl_material_info`.`idtbl_material_info`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode` FROM `tbl_material_info` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`tbl_material_category_idtbl_material_category`=? AND `tbl_material_info`.`status`=?";
+            $respondmaterial=$this->db->query($sqlmaterial, array($materialcategoryID, 1)); 
             
             $html.='
             <div class="dynamic-field" id="dynamic-field-'.$i.'">
@@ -403,7 +403,7 @@ class Finishgoodbominfo extends CI_Model{
             ';
         }
 
-        $sqlfinishgood="SELECT `tbl_product`.`idtbl_product`, `tbl_product`.`productcode`, `tbl_material_code`.`materialname` FROM `tbl_product` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_product`.`materialid` WHERE `tbl_product`.`idtbl_product`=?";
+        $sqlfinishgood="SELECT `idtbl_product`, `productcode`, `prodcutname` FROM `tbl_product` WHERE `idtbl_product`=?";
         $respondfinishgood=$this->db->query($sqlfinishgood, array($finishgoodID));    
 
         $obj=new stdClass();
@@ -411,7 +411,7 @@ class Finishgoodbominfo extends CI_Model{
         $obj->title=$respond->row(0)->title;
         $obj->finishgoodID=$finishgoodID;
         $obj->productcode=$respondfinishgood->row(0)->productcode;
-        $obj->productname=$respondfinishgood->row(0)->materialname;
+        $obj->productname=$respondfinishgood->row(0)->prodcutname;
         $obj->bominfo=$html;
 
         echo json_encode($obj);
@@ -420,16 +420,16 @@ class Finishgoodbominfo extends CI_Model{
         $searchTerm=$this->input->post('searchTerm');
 
         if(!isset($searchTerm)){
-            $sql="SELECT `tbl_product`.`idtbl_product`, `tbl_product`.`productcode`, `tbl_material_code`.`materialname` FROM `tbl_product` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_product`.`materialid` WHERE `tbl_product`.`status`=? LIMIT 5";
+            $sql="SELECT `idtbl_product`, `prodcutname`, `productcode` FROM `tbl_product` WHERE `tbl_product`.`status`=? LIMIT 5";
             $respond=$this->db->query($sql, array(1));                       
         }
         else{            
             if(!empty($searchTerm)){
-                $sql="SELECT `tbl_product`.`idtbl_product`, `tbl_product`.`productcode`, `tbl_material_code`.`materialname` FROM `tbl_product` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_product`.`materialid` WHERE `tbl_product`.`status`=? AND `tbl_product`.`productcode` LIKE '$searchTerm%'";
+                $sql="SELECT `idtbl_product`, `prodcutname`, `productcode` FROM `tbl_product` WHERE `tbl_product`.`status`=? AND (`tbl_product`.`productcode` LIKE '%$searchTerm%' OR `tbl_product`.`prodcutname` LIKE '%$searchTerm%')";
                 $respond=$this->db->query($sql, array(1));    
             }
             else{
-                $sql="SELECT `tbl_product`.`idtbl_product`, `tbl_product`.`productcode`, `tbl_material_code`.`materialname` FROM `tbl_product` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_product`.`materialid` WHERE `tbl_product`.`status`=? LIMIT 5";
+                $sql="SELECT `idtbl_product`, `prodcutname`, `productcode` FROM `tbl_product` WHERE `tbl_product`.`status`=? LIMIT 5";
                 $respond=$this->db->query($sql, array(1));                
             }
         }
@@ -437,7 +437,7 @@ class Finishgoodbominfo extends CI_Model{
         $data=array();
         
         foreach ($respond->result() as $row) {
-            $data[]=array("id"=>$row->idtbl_product, "text"=>$row->materialname.' - '.$row->productcode);
+            $data[]=array("id"=>$row->idtbl_product, "text"=>$row->prodcutname.' - '.$row->productcode);
         }
         
         echo json_encode($data);
@@ -485,7 +485,6 @@ class Finishgoodbominfo extends CI_Model{
     public function Getmaterialname(){
         $this->db->select('`idtbl_material_info`, `materialname`, `materialinfocode`, `unitcode`');
         $this->db->from('tbl_material_info');
-        $this->db->join('tbl_material_code', 'tbl_material_code.idtbl_material_code = tbl_material_info.tbl_material_code_idtbl_material_code', 'left');
         $this->db->join('tbl_unit', 'tbl_unit.idtbl_unit = tbl_material_info.tbl_unit_idtbl_unit', 'left');
         $this->db->where('tbl_material_info.status', 1);
 
@@ -494,7 +493,7 @@ class Finishgoodbominfo extends CI_Model{
     public function Getmaterialinfo(){
         $recordID=$this->input->post('recordID');
 
-        $sql="SELECT `tbl_material_info`.`idtbl_material_info`, `tbl_material_info`.`materialinfocode`, `tbl_material_code`.`materialname`, `tbl_unit`.`unitcode` FROM `tbl_material_info` LEFT JOIn `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_material_info`.`tbl_material_code_idtbl_material_code` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`tbl_material_category_idtbl_material_category`=? AND `tbl_material_info`.`status`=?";
+        $sql="SELECT `tbl_material_info`.`idtbl_material_info`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode` FROM `tbl_material_info` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`tbl_material_category_idtbl_material_category`=? AND `tbl_material_info`.`status`=?";
         $respond=$this->db->query($sql, array($recordID, 1));
 
         echo json_encode($respond->result());
@@ -512,15 +511,12 @@ class Finishgoodbominfo extends CI_Model{
         $recordID=$this->input->post('recordID');
         $html='';
 
-        $sql="SELECT `tbl_product_bom`.`idtbl_product_bom`, `tbl_product_bom`.`tbl_material_info_idtbl_material_info`, `tbl_product_bom`.`qty` , `tbl_product_bom`.`wastage`, `tbl_material_code`.`materialname`, `tbl_material_code`.`materialcode`, `tbl_material_category`.`categoryname`, `tbl_product`.`productcode`, `tbl_unit`.`unitcode`, `tbl_material_info`.`materialinfocode`
+        $sql="SELECT `tbl_product_bom`.`idtbl_product_bom`, `tbl_product_bom`.`tbl_material_info_idtbl_material_info`, `tbl_product_bom`.`qty` , `tbl_product_bom`.`wastage`, `tbl_material_info`.`materialname`, `tbl_material_info`.`materialinfocode`, `tbl_material_category`.`categoryname`, `tbl_product`.`productcode`, `tbl_unit`.`unitcode`, `tbl_material_info`.`materialinfocode`
         FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info`
-                LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_product_bom`.`tbl_product_idtbl_product` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category`
-                LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_material_info`.`tbl_material_code_idtbl_material_code`
-                LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_bom_info_idtbl_product_bom_info`= $recordID AND `tbl_product_bom`.`status`=1
+        LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_product_bom`.`tbl_product_idtbl_product` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category`
+        LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_bom_info_idtbl_product_bom_info`= ? AND `tbl_product_bom`.`status`=?
         ";
-
-        $respond=$this->db->query($sql, array(1, $recordID));
-
+        $respond=$this->db->query($sql, array($recordID, 1));
 
         foreach($respond->result() as $rowlist){
             $html.='
@@ -530,15 +526,9 @@ class Finishgoodbominfo extends CI_Model{
             	<td>'.$rowlist->qty.$rowlist->unitcode.'</td>
                 <td>'.$rowlist->wastage.'%</td>
             	<td>
-            		<div class="row ml-5"><button type="button" id="'.$rowlist->idtbl_product_bom.'"
-            				class="btnEditbom btn btn-primary btn-sm float-right" data-toggle="modal"
-            				data-target="#exampleModal">
-            				<i class="fas fa-pen"></i>
-            			</button>
-            			<button type="button" id="'.$rowlist->idtbl_product_bom.'"
-            				class="btnDeletebom btn btn-danger btn-sm float-left ml-1" onclick="return delete_confirm()"">
-            				<i class="fas fa-trash-alt"></i>
-            			</button>
+            		<div class="row ml-5">
+                        <button type="button" id="'.$rowlist->idtbl_product_bom.'" class="btnEditbom btn btn-primary btn-sm float-right" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-pen"></i></button>
+                        <button type="button" id="'.$rowlist->idtbl_product_bom.'" class="btnDeletebom btn btn-danger btn-sm float-left ml-1"><i class="fas fa-trash-alt"></i></button>
             		</div>
             	</td>
 
@@ -552,11 +542,10 @@ class Finishgoodbominfo extends CI_Model{
     public function Finishgoodbomlist(){
         $recordID=$this->input->post('recordID');
 
-        $this->db->select('tbl_product_bom.idtbl_product_bom, tbl_product_bom.tbl_material_info_idtbl_material_info, tbl_product_bom.qty, `tbl_product_bom`.`wastage`, tbl_material_category.categoryname , tbl_material_code.materialname, tbl_material_code.materialcode');
+        $this->db->select('tbl_product_bom.idtbl_product_bom, tbl_product_bom.tbl_material_info_idtbl_material_info, tbl_product_bom.qty, `tbl_product_bom`.`wastage`, tbl_material_category.categoryname , tbl_material_info.materialname, tbl_material_info.materialinfocode');
         $this->db->from('tbl_product_bom');
         $this->db->join('tbl_material_info', 'tbl_material_info.idtbl_material_info = tbl_product_bom.tbl_material_info_idtbl_material_info', 'left');
         $this->db->join('tbl_material_category', 'tbl_material_category.idtbl_material_category = tbl_material_info.tbl_material_category_idtbl_material_category', 'left');
-        $this->db->join('tbl_material_code', 'tbl_material_code.idtbl_material_code = tbl_material_info.tbl_material_code_idtbl_material_code', 'left');
         $this->db->where('tbl_product_bom.idtbl_product_bom', $recordID);
         $this->db->where('tbl_product_bom.status', 1);
 
@@ -644,15 +633,15 @@ class Finishgoodbominfo extends CI_Model{
 
         $html = '';
 
-        $sql = "SELECT `tbl_product`.`idtbl_product`, `tbl_product`.`productcode`, `tbl_material_code`.`materialname` FROM `tbl_product_bom_info` LEFT JOIN `tbl_product_bom` ON `tbl_product_bom`.`tbl_product_bom_info_idtbl_product_bom_info`=`tbl_product_bom_info`.`idtbl_product_bom_info` LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_product_bom`.`tbl_product_idtbl_product` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_product`.`materialid` WHERE `tbl_product`.`status`=? GROUP BY `tbl_product_bom`.`tbl_product_bom_info_idtbl_product_bom_info`";
+        $sql = "SELECT `tbl_product`.`idtbl_product`, `tbl_product`.`productcode`, `tbl_product`.`prodcutname` FROM `tbl_product_bom_info` LEFT JOIN `tbl_product_bom` ON `tbl_product_bom`.`tbl_product_bom_info_idtbl_product_bom_info`=`tbl_product_bom_info`.`idtbl_product_bom_info` LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_product_bom`.`tbl_product_idtbl_product` WHERE `tbl_product`.`status`=? GROUP BY `tbl_product_bom`.`tbl_product_bom_info_idtbl_product_bom_info`";
         $respond = $this->db->query($sql, array(1)); 
-
+        
         $bomarray = array();
 
         foreach ($respond->result() as $rowlist) {
             $productid = $rowlist->idtbl_product;
 
-            $sqlbom = "SELECT `tbl_product_bom`.`qty`, `tbl_material_info`.`materialinfocode`, `tbl_material_code`.`materialname`, `tbl_unit`.`unitcode`, `tbl_product_bom`.`wastage`  FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_material_info`.`tbl_material_code_idtbl_material_code` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_idtbl_product`=? AND `tbl_product_bom`.`status`=?";
+            $sqlbom = "SELECT `tbl_product_bom`.`qty`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode`, `tbl_product_bom`.`wastage`  FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_idtbl_product`=? AND `tbl_product_bom`.`status`=?";
             $respondbom = $this->db->query($sqlbom, array($productid, 1)); 
 
             $obj = new stdClass();
@@ -682,7 +671,7 @@ class Finishgoodbominfo extends CI_Model{
                 <tr class="table-secondary">
                     <td>'.$bomitem->id.'</td>
                     <td>'.$bomitem->procode.'</td>
-                    <td>'.$bomitem->matname.'</td>
+                    <td>'.$bomitem->prodcutname.'</td>
                     <td></td>
                     <td></td>
                     <td></td>

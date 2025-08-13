@@ -8,19 +8,7 @@ class Product extends CI_Controller {
         $this->load->model('Commeninfo');
         $this->load->model('Productinfo');
 		$result['menuaccess']=$this->Commeninfo->Getmenuprivilege();
-        $result['material']=$this->Productinfo->Getmaterial();
-		$result['form']=$this->Productinfo->Getform();
-		$result['grade']=$this->Productinfo->Getgrade();
-		$result['brand']=$this->Productinfo->Getbrand();
-		$result['size']=$this->Productinfo->Getsize();
-		$result['type']=$this->Productinfo->Gettype();
 		$this->load->view('product', $result);
-	}
-	public function getSubCategory(){
-		$postData = $this->input->post();
-		$this->load->model('Productinfo');
-		$data = $this->Productinfo->getSubCategory($postData);
-		echo json_encode($data);
 	}
     public function Productinsertupdate(){
 		$this->load->model('Productinfo');
@@ -41,10 +29,6 @@ class Product extends CI_Controller {
 	public function Checkbarcode(){
 		$this->load->model('Productinfo');
         $result=$this->Productinfo->Checkbarcode();
-	}
-	public function Getproductinfo(){
-		$this->load->model('Productinfo');
-        $result=$this->Productinfo->Getproductinfo();
 	}
 	public function Barcode($barcode){
 		$this->load->library('Fpdf_gen');

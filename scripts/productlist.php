@@ -30,18 +30,14 @@ $primaryKey = 'idtbl_product';
 // indexes
 $columns = array(
 	array( 'db' => '`u`.`idtbl_product`', 'dt' => 'idtbl_product', 'field' => 'idtbl_product' ),
-	array( 'db' => '`ub`.`materialname`', 'dt' => 'materialname', 'field' => 'materialname' ),
-	array( 'db' => '`u`.`barcode`', 'dt' => 'barcode', 'field' => 'barcode' ),
+	array( 'db' => '`u`.`prodcutname`', 'dt' => 'prodcutname', 'field' => 'prodcutname' ),
 	array( 'db' => '`u`.`productcode`', 'dt' => 'productcode', 'field' => 'productcode' ),
     array( 'db' => '`u`.`weight`', 'dt' => 'weight', 'field' => 'weight' ),
 	array( 'db' => '`u`.`retailprice`', 'dt' => 'retailprice', 'field' => 'retailprice' ),
 	array( 'db' => '`u`.`wholesaleprice`', 'dt' => 'wholesaleprice', 'field' => 'wholesaleprice' ),
-	array( 'db' => '`ub`.`materialcode`', 'dt' => 'materialcode', 'field' => 'materialcode' ),
-    array( 'db' => '`uc`.`formname`', 'dt' => 'formname', 'field' => 'formname' ),
-	array( 'db' => '`ud`.`gradename`', 'dt' => 'gradename', 'field' => 'gradename' ),
-    array( 'db' => '`ue`.`brandname`', 'dt' => 'brandname', 'field' => 'brandname' ),
-	array( 'db' => '`uf`.`sizename`', 'dt' => 'sizename', 'field' => 'sizename' ),
-	array( 'db' => '`ug`.`unittypecode`', 'dt' => 'unittypecode', 'field' => 'unittypecode' ),
+	array( 'db' => '`u`.`semistatus`', 'dt' => 'semistatus', 'field' => 'semistatus' ),
+	array( 'db' => '`u`.`nopckperctn`', 'dt' => 'nopckperctn', 'field' => 'nopckperctn' ),
+	array( 'db' => '`u`.`mastercartoon`', 'dt' => 'mastercartoon', 'field' => 'mastercartoon' ),
 	array( 'db' => '`u`.`status`', 'dt' => 'status', 'field' => 'status' ),
 );
 
@@ -62,9 +58,7 @@ $sql_details = array(
 // require( 'ssp.class.php' );
 require('ssp.customized.class.php' );
 
-$joinQuery = "FROM `tbl_product` AS `u` LEFT JOIN `tbl_material_code` AS `ub` ON `u`.`materialid` = `ub`.`idtbl_material_code` 
-LEFT JOIN `tbl_form` AS `uc` ON `u`.`formid` = `uc`.`idtbl_form` LEFT JOIN `tbl_grade` AS `ud` ON `u`.`gradeid` = `ud`.`idtbl_grade`
-LEFT JOIN `tbl_brand` AS `ue` ON `u`.`brandid` = `ue`.`idtbl_brand` LEFT JOIN `tbl_size` AS `uf` ON `u`.`sizeid` = `uf`.`idtbl_size` LEFT JOIN `tbl_unit_type` AS `ug` ON `u`.`typeid` = `ug`.`idtbl_unit_type`";
+$joinQuery = "FROM `tbl_product` AS `u`";
 
 $extraWhere = "`u`.`status` IN (1, 2)";
 
