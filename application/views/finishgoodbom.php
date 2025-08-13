@@ -23,8 +23,10 @@ include "include/topnavbar.php";
                     <div class="card-body p-0 p-2">
                         <div class="row">
                             <div class="col-12 text-right">
-                            <button type="button" class="btn btnviewBOM btn-secondary btn-sm"><i class="fas fa-list mr-2"></i>All BOM List</button>
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus mr-2"></i>Create BOM</button>
+                                <button type="button" class="btn btnviewBOM btn-secondary btn-sm"><i class="fas fa-list mr-2"></i>All BOM List</button>
+                                <?php if($addcheck==1){ ?>
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop"><i class="fas fa-plus mr-2"></i>Create BOM</button>
+                                <?php } ?>
                                 <hr>
                             </div>
                         </div>
@@ -35,8 +37,8 @@ include "include/topnavbar.php";
                                         <tr>
                                             <th>#</th>
                                             <th>BOM Title</th>
-                                            <th>Finish Good</th>
-                                            <th>Material</th>
+                                            <th>Product Code</th>
+                                            <th>Product</th>
                                             <th class="text-right">Actions</th>
                                         </tr>
                                     </thead>
@@ -94,7 +96,7 @@ include "include/topnavbar.php";
 					autocomplete="off">
 					<div class="form-group mb-1">
 						<label class="small font-weight-bold">Material Category</label>
-						<input type="text" class="form-control form-control-sm" name="category" id="category">
+						<input type="text" class="form-control form-control-sm" name="category" id="category" readonly>
 					</div>
 					<div class="form-group mb-1">
 						<label class="small font-weight-bold">Material Name</label>
@@ -186,10 +188,10 @@ include "include/topnavbar.php";
                                         <div class="col-3">
                                             <label class="small font-weight-bold">Quantity*</label>
                                             <div class="input-group mb-3">
-                                                <input type="text" class="form-control form-control-sm col-10" name="qty[]"
+                                                <input type="text" class="form-control form-control-sm col-9" name="qty[]"
                                                     id="qty" required>
                                                 <input type="text" id="unit" name="unit"
-                                                    class="form-control form-control-sm col-2" readonly>
+                                                    class="form-control form-control-sm col-3" readonly>
                                             </div>
                                         </div>
                                         <div class="col-3">
@@ -238,13 +240,6 @@ include "include/topnavbar.php";
 
 <?php include "include/footerscripts.php"; ?>
 <script>
-    function confirmation() {
-    	var result = confirm("Are you sure to delete?");
-    	if (result) {
-    		console.log("Deleted")
-    	}
-    }
-
     $(document).on("click", ".btnviewBOM", function () {
         $('#viewBOM').modal('show');
         $('#viewdata').html('<div class="card border-0 shadow-none"><div class="card-body text-center"><img src="images/spinner.gif" class="img-fluid" /></div></div>');
@@ -297,52 +292,56 @@ include "include/topnavbar.php";
     });
 
 
-    $(document).on("click", ".btnEditbom", function () {
+    $(document).on("click", ".btnEditbom", async function() {
+        var r = await Otherconfirmation("You want to Edit this ? ");
+        if (r == true) {
+            var id = $(this).attr('id');
+            //alert(id);
+            $.ajax({
+                type: "POST",
+                data: {
+                    recordID: id
+                },
+                url: '<?php echo base_url() ?>Finishgoodbom/Finishgoodbomlist',
+                success: function (result) { //alert(result);
 
-        var id = $(this).attr('id');
-        //alert(id);
-        $.ajax({
-            type: "POST",
-            data: {
-                recordID: id
-            },
-            url: '<?php echo base_url() ?>Finishgoodbom/Finishgoodbomlist',
-            success: function (result) { //alert(result);
+                    var obj = JSON.parse(result);
+                    
+                    $('#bomDetailsEdit').modal('show');
 
-                var obj = JSON.parse(result);
-                
-                $('#bomDetailsEdit').modal('show');
+                    $('#recordID').val(obj.id);
+                    $('#category').val(obj.materialcategory);
+                    $('#name').val(obj.materialinfo);   
+                    $('#quantity').val(obj.qty);
+                    $('#wastagepresentage').val(obj.wastage);
+                    
+                    var unit = $("#name").find("option:selected").text().split('/');
+                    $("#unitedit").val(unit[1]);
+                    
 
-                $('#recordID').val(obj.id);
-                $('#category').val(obj.materialcategory);
-                $('#name').val(obj.materialinfo);   
-                $('#quantity').val(obj.qty);
-                $('#wastagepresentage').val(obj.wastage);
-                
-                var unit = $("#name").find("option:selected").text().split('/');
-                $("#unitedit").val(unit[1]);
-                
-
-            }
-        });
+                }
+            });
+        }
     });
 
-    $(document).on("click", ".btnDeletebom", function () {
+    $(document).on("click", ".btnDeletebom", async function() {
+        var r = await Otherconfirmation("You want to remove this ? ");
+        if (r == true) {
+            var id = $(this).attr('id');
+            // alert(id);
+            $.ajax({
+                type: "POST",
+                data: {
+                    recordID: id
+                },
+                url: '<?php echo base_url() ?>Finishgoodbom/Finishgoodbomdelete',
+                success: function (result) { //alert(result);
+                    $('#exampleModalCenter').modal('hide');
+                    // alert("Record Delete Successfully");
 
-        var id = $(this).attr('id');
-        // alert(id);
-        $.ajax({
-            type: "POST",
-            data: {
-                recordID: id
-            },
-            url: '<?php echo base_url() ?>Finishgoodbom/Finishgoodbomdelete',
-            success: function (result) { //alert(result);
-                $('#exampleModalCenter').modal('hide');
-                // alert("Record Delete Successfully");
-
-            }
-        });
+                }
+            });
+        }
     });
 
     $(document).ready(function() {
@@ -382,7 +381,7 @@ include "include/topnavbar.php";
                 $("#unit").val(unit[1]);
             });
         });
-
+        
         $(function () {
             $("#name").on('change', function () {
                 var unit = $(this).find("option:selected").text().split('/');
@@ -434,7 +433,7 @@ include "include/topnavbar.php";
                     "data": "productcode"
                 },
                 {
-                    "data": "materialname"
+                    "data": "prodcutname"
                 },
                 {
                     "targets": -1,
@@ -444,14 +443,18 @@ include "include/topnavbar.php";
                         var button='';
                         // button+='<a href="<?php echo base_url() ?>Finishgoodbom/Finishgoodbomdetails/'+productid=full['idtbl_product']+'/2" target="_self" class="btn btn-dark btn-sm mr-1" data-toggle="modal" data-target="#exampleModalCenter"><i class="fas fa-eye"></i></a>';
                         button+='<button class="btn btn-dark btn-sm btnModal mr-1" id="'+full['idtbl_product_bom_info']+'"><i class="fas fa-eye"></i></button>';
-                        button+='<button class="btn btn-primary btn-sm btnEdit mr-1 ';if(editcheck!=1){button+='d-none';}button+='" id="'+full['idtbl_product_bom_info']+'"><i class="fas fa-pen"></i></button>';
-
-                        if(full['status']==1){
-                            button+='<a href="<?php echo base_url() ?>Finishgoodbom/Finishgoodbomstatus/'+full['idtbl_product_bom_info']+'/2" onclick="return deactive_confirm()" target="_self" class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-check"></i></a>';
-                        }else{
-                            button+='<a href="<?php echo base_url() ?>Finishgoodbom/Finishgoodbomstatus/'+full['idtbl_product_bom_info']+'/1" onclick="return active_confirm()" target="_self" class="btn btn-warning btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-times"></i></a>';
+                        if(editcheck==1){
+                            button+='<button class="btn btn-primary btn-sm btnEdit mr-1" id="'+full['idtbl_product_bom_info']+'"><i class="fas fa-pen"></i></button>';
                         }
-                        button+='<a href="<?php echo base_url() ?>Finishgoodbom/Finishgoodbomstatus/'+full['idtbl_product_bom_info']+'/3" onclick="return delete_confirm()" target="_self" class="btn btn-danger btn-sm ';if(deletecheck!=1){button+='d-none';}button+='"><i class="fas fa-trash-alt"></i></a>';
+
+                        if(full['status']==1 && statuscheck==1){
+                            button+='<button type="button" data-url="Finishgoodbom/Finishgoodbomstatus/'+full['idtbl_product_bom_info']+'/2" data-actiontype="2" class="btn btn-success btn-sm mr-1 btntableaction"><i class="fas fa-check"></i></button>';
+                        }else if(full['status']==2 && statuscheck==1){
+                            button+='<button type="button" data-url="Finishgoodbom/Finishgoodbomstatus/'+full['idtbl_product_bom_info']+'/1" data-actiontype="1" class="btn btn-warning btn-sm mr-1 btntableaction"><i class="fas fa-times"></i></button>';
+                        }
+                        if(deletecheck==1){
+                            button+='<button type="button" data-url="Finishgoodbom/Finishgoodbomstatus/'+full['idtbl_product_bom_info']+'/3" data-actiontype="3" class="btn btn-danger btn-sm btntableaction"><i class="fas fa-trash-alt"></i></button>';
+                        }
                         
                         return button;
                     }
@@ -481,9 +484,8 @@ include "include/topnavbar.php";
                 });
         });
 
-
-        $('#dataTable tbody').on('click', '.btnEdit', function() {
-            var r = confirm("Are you sure, You want to Edit this ? ");
+        $('#dataTable tbody').on('click', '.btnEdit', async function() {
+            var r = await Otherconfirmation("You want to Edit this ? ");
             if (r == true) {
                 var id = $(this).attr('id');
                 $.ajax({
@@ -528,66 +530,6 @@ include "include/topnavbar.php";
         $('#staticBackdrop').on('hidden.bs.modal', function (event) {
             window.location.reload();
         });
-
-        // $("#formsubmit").click(function () {
-        //     if (!$("#formbom")[0].checkValidity()) {
-        //         // If the form is invalid, submit it. The form won't actually submit;
-        //         // this will just cause the browser to display the native HTML5 error messages.
-        //         $("#submitBtn").click();
-        //     } else {
-        //         var finishgoodID = $('#finishgood').val();
-        //         var finishgood = $("#finishgood option:selected").text();
-        //         var materialinfoID = $('#materialinfo').val();
-        //         var materialinfo = $("#materialinfo option:selected").text();
-        //         var qty = $('#qty').val();
-
-        //         $('#tablelistbom > tbody:last').append('<tr class="pointer"><td>' + finishgood + '</td><td>' + materialinfo + '</td><td>' + qty + '</td><td class="d-none">' + finishgoodID + '</td><td class="d-none">' + materialinfoID + '</td></tr>');
-
-        //         $('#finishgood').val('').trigger('change');
-        //         $('#materialinfo').val('').trigger('change');
-        //         $('#qty').val('');
-        //     }
-        // });
-        // $('#tablelistbom').on('click', 'tr', function () {
-        //     var r = confirm("Are you sure, You want to remove this ? ");
-        //     if (r == true) {
-        //         $(this).closest('tr').remove();
-        //     }
-        // });
-        // $('#btnsaveall').click(function () { //alert('IN');
-        //     $('#btnsaveall').prop('disabled', true).html('<i class="fas fa-circle-notch fa-spin mr-2"></i> Save All')
-        //     var tbody = $("#tablelistbom tbody");
-
-        //     if (tbody.children().length > 0) {
-        //         jsonObj = [];
-        //         $("#tablelistbom tbody tr").each(function () {
-        //             item = {}
-        //             $(this).find('td').each(function (col_idx) {
-        //                 item["col_" + (col_idx + 1)] = $(this).text();
-        //             });
-        //             jsonObj.push(item);
-        //         });
-        //         // console.log(jsonObj);
-
-        //         $.ajax({
-        //             type: "POST",
-        //             data: {
-        //                 tableData: jsonObj
-        //             },
-        //             url: '<?php //echo base_url() ?>Finishgoodbom/Finishgoodbominsertupdate',
-        //             success: function (result) { //alert(result);
-        //                 // console.log(result);
-        //                 var obj = JSON.parse(result);
-        //                 if(obj.status==1){
-        //                     $('#staticBackdrop').modal('hide');
-        //                     setTimeout(window.location.reload(), 3000);
-        //                 }
-        //                 action(obj.action);
-        //             }
-        //         });
-        //     }
-
-        // });
     });
 
     function dynamicfieldone() {
@@ -694,18 +636,6 @@ include "include/topnavbar.php";
                 }
             });
         });
-    }
-
-    function deactive_confirm() {
-        return confirm("Are you sure you want to deactive this?");
-    }
-
-    function active_confirm() {
-        return confirm("Are you sure you want to active this?");
-    }
-
-    function delete_confirm() {
-        return confirm("Are you sure you want to remove this?");
     }
 </script>
 <?php include "include/footer.php"; ?>

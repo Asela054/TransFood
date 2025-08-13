@@ -9,7 +9,7 @@ class Finishgoodbom extends CI_Controller {
         $this->load->model('Finishgoodbominfo');
 		$result['menuaccess']=$this->Commeninfo->Getmenuprivilege();
 		$result['materialcategory']=$this->Finishgoodbominfo->Getmaterialcategory();
-		$result['materialcategoryedit']=$this->Finishgoodbominfo->Getmaterialcategoryedit();
+		// $result['materialcategoryedit']=$this->Finishgoodbominfo->Getmaterialcategoryedit();
 		$result['materialname']=$this->Finishgoodbominfo->Getmaterialname();
 		$this->load->view('finishgoodbom', $result);
 	}

@@ -31,7 +31,7 @@ $primaryKey = 'idtbl_product';
 $columns = array(
 	array( 'db' => '`u`.`idtbl_product`', 'dt' => 'idtbl_product', 'field' => 'idtbl_product' ),
 	array( 'db' => '`u`.`productcode`', 'dt' => 'productcode', 'field' => 'productcode' ),
-	array( 'db' => '`uc`.`materialname`', 'dt' => 'materialname', 'field' => 'materialname' ),
+	array( 'db' => '`u`.`prodcutname`', 'dt' => 'prodcutname', 'field' => 'prodcutname' ),
 	array( 'db' => '`ud`.`idtbl_product_bom`', 'dt' => 'idtbl_product_bom', 'field' => 'idtbl_product_bom' ),
 	array( 'db' => '`ue`.`title`', 'dt' => 'title', 'field' => 'title' ),
 	array( 'db' => '`ue`.`idtbl_product_bom_info`', 'dt' => 'idtbl_product_bom_info', 'field' => 'idtbl_product_bom_info' ),
@@ -56,7 +56,6 @@ $sql_details = array(
 require('ssp.customized.class.php' );
 
 $joinQuery = "FROM `tbl_product` AS `u` 
-LEFT JOIN `tbl_material_code` AS `uc` ON (`uc`.`idtbl_material_code` = `u`.`materialid`) 
 LEFT JOIN `tbl_product_bom` AS `ud` ON (`ud`.`tbl_product_idtbl_product` = `u`.`idtbl_product`)
 LEFT JOIN `tbl_product_bom_info` AS `ue` ON (`ue`.`idtbl_product_bom_info` = `ud`.`tbl_product_bom_info_idtbl_product_bom_info`)";
 

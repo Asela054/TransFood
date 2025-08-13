@@ -1,1 +1,2 @@
-Material Name,Description,Weight,Material Code,Form Code,Grade Code,Brand Code,Size Code,Type
+Product Name,Product Code,Description,Weight,Retail Price,No of Pkts Per Ctn,Master carton
+Test Product,TEST1KG2025,Test,1,250.50,20,1
