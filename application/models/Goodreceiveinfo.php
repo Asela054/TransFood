@@ -109,11 +109,15 @@ class Goodreceiveinfo extends CI_Model{
             $quater=$rowtabledata['col_5'];
             $materialID=$rowtabledata['col_6'];
             $unit=$rowtabledata['col_7'];
-            $qty=$rowtabledata['col_8'];
-            $nettotal=$rowtabledata['col_9'];
+            $unitperctn=$rowtabledata['col_8'];
+            $ctn=$rowtabledata['col_9'];
+            $qty=$rowtabledata['col_10'];
+            $nettotal=$rowtabledata['col_11'];
 
             $dataone = array(
                 'date'=> $grndate, 
+                'unitperctn'=> $unitperctn, 
+                'ctn'=> $ctn, 
                 'qty'=> $qty, 
                 'unitprice'=> $unit, 
                 'costunitprice'=> $unit, 
@@ -212,9 +216,10 @@ class Goodreceiveinfo extends CI_Model{
         $sql="SELECT `u`.*, `ua`.`suppliername`, `ua`.`primarycontactno`, `ua`.`secondarycontactno`, `ua`.`address`, `ua`.`email`, `ub`.`location`, `ub`.`phone`, `ub`.`address`, `ub`.`phone2`, `ub`.`email` AS `locemail` FROM `tbl_grn` AS `u` LEFT JOIN `tbl_supplier` AS `ua` ON (`ua`.`idtbl_supplier` = `u`.`tbl_supplier_idtbl_supplier`) LEFT JOIN `tbl_location` AS `ub` ON (`ub`.`idtbl_location` = `u`.`tbl_location_idtbl_location`) WHERE `u`.`status`=? AND `u`.`idtbl_grn`=?";
         $respond=$this->db->query($sql, array(1, $recordID));
 
-        $this->db->select('tbl_grndetail.*, tbl_material_info.materialinfocode, tbl_material_info.materialname');
+        $this->db->select('tbl_grndetail.*, tbl_material_info.materialinfocode, tbl_material_info.materialname, tbl_unit.unitname');
         $this->db->from('tbl_grndetail');
         $this->db->join('tbl_material_info', 'tbl_material_info.idtbl_material_info = tbl_grndetail.tbl_material_info_idtbl_material_info', 'left');
+        $this->db->join('tbl_unit', 'tbl_unit.idtbl_unit = tbl_material_info.tbl_unit_idtbl_unit', 'left');
         $this->db->where('tbl_grndetail.tbl_grn_idtbl_grn', $recordID);
         $this->db->where('tbl_grndetail.status', 1);
 
@@ -240,9 +245,11 @@ class Goodreceiveinfo extends CI_Model{
                     <thead>
                         <tr>
                             <th>Material Info</th>
+                            <th>Unit</th>
+                            <th>Unit Per Ctn</th>
+                            <th>Ctns</th>
+                            <th>Qty</th>
                             <th>Unit Price</th>
-                            <th class="text-center">Qty</th>
-                            <!--<th class="text-center">Amend Qty</th>-->
                             <th class="text-right">Total</th>
                         </tr>
                     </thead>
@@ -251,9 +258,11 @@ class Goodreceiveinfo extends CI_Model{
                         $total=number_format(($roworderinfo->qty*$roworderinfo->unitprice), 2);
                         $html.='<tr>
                             <td>'.$roworderinfo->materialname.' / '.$roworderinfo->materialinfocode.'</td>
-                            <td>'.$roworderinfo->unitprice.'</td>
-                            <td class="text-center">'.$roworderinfo->qty.'</td>
-                            <!--<td class="text-center"></td>-->
+                            <td>'.$roworderinfo->unitname.'</td>
+                            <td>'.$roworderinfo->unitperctn.'</td>
+                            <td>'.$roworderinfo->ctn.'</td>
+                            <td>'.$roworderinfo->qty.'</td>
+                            <td>'.number_format(($roworderinfo->unitprice), 2).'</td>
                             <td class="text-right">'.$total.'</td>
                         </tr>';
                     }
@@ -262,7 +271,7 @@ class Goodreceiveinfo extends CI_Model{
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-12 text-right"><h3 class="font-weight-normal">Rs. '.number_format(($respond->row(0)->total), 2).'</h3></div>
+            <div class="col-12 text-right"><h3 class="font-weight-bold">Rs. '.number_format(($respond->row(0)->total), 2).'</h3></div>
         </div>
         ';
 
@@ -408,7 +417,7 @@ class Goodreceiveinfo extends CI_Model{
         $porderID = $this->input->post('porderID');
     
         if ($porderID != "") {
-            $this->db->select('qty, unitprice, comment');
+            $this->db->select('qty, unitperctn, ctn, unitprice, comment');
             $this->db->from('tbl_porder_detail');
             $this->db->where('status', 1);
             $this->db->where('tbl_material_info_idtbl_material_info', $recordID);
@@ -420,17 +429,23 @@ class Goodreceiveinfo extends CI_Model{
                 $row = $respond->row();
                 $obj->qty = $row->qty;
                 $obj->unitprice = $row->unitprice;
+                $obj->unitperctn = $row->unitperctn;
+                $obj->ctn = $row->ctn;
                 $obj->comment = $row->comment;
             } else {
                 $obj = new stdClass();
                 $obj->qty = 0;
                 $obj->unitprice = 0;
+                $obj->unitperctn = 0;
+                $obj->ctn = 0;
                 $obj->comment = '';
             }
         } else {
             $obj = new stdClass();
             $obj->qty = 0;
             $obj->unitprice = 0;
+            $obj->unitperctn = 0;
+            $obj->ctn = 0;
             $obj->comment = '';
         }
         echo json_encode($obj);

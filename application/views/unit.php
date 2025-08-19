@@ -11,7 +11,7 @@ include "include/topnavbar.php";
             <div class="page-header page-header-light bg-white shadow">
                 <div class="container-fluid">
                     <div class="page-header-content py-3">
-                        <h1 class="page-header-title font-weight-light">
+                        <h1 class="page-header-title font-weight-bold">
                             <div class="page-header-icon"><i data-feather="list"></i></div>
                             <span>Unit Category</span>
                         </h1>

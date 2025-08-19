@@ -9,7 +9,6 @@ class Purchaseorder extends CI_Controller {
         $this->load->model('Purchaseorderinfo');
 		$result['menuaccess']=$this->Commeninfo->Getmenuprivilege();
 		$result['locationlist']=$this->Purchaseorderinfo->Getlocation();
-		$result['supplierlist']=$this->Purchaseorderinfo->Getsupplier();
 		$result['ordertypelist']=$this->Purchaseorderinfo->Getordertype();
 		$this->load->view('purchaseorder', $result);
 	}
@@ -40,5 +39,9 @@ class Purchaseorder extends CI_Controller {
 	public function Printpurchaseorder($x){
 		$this->load->model('PurchaseorderPrintinfo');
         $result=$this->PurchaseorderPrintinfo->Printpurchaseorder($x);
+	}
+	public function Getsupplierlist(){
+		$searchTerm=$this->input->post('searchTerm');
+        $result=SearchSupplierList($searchTerm);
 	}
 }

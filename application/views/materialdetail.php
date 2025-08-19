@@ -39,14 +39,7 @@ include "include/topnavbar.php";
             									<?php } ?>
             								</select>
             							</div>
-            							<div class="col">
-            								<label class="small font-weight-bold">Material Name*</label>
-            								<input type="text" class="form-control form-control-sm" name="materialname"
-            									id="materialname">
-            							</div>
-            						</div>
-            						<div class="form-row mb-1">
-            							<div class="col">
+										<div class="col">
             								<label class="small font-weight-bold">Supplier*</label>
             								<select class="form-control form-control-sm" name="supplier" id="supplier"
             									required>
@@ -57,10 +50,35 @@ include "include/topnavbar.php";
             									<?php } ?>
             								</select>
             							</div>
-                                        <div class="col">
+            						</div>
+            						<div class="form-row mb-1">
+										<div class="col">
+            								<label class="small font-weight-bold">Material Name*</label>
+            								<input type="text" class="form-control form-control-sm" name="materialname"
+            									id="materialname">
+            							</div>
+										<div class="col">
             								<label class="small font-weight-bold">Material Code*</label>
             								<input type="text" class="form-control form-control-sm" name="materialcode"
             									id="materialcode">
+            							</div>
+            						</div>
+									<div class="form-row mb-1">
+										<div class="col">
+            								<label class="small font-weight-bold">Unit*</label>
+            								<select class="form-control form-control-sm" name="unit" id="unit"
+            									required>
+            									<option value="">Select</option>
+            									<?php foreach($unitlist->result() as $rowunitlist){ ?>
+            									<option value="<?php echo $rowunitlist->idtbl_unit ?>">
+            										<?php echo $rowunitlist->unitname ?></option>
+            									<?php } ?>
+            								</select>
+            							</div>
+                                        <div class="col">
+            								<label class="small font-weight-bold">Unit per Ctn*</label>
+            								<input type="text" class="form-control form-control-sm" name="unitperctn"
+            									id="unitperctn">
             							</div>
             						</div>
             						<div class="form-row mb-1">
@@ -96,6 +114,8 @@ include "include/topnavbar.php";
             								<tr>
             									<th>#</th>
             									<th>Material Name</th>
+												<th>Unit</th>
+												<th>Unit per Ctn</th>
                                                 <th>Category</th>
                                                 <th>Supplier</th>
             									<th>Material Code</th>
@@ -176,6 +196,12 @@ $(document).ready(function() {
         	{
         		"data": "materialname"
         	},
+			{
+        		"data": "unitname"
+        	},
+			{
+        		"data": "unitperctn"
+        	},
         	{
         		"data": "categoryname"
         	},
@@ -244,10 +270,12 @@ $(document).ready(function() {
                     $('#materialname').val(obj.materialname);
                     $('#materialcategory').val(obj.materialcategory);
                     $('#unitprice').val(obj.unitprice);
+					$('#unitperctn').val(obj.unitperctn);
                     $('#materialcode').val(obj.materialcode);
                     $('#reorder').val(obj.reorderlevel);
                     $('#comment').val(obj.comment);
                     $('#supplier').val(obj.supplier);
+					$('#unit').val(obj.unit);
                     $('#recordOption').val('2');
                     $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Update');
                 }

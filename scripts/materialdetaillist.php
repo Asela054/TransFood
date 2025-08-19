@@ -35,8 +35,10 @@ $columns = array(
 	array( 'db' => '`u`.`reorderlevel`', 'dt' => 'reorderlevel', 'field' => 'reorderlevel' ),
 	array( 'db' => '`u`.`comment`', 'dt' => 'comment', 'field' => 'comment' ),
 	array( 'db' => '`u`.`unitprice`', 'dt' => 'unitprice', 'field' => 'unitprice' ),
+	array( 'db' => '`u`.`unitperctn`', 'dt' => 'unitperctn', 'field' => 'unitperctn' ),
 	array( 'db' => '`ua`.`categoryname`', 'dt' => 'categoryname', 'field' => 'categoryname' ),
 	array( 'db' => '`ub`.`suppliername`', 'dt' => 'suppliername', 'field' => 'suppliername' ),
+	array( 'db' => '`uc`.`unitname`', 'dt' => 'unitname', 'field' => 'unitname' ),
 	array( 'db' => '`u`.`status`', 'dt' => 'status', 'field' => 'status' )
 );
 
@@ -57,7 +59,7 @@ $sql_details = array(
 // require( 'ssp.class.php' );
 require('ssp.customized.class.php' );
 
-$joinQuery = "FROM `tbl_material_info` AS `u` LEFT JOIN `tbl_material_category` AS `ua` ON (`ua`.`idtbl_material_category` = `u`.`tbl_material_category_idtbl_material_category`) LEFT JOIN `tbl_supplier` AS `ub` ON (`ub`.`idtbl_supplier` = `u`.`tbl_supplier_idtbl_supplier`)";
+$joinQuery = "FROM `tbl_material_info` AS `u` LEFT JOIN `tbl_material_category` AS `ua` ON (`ua`.`idtbl_material_category` = `u`.`tbl_material_category_idtbl_material_category`) LEFT JOIN `tbl_supplier` AS `ub` ON (`ub`.`idtbl_supplier` = `u`.`tbl_supplier_idtbl_supplier`) LEFT JOIN `tbl_unit` AS `uc` ON (`uc`.`idtbl_unit` = `u`.`tbl_unit_idtbl_unit`)";
 
 $extraWhere = "`u`.`status` IN (1, 2)";
 

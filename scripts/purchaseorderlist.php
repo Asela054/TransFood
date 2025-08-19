@@ -34,6 +34,7 @@ $primaryKey = 'idtbl_porder';
 $columns = array(
 	array( 'db' => '`u`.`idtbl_porder`', 'dt' => 'idtbl_porder', 'field' => 'idtbl_porder' ),
 	array( 'db' => '`u`.`po_no`', 'dt' => 'po_no', 'field' => 'po_no' ),
+	array( 'db' => '`u`.`class`', 'dt' => 'class', 'field' => 'class' ),
 	array( 'db' => '`u`.`orderdate`', 'dt' => 'orderdate', 'field' => 'orderdate' ),
 	array( 'db' => '`u`.`nettotal`', 'dt' => 'nettotal', 'field' => 'nettotal' ),
 	array( 'db' => '`u`.`confirmstatus`', 'dt' => 'confirmstatus', 'field' => 'confirmstatus' ),

@@ -10,6 +10,7 @@ class Materialdetail extends CI_Controller {
 		$result['menuaccess']=$this->Commeninfo->Getmenuprivilege();
         $result['materialcategory']=$this->Materialdetailinfo->Getmaterialcategory();
 		$result['supplierlist']=$this->Materialdetailinfo->Getsupplier();
+        $result['unitlist']=$this->Materialdetailinfo->Getunit();
 		$this->load->view('materialdetail', $result);
 	}
     public function Materialdetailinsertupdate(){
