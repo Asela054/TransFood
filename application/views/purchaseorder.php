@@ -35,10 +35,12 @@ include "include/topnavbar.php";
                                             <tr>
                                                 <th>#</th>
                                                 <th>PO No.</th>
+                                                <th>Class</th>
                                                 <th>PO Date</th>
                                                 <th>Amount</th>
                                                 <th>Confirm Status</th>
                                                 <th>GRN Issue Status</th>
+                                                <th>Notes and Instructions</th>
                                                 <th class="text-right">Actions</th>
                                             </tr>
                                         </thead>
@@ -68,14 +70,20 @@ include "include/topnavbar.php";
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
                         <form id="createorderform" autocomplete="off">
-                            <div class="form-group mb-1">
-                                <label class="small font-weight-bold text-dark">Purchase Order Type*</label>
-                                <select class="form-control form-control-sm" name="ordertype" id="ordertype" required>
-                                    <option value="">Select</option>
-                                    <?php foreach($ordertypelist->result() as $rowordertypelist){ ?>
-                                    <option value="<?php echo $rowordertypelist->idtbl_order_type ?>"><?php echo $rowordertypelist->type ?></option>
-                                    <?php } ?>
-                                </select>
+                            <div class="form-row mb-1">
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">Purchase Order Type*</label>
+                                    <select class="form-control form-control-sm" name="ordertype" id="ordertype" required>
+                                        <option value="">Select</option>
+                                        <?php foreach($ordertypelist->result() as $rowordertypelist){ ?>
+                                        <option value="<?php echo $rowordertypelist->idtbl_order_type ?>"><?php echo $rowordertypelist->type ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">Class</label>
+                                    <input type="text" id="poclass" name="poclass" class="form-control form-control-sm">
+                                </div>
                             </div>
                             <div class="form-row mb-1">
                                 <div class="col">
@@ -99,28 +107,43 @@ include "include/topnavbar.php";
                                 </div>
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Supplier*</label>
-                                    <select class="form-control form-control-sm" name="supplier" id="supplier" required>
-                                        <option value="">Select</option>
-                                            <?php foreach($supplierlist->result() as $rowsupplierlist){ ?>
-                                        <option value="<?php echo $rowsupplierlist->idtbl_supplier ?>"><?php echo $rowsupplierlist->suppliername ?></option>
-                                            <?php } ?> 
-                                    </select>
+									<select class="form-control form-control-sm" name="supplier" id="supplier" required>
+										<option value="">Select</option>
+									</select>
                                 </div>
-                            </div>
-                            <div class="form-group mb-1">
-                                <label class="small font-weight-bold text-dark">Material*</label>
-                                <select class="form-control form-control-sm" name="product" id="product" required>
-                                    <option value="">Select</option>
-                                </select>
                             </div>
                             <div class="form-row mb-1">
                                 <div class="col">
-                                    <label class="small font-weight-bold text-dark">Unit Price</label>
-                                    <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
+                                    <label class="small font-weight-bold text-dark">Material*</label>
+                                    <select class="form-control form-control-sm" name="product" id="product" required>
+                                        <option value="">Select</option>
+                                    </select>
                                 </div>
                                 <div class="col">
-                                    <label class="small font-weight-bold text-dark">Qty*</label>
+                                    <label class="small font-weight-bold text-dark">Unit*</label>
+                                    <select class="form-control form-control-sm" name="unit" id="unit" required readonly>
+                                        <option value="">Select</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row mb-1">
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">Unit Per Ctn*</label>
+                                    <input type="text" id="unitperctn" name="unitperctn" class="form-control form-control-sm" value="0" required>
+                                </div>
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">Ctn*</label>
+                                    <input type="text" id="ctn" name="ctn" class="form-control form-control-sm" required>
+                                </div>
+                            </div>
+                            <div class="form-row mb-1">
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">Total Qty*</label>
                                     <input type="text" id="newqty" name="newqty" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">Unit Price</label>
+                                    <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
                                 </div>
                             </div>
                             <div class="form-group mb-1">
@@ -142,7 +165,10 @@ include "include/topnavbar.php";
                                     <th>Comment</th>
                                     <th class="d-none">ProductID</th>
                                     <th class="d-none">Unitprice</th>
-                                    <th class="text-center">Qty</th>
+                                    <th class="text-center">Unit Price</th>
+                                    <th class="text-center">Unit Per Ctn</th>
+                                    <th class="text-center">Ctn</th>
+                                    <th class="text-center">Total Qty</th>
                                     <th class="d-none">HideTotal</th>
                                     <th class="text-right">Total</th>
                                 </tr>
@@ -157,7 +183,7 @@ include "include/topnavbar.php";
                         </div>
                         <hr>
                         <div class="form-group">
-                            <label class="small font-weight-bold text-dark">Remark</label>
+                            <label class="small font-weight-bold text-dark">Notes and Instructions</label>
                             <textarea name="remark" id="remark" class="form-control form-control-sm"></textarea>
                         </div>
                         <div class="form-group mt-2">
@@ -187,22 +213,11 @@ include "include/topnavbar.php";
                 <h4 class="text-right"><label id="procode"></label></h4>
                 <div id="viewhtml"></div>
 			</div>
-            <div class="modal-footer">
-            <button onclick="printDiv('print')" type="button" id="formsubmit" class="btn btn-primary btn-sm px-4"><i class="fas fa-save"></i>&nbsp;Print</button>
-			</div>
 		</div>
 	</div>
 </div>
 <?php include "include/footerscripts.php"; ?>
 <script>
-    function printDiv(divId) {
-            printJS({
-                printable: divId,
-                type: 'html',
-                documentTitle: 'Print Example',
-                targetStyles: ['*']
-            });
-        }
     $(document).ready(function() {
         var addcheck='<?php echo $addcheck; ?>';
         var editcheck='<?php echo $editcheck; ?>';
@@ -210,6 +225,36 @@ include "include/topnavbar.php";
         var deletecheck='<?php echo $deletecheck; ?>';
 
         sessionStorage.setItem('companyid', '<?php echo $this->session->userdata('companyid'); ?>');
+
+        $('#ctn').on('input', function () {
+            var unitPerCtn = parseFloat($('#unitperctn').val()) || 0;
+            var ctn = parseFloat($(this).val()) || 0;
+            var totalQty = unitPerCtn * ctn;
+
+            $('#newqty').val(totalQty);
+        });
+
+        $("#supplier").select2({
+            dropdownParent: $('#staticBackdrop'),
+            width: '100%',
+            ajax: {
+                url: "<?php echo base_url() ?>Purchaseorder/Getsupplierlist",
+                type: "post",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        searchTerm: params.term
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: response
+                    };
+                },
+                cache: true
+            }
+        });
 
         $('#dataTable').DataTable({
             "destroy": true,
@@ -274,6 +319,9 @@ include "include/topnavbar.php";
                     }
                 },
                 {
+                    "data": "class"
+                },
+                {
                     "data": "orderdate"
                 },
                 {
@@ -301,6 +349,9 @@ include "include/topnavbar.php";
                         if(full['grnconfirm']==1){return '<i class="fas fa-check text-success mr-2"></i>Issue GRN';}
                         else{return 'Not Issue GRN';}
                     }
+                },
+                {
+                    "data": "remark"
                 },
                 {
                     "targets": -1,
@@ -393,10 +444,21 @@ include "include/topnavbar.php";
                 dataType: 'json',
                 success: function (response) {
                     $('#unitprice').val(response.unitprice);
+                    $('#unitperctn').val(response.unitperctn);
+                    
+                    let unitDropdown = $('#unit');
+                    unitDropdown.empty();
+                    unitDropdown.append($('<option>').val('').text('Select'));
+                    
+                    if (response.unit_id && response.unitname) {
+                        unitDropdown.append($('<option>').val(response.unit_id).text(response.unitname));
+                        unitDropdown.val(response.unit_id); 
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error("Error fetching unit price:", error);
                     $('#unitprice').val('0');
+                    $('#unit').empty().append($('<option>').val('').text('Select'));
                 }
             });
         });
@@ -409,7 +471,10 @@ include "include/topnavbar.php";
                 var productID = $('#product').val();
                 var comment = $('#comment').val();
                 var product = $("#product option:selected").text();
-                var unitprice = parseFloat($('#unitprice').val());
+                var unit_price = parseFloat($('#unitprice').val());
+                var unitprice = addCommas(parseFloat(unit_price).toFixed(2));
+                var unitperctn = parseFloat($('#unitperctn').val());
+                var ctn = parseFloat($('#ctn').val());
                 var newqty = parseFloat($('#newqty').val());
 
                 var newtotal = parseFloat(unitprice * newqty);
@@ -417,10 +482,12 @@ include "include/topnavbar.php";
                 var total = parseFloat(newtotal);
                 var showtotal = addCommas(parseFloat(total).toFixed(2));
 
-                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
+                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitprice + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
 
                 $('#product').val('');
                 $('#unitprice').val('');
+                $('#ctn').val('0');
+                $('#unitperctn').val('0');
                 $('#saleprice').val('');
                 $('#comment').val('');
                 $('#newqty').val('0');
@@ -470,6 +537,7 @@ include "include/topnavbar.php";
                 // console.log(jsonObj);
 
                 var orderdate = $('#orderdate').val();
+                var poclass = $('#poclass').val();
                 var duedate = $('#duedate').val();
                 var remark = $('#remark').val();
                 var total = $('#hidetotalorder').val();
@@ -482,6 +550,7 @@ include "include/topnavbar.php";
                     data: {
                         tableData: jsonObj,
                         orderdate: orderdate,
+                        poclass: poclass,
                         duedate: duedate,
                         total: total,
                         remark: remark,

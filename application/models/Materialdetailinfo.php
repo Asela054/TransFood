@@ -17,6 +17,15 @@ class Materialdetailinfo extends CI_Model{
         return $respond=$this->db->get();
     }
 
+    public function Getunit(){
+
+        $this->db->select('`idtbl_unit`, `unitname`');
+        $this->db->from('tbl_unit');
+        $this->db->where('status', 1);
+
+        return $respond=$this->db->get();
+    }
+
     public function Materialdetailinsertupdate(){
         $this->db->trans_begin();
 
@@ -29,6 +38,8 @@ class Materialdetailinfo extends CI_Model{
         $reorder=$this->input->post('reorder');
         $comment=$this->input->post('comment');  
         $unitprice=$this->input->post('unitprice');  
+        $unit=$this->input->post('unit');  
+        $unitperctn=$this->input->post('unitperctn');  
         
 
         $recordOption=$this->input->post('recordOption');
@@ -40,6 +51,7 @@ class Materialdetailinfo extends CI_Model{
             $data = array(
                 'materialname'=> $materialname, 
                 'materialinfocode'=> $materialcode, 
+                'unitperctn'=> $unitperctn, 
                 'unitprice'=> $unitprice, 
                 'reorderlevel'=> $reorder, 
                 'comment'=> $comment, 
@@ -47,7 +59,8 @@ class Materialdetailinfo extends CI_Model{
                 'insertdatetime'=> $updatedatetime, 
                 'tbl_user_idtbl_user'=> $userID, 
                 'tbl_material_category_idtbl_material_category'=> $materialcategory, 
-                'tbl_supplier_idtbl_supplier'=> $supplier
+                'tbl_supplier_idtbl_supplier'=> $supplier,
+                'tbl_unit_idtbl_unit'=> $unit
             );
 
             $this->db->insert('tbl_material_info', $data);
@@ -90,13 +103,15 @@ class Materialdetailinfo extends CI_Model{
             $data = array(
                 'materialname'=> $materialname, 
                 'materialinfocode'=> $materialcode, 
+                'unitperctn'=> $unitperctn, 
                 'unitprice'=> $unitprice, 
                 'reorderlevel'=> $reorder, 
                 'comment'=> $comment, 
                 'updateuser'=> $userID, 
                 'updatedatetime'=> $updatedatetime, 
                 'tbl_material_category_idtbl_material_category'=> $materialcategory, 
-                'tbl_supplier_idtbl_supplier'=> $supplier
+                'tbl_supplier_idtbl_supplier'=> $supplier,
+                'tbl_unit_idtbl_unit'=> $unit
             );
 
             $this->db->where('idtbl_material_info', $recordID);
@@ -296,8 +311,10 @@ class Materialdetailinfo extends CI_Model{
         $obj->comment=$respond->row(0)->comment;
         $obj->unitprice=$respond->row(0)->unitprice;
         $obj->materialcode=$respond->row(0)->materialinfocode;
+        $obj->unitperctn=$respond->row(0)->unitperctn;
         $obj->materialcategory=$respond->row(0)->tbl_material_category_idtbl_material_category ;
         $obj->supplier=$respond->row(0)->tbl_supplier_idtbl_supplier;
+        $obj->unit=$respond->row(0)->tbl_unit_idtbl_unit;
 
         echo json_encode($obj);
     }

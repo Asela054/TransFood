@@ -143,6 +143,16 @@ include "include/topnavbar.php";
                                     <input type="date" id="expdate" name="expdate" class="form-control form-control-sm" required>
                                 </div>
                             </div>
+							<div class="form-row mb-1">
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">Unit Per Ctn*</label>
+                                    <input type="text" id="unitperctn" name="unitperctn" class="form-control form-control-sm" <?php if($editcheck==0){echo 'readonly';} ?> required>
+                                </div>
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">ctn</label>
+                                    <input type="text" id="ctn" name="ctn" class="form-control form-control-sm" <?php if($editcheck==0){echo 'readonly';} ?>>
+                                </div>
+                            </div>
                             <div class="form-row mb-1">
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Qty*</label>
@@ -191,6 +201,8 @@ include "include/topnavbar.php";
                                         <th class="d-none">ProductID</th>
                                         <th class="d-none">Unitprice</th>
                                         <th class="d-none">Saleprice</th>
+										<th class="text-center">Unit Per Ctn</th>
+										<th class="text-center">Ctn</th>
                                         <th class="text-center">Qty</th>
                                         <th class="d-none">HideTotal</th>
                                         <th class="text-right">Total</th>
@@ -312,10 +324,6 @@ include "include/topnavbar.php";
 				<h4 class="text-right"><label id="grncode"></label></h4>
                 <div id="viewhtml"></div>
 			</div>
-            <div class="modal-footer">
-            <button type="button" id="printgrn" class="btn btn-outline-primary btn-sm fa-pull-right"
-								<?php if($addcheck==0){echo 'disabled';} ?>><i class="far fa-save"></i>&nbsp;Print GRN</button>
-			</div>
 		</div>
 	</div>
 </div>
@@ -405,15 +413,6 @@ include "include/topnavbar.php";
 </div>
 <?php include "include/footerscripts.php"; ?>
 <script>
-    $(document).ready(function () {
-    	$('#printgrn').click(function () {
-    		printJS({
-    			printable: 'GRNView',
-    			type: 'html',
-    			css: 'assets/css/styles.css'
-    		});
-    	});
-    });
     $(document).on("click", "#BtnAdd", function () {
     	var costList = $("#costlist option:selected").text();
     	var costListid = $('#costlist').val();
@@ -576,6 +575,11 @@ include "include/topnavbar.php";
     				"data": null,
     				"render": function (data, type, full) {
     					var button = '';
+						button += '<a href="<?php echo base_url() ?>Goodreceive/Printgoodreceive/' +full['idtbl_grn'] + '" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print PO" class="btn btn-danger btn-sm mr-1 ';
+						if (editcheck != 1) {
+							button += 'd-none';
+						}
+						button += '"><i class="fas fa-file-pdf"></i></a>';
                         button+='<button class="btn btn-secondary btn-sm btnLabel mr-1" id="'+full['idtbl_grn']+'"><i class="fas fa-tag"></i></button>';
 						button += '<button class="btn btn-dark btn-sm btnview mr-1" id="' + full['idtbl_grn'] + '" value="'+ full['grn_no'] +'"><i class="fas fa-eye"></i></button>';
     					if (full['approvestatus'] == 1) {
@@ -738,6 +742,8 @@ include "include/topnavbar.php";
     			var product = $("#product option:selected").text();
     			var unitprice = parseFloat($('#unitprice').val());
     			var newqty = parseFloat($('#newqty').val());
+				var unitperctn = parseFloat($('#unitperctn').val());
+				var ctn = parseFloat($('#ctn').val());
     			var mfdate = $('#mfdate').val();
     			var quater = $('#quater').val();
     			var expdate = $('#expdate').val();
@@ -748,14 +754,13 @@ include "include/topnavbar.php";
     			var total = parseFloat(newtotal);
     			var showtotal = addCommas(parseFloat(total).toFixed(2));
 
-    			$('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td>' + mfdate + '</td><td>' + expdate + '</td><td class="d-none">' + quater + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
+    			$('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td>' + mfdate + '</td><td>' + expdate + '</td><td class="d-none">' + quater + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
 
 				$('#product').val('').trigger('change');
     			$('#unitprice').val('');
     			$('#saleprice').val('');
     			$('#comment').val('');
     			$('#newqty').val('');
-    			$('#mfdate').val('<?php echo date('Y - m - d ') ?>');
     			$('#quater').val('');
     			$('#expdate').val('');
 
@@ -928,6 +933,8 @@ include "include/topnavbar.php";
     				var obj = JSON.parse(result);
     				$('#newqty').val(obj.qty);
     				$('#unitprice').val(obj.unitprice);
+					$('#unitperctn').val(obj.unitperctn);
+					$('#ctn').val(obj.ctn);
     				$('#comment').val(obj.comment);
     			}
     		});

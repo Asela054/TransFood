@@ -32,14 +32,24 @@ class Purchaseorderinfo extends CI_Model{
     public function Getunitpriceaccomaterial() {
         $recordID = $this->input->post('recordID');
         
-        $sql = "SELECT `tbl_material_info`.`unitprice` FROM `tbl_material_info` WHERE `tbl_material_info`.`status` = ? AND `idtbl_material_info` = ?";
+        $sql = "SELECT `tbl_material_info`.`unitprice`, `tbl_material_info`.`unitperctn`, `tbl_unit`.`idtbl_unit`, `tbl_unit`.`unitname` FROM `tbl_material_info` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`status` = ? AND `idtbl_material_info` = ?";
         $query = $this->db->query($sql, array(1, $recordID));
         
         if ($query->num_rows() > 0) {
             $row = $query->row();
-            echo json_encode(array('unitprice' => $row->unitprice));
+            echo json_encode(array(
+                'unitprice' => $row->unitprice,
+                'unitperctn' => $row->unitperctn,
+                'unit_id' => $row->idtbl_unit,
+                'unitname' => $row->unitname
+            ));
         } else {
-            echo json_encode(array('unitprice' => 0));
+            echo json_encode(array(
+                'unitprice' => 0,
+                'unitperctn' => 0,
+                'unit_id' => 0,
+                'unitname' => ''
+            ));
         }
     }
     public function Purchaseorderinsertupdate(){
@@ -51,6 +61,7 @@ class Purchaseorderinfo extends CI_Model{
 
         $tableData=$this->input->post('tableData');
         $orderdate=$this->input->post('orderdate');
+        $poclass=$this->input->post('poclass');
         $duedate=$this->input->post('duedate');
         $total=$this->input->post('total');
         $remark=$this->input->post('remark');
@@ -71,6 +82,7 @@ class Purchaseorderinfo extends CI_Model{
 
         $data = array(
             'po_no'=> $i, 
+            'class'=> $poclass, 
             'orderdate'=> $orderdate, 
             'duedate'=> $duedate, 
             'subtotal'=> $total, 
@@ -99,14 +111,19 @@ class Purchaseorderinfo extends CI_Model{
             $comment=$rowtabledata['col_2'];
             $materialID=$rowtabledata['col_3'];
             $unit=$rowtabledata['col_4'];
-            $qty=$rowtabledata['col_5'];
-            $nettotal=$rowtabledata['col_6'];
+            $unitperctn=$rowtabledata['col_6'];
+            $ctn=$rowtabledata['col_7'];
+            $qty=$rowtabledata['col_8'];
+            $nettotal=$rowtabledata['col_9'];
 
             $dataone = array(
+                'unitperctn'=> $unitperctn, 
+                'ctn'=> $ctn, 
                 'qty'=> $qty, 
                 'unitprice'=> $unit, 
                 'discount'=> '0', 
                 'discountamount'=> '0', 
+                'total'=> $nettotal, 
                 'comment'=> $comment, 
                 'status'=> '1', 
                 'insertdatetime'=> $updatedatetime,
@@ -163,9 +180,10 @@ class Purchaseorderinfo extends CI_Model{
         $sql="SELECT `u`.*, `ua`.`suppliername`, `ua`.`primarycontactno`, `ua`.`secondarycontactno`, `ua`.`address` AS supplieraddress, `ua`.`email`, `ub`.`location`, `ub`.`phone`, `ub`.`address`, `ub`.`phone2`, `ub`.`email` AS `locemail` FROM `tbl_porder` AS `u` LEFT JOIN `tbl_supplier` AS `ua` ON (`ua`.`idtbl_supplier` = `u`.`tbl_supplier_idtbl_supplier`) LEFT JOIN `tbl_location` AS `ub` ON (`ub`.`idtbl_location` = `u`.`tbl_location_idtbl_location`) WHERE `u`.`status`=? AND `u`.`idtbl_porder`=?";
         $respond=$this->db->query($sql, array(1, $recordID));
 
-        $this->db->select('tbl_porder_detail.*, tbl_material_info.materialinfocode, tbl_material_info.materialname');
+        $this->db->select('tbl_porder_detail.*, tbl_material_info.materialinfocode, tbl_material_info.materialname, tbl_unit.unitname');
         $this->db->from('tbl_porder_detail');
         $this->db->join('tbl_material_info', 'tbl_material_info.idtbl_material_info = tbl_porder_detail.tbl_material_info_idtbl_material_info', 'left');
+        $this->db->join('tbl_unit', 'tbl_unit.idtbl_unit = tbl_material_info.tbl_unit_idtbl_unit', 'left');
         $this->db->where('tbl_porder_detail.tbl_porder_idtbl_porder', $recordID);
         $this->db->where('tbl_porder_detail.status', 1);
 
@@ -185,8 +203,11 @@ class Purchaseorderinfo extends CI_Model{
                     <thead>
                         <tr>
                             <th>Material Info</th>
-                            <th>Unit Price</th>
+                            <th>Unit</th>
+                            <th>Unit Per Ctn</th>
+                            <th>Ctns</th>
                             <th>Qty</th>
+                            <th>Unit Price</th>
                             <th class="text-right">Total</th>
                         </tr>
                     </thead>
@@ -194,8 +215,11 @@ class Purchaseorderinfo extends CI_Model{
                     foreach($responddetail->result() as $roworderinfo){
                         $html.='<tr>
                             <td>'.$roworderinfo->materialname.' / '.$roworderinfo->materialinfocode.'</td>
-                            <td>'.$roworderinfo->unitprice.'</td>
+                            <td>'.$roworderinfo->unitname.'</td>
+                            <td>'.$roworderinfo->unitperctn.'</td>
+                            <td>'.$roworderinfo->ctn.'</td>
                             <td>'.$roworderinfo->qty.'</td>
+                            <td>'.number_format(($roworderinfo->unitprice), 2).'</td>
                             <td class="text-right">'.number_format(($roworderinfo->qty*$roworderinfo->unitprice), 2).'</td>
                         </tr>';
                     }
@@ -204,7 +228,7 @@ class Purchaseorderinfo extends CI_Model{
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-12 text-right"><h3 class="font-weight-normal">Rs. '.number_format(($respond->row(0)->nettotal), 2).'</h3></div>
+            <div class="col-12 text-right"><h3 class="font-weight-bold">Rs. '.number_format(($respond->row(0)->nettotal), 2).'</h3></div>
         </div>
         ';
 

@@ -108,4 +108,8 @@ class Goodreceive extends CI_Controller {
 		$this->load->model('Goodreceiveinfo');
         $result=$this->Goodreceiveinfo->Getmaterialinfoaccogrnlable();
 	}
+	public function Printgoodreceive($x){
+		$this->load->model('GoodreceivePrintinfo');
+        $result=$this->GoodreceivePrintinfo->Printgoodreceive($x);
+	}
 }
