@@ -35,7 +35,7 @@ $columns = array(
 	array( 'db' => '`u`.`idtbl_production_orderdetail`', 'dt' => 'idtbl_production_orderdetail', 'field' => 'idtbl_production_orderdetail' ),
 	array( 'db' => '`ub`.`idtbl_production_order`', 'dt' => 'idtbl_production_order', 'field' => 'idtbl_production_order' ),
 	array( 'db' => '`uc`.`productcode`', 'dt' => 'productcode', 'field' => 'productcode' ),
-    array( 'db' => '`ud`.`materialname`', 'dt' => 'materialname', 'field' => 'materialname' ),
+    array( 'db' => '`uc`.`prodcutname`', 'dt' => 'prodcutname', 'field' => 'prodcutname' ),
 	array( 'db' => 'LPAD(`ub`.`procode`, 6, "0")', 'dt' => 'procode', 'field' => 'procode', 'as' => 'procode' ),
     array( 'db' => '`u`.`qty`', 'dt' => 'qty', 'field' => 'qty' ),
     array( 'db' => '`ub`.`prodate`', 'dt' => 'prodate', 'field' => 'prodate' ),
@@ -68,8 +68,7 @@ $branchid=$_SESSION['branchid'];
 
 $joinQuery = "FROM `tbl_production_orderdetail` AS `u`
 LEFT JOIN `tbl_production_order` AS `ub` ON `u`.`tbl_production_order_idtbl_production_order` = `ub`.`idtbl_production_order`
-LEFT JOIN `tbl_product` AS `uc` ON `u`.`tbl_product_idtbl_product` = `uc`.`idtbl_product`
-LEFT JOIN `tbl_material_code` AS `ud` ON `uc`.`materialid` = `ud`.`idtbl_material_code`";
+LEFT JOIN `tbl_product` AS `uc` ON `u`.`tbl_product_idtbl_product` = `uc`.`idtbl_product`";
 
 $extraWhere = "`u`.`status` IN (1, 2) AND `ub`.`tbl_company_idtbl_company`='$companyid' AND `ub`.`tbl_company_branch_idtbl_company_branch`='$branchid'";
 
