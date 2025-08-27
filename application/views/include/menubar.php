@@ -538,7 +538,7 @@ function checkprivilege($arraymenu, $menuID, $type){
                 <div class="nav-link-icon"><i class="fas fa-users"></i></div>
                 Supplier
             </a>
-            <?php } if(menucheck($menuprivilegearray, 4)==1 | menucheck($menuprivilegearray, 13)==1){ ?>
+            <?php } if(menucheck($menuprivilegearray, 4)==1 | menucheck($menuprivilegearray, 11)==1 | menucheck($menuprivilegearray, 13)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseMaterialinfo" aria-expanded="false" aria-controls="collapseMaterialinfo">
                 <div class="nav-link-icon"><i class="fas fa-shopping-basket"></i></div>
                 Material Information
@@ -548,6 +548,8 @@ function checkprivilege($arraymenu, $menuID, $type){
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                     <?php if(menucheck($menuprivilegearray, 4)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Materialcategory'; ?>">Material Category</a>
+                    <?php } if(menucheck($menuprivilegearray, 11)==1){ ?>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Unit'; ?>">Unit</a>
                     <?php } if(menucheck($menuprivilegearray, 13)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Materialdetail'; ?>">Material Detail</a>
                     <?php } ?>
