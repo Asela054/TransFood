@@ -624,9 +624,9 @@ function checkprivilege($arraymenu, $menuID, $type){
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Semiproduction/Semiproductionprocess'; ?>">Prodcution Process</a>
                     <?php } if(menucheck($menuprivilegearray, 60)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Semiproductionquality'; ?>">Prodcution Quality</a>
-                    <?php } ?>
+                    <?php //} ?>
                 </nav>
-            </div>
+            </div> -->
             <?php } if(menucheck($menuprivilegearray, 42)==1 | menucheck($menuprivilegearray, 61)==1 | menucheck($menuprivilegearray, 45)==1 | menucheck($menuprivilegearray, 46)==1 | menucheck($menuprivilegearray, 57)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseProdcution" aria-expanded="false" aria-controls="collapseProdcution">
                 <div class="nav-link-icon"><i class="fas fa-list"></i></div>

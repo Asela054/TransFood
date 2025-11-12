@@ -574,21 +574,21 @@ function checkprivilege($arraymenu, $menuID, $type){
                     <?php } ?>
                 </nav>
             </div>
-            <?php } if(menucheck($menuprivilegearray, 26)==1 | menucheck($menuprivilegearray, 43)==1){ ?>
+            <!-- <?php //} if(menucheck($menuprivilegearray, 26)==1 | menucheck($menuprivilegearray, 43)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSalesinfo" aria-expanded="false" aria-controls="collapseSalesinfo">
                 <div class="nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
                 Sales Information
                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse <?php if($controllermenu=="Customerporder" | $controllermenu=="Salesordercost"){echo 'show';} ?>" id="collapseSalesinfo" data-parent="#accordionSidenav">
+            <div class="collapse <?php //if($controllermenu=="Customerporder" | $controllermenu=="Salesordercost"){echo 'show';} ?>" id="collapseSalesinfo" data-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                    <?php if(menucheck($menuprivilegearray, 26)==1){ ?>
+                    <?php //if(menucheck($menuprivilegearray, 26)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Customerporder'; ?>">Sales Order</a>
-                    <!-- <?php //} if(menucheck($menuprivilegearray, 43)==1){ ?>
-                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Salesordercost'; ?>">Sales Order Cost List</a> -->
-                    <?php } ?>
+                    <?php //} if(menucheck($menuprivilegearray, 43)==1){ ?>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Salesordercost'; ?>">Sales Order Cost List</a>
+                    <?php //} ?>
                 </nav>
-            </div>
+            </div> -->
             <?php } if(menucheck($menuprivilegearray, 14)==1 | menucheck($menuprivilegearray, 15)==1 | menucheck($menuprivilegearray, 18)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapsepordergrn" aria-expanded="false" aria-controls="collapsepordergrn">
                 <div class="nav-link-icon"><i class="fas fa-truck"></i></div>
@@ -606,27 +606,27 @@ function checkprivilege($arraymenu, $menuID, $type){
                     <?php } ?>
                 </nav>
             </div>
-            <?php } if(menucheck($menuprivilegearray, 53)==1 | menucheck($menuprivilegearray, 54)==1 | menucheck($menuprivilegearray, 60)==1 | menucheck($menuprivilegearray, 64)==1 | menucheck($menuprivilegearray, 71)==1){ ?>
+            <!-- <?php //} if(menucheck($menuprivilegearray, 53)==1 | menucheck($menuprivilegearray, 54)==1 | menucheck($menuprivilegearray, 60)==1 | menucheck($menuprivilegearray, 64)==1 | menucheck($menuprivilegearray, 71)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSemi" aria-expanded="false" aria-controls="collapseSemi">
                 <div class="nav-link-icon"><i class="fas fa-sitemap"></i></div>
                 Production
                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse <?php if($controllermenu=="Semibom" | $controllermenu=="Semiproduction" | $controllermenu=="Semiproductionquality" | $functionmenu=="Semiproductionprocess" | $controllermenu=="SemiBomOtherCostCharge"){echo 'show';} ?>" id="collapseSemi" data-parent="#accordionSidenav">
+            <div class="collapse <?php //if($controllermenu=="Semibom" | $controllermenu=="Semiproduction" | $controllermenu=="Semiproductionquality" | $functionmenu=="Semiproductionprocess" | $controllermenu=="SemiBomOtherCostCharge"){echo 'show';} ?>" id="collapseSemi" data-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                    <?php if(menucheck($menuprivilegearray, 53)==1){ ?>
+                    <?php //if(menucheck($menuprivilegearray, 53)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Semibom'; ?>">Production BOM</a>
-                    <?php } if(menucheck($menuprivilegearray, 71)==1){ ?>
+                    <?php //} if(menucheck($menuprivilegearray, 71)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'SemiBomOtherCostCharge'; ?>">Production Other Cost</a>
-                    <?php } if(menucheck($menuprivilegearray, 54)==1){ ?>
+                    <?php //} if(menucheck($menuprivilegearray, 54)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Semiproduction'; ?>">Prodcution Order</a>
-                    <?php } if(menucheck($menuprivilegearray, 64)==1){ ?>
+                    <?php //} if(menucheck($menuprivilegearray, 64)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Semiproduction/Semiproductionprocess'; ?>">Prodcution Process</a>
-                    <?php } if(menucheck($menuprivilegearray, 60)==1){ ?>
+                    <?php //} if(menucheck($menuprivilegearray, 60)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Semiproductionquality'; ?>">Prodcution Quality</a>
-                    <?php } ?>
+                    <?php //} ?>
                 </nav>
-            </div>
+            </div> -->
             <?php } if(menucheck($menuprivilegearray, 42)==1 | menucheck($menuprivilegearray, 61)==1 | menucheck($menuprivilegearray, 45)==1 | menucheck($menuprivilegearray, 46)==1 | menucheck($menuprivilegearray, 57)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseProdcution" aria-expanded="false" aria-controls="collapseProdcution">
                 <div class="nav-link-icon"><i class="fas fa-list"></i></div>
