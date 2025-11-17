@@ -78,7 +78,7 @@ class Productionorderviewinfo extends CI_Model{
     public function Productiondetailaccoproduction(){
         $recordID=$this->input->post('recordID');
 
-        $sql="SELECT `tbl_production_orderdetail`.`idtbl_production_orderdetail`, `tbl_material_code`.`materialname`, `tbl_product`.`idtbl_product`, `tbl_product`.`productcode` FROM `tbl_production_orderdetail` LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_production_orderdetail`.`tbl_product_idtbl_product` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_product`.`materialid` WHERE `tbl_production_orderdetail`.`tbl_production_order_idtbl_production_order`=? AND `tbl_production_orderdetail`.`status`=? AND `tbl_production_orderdetail`.`materialissue`=?";
+        $sql="SELECT `tbl_production_orderdetail`.`idtbl_production_orderdetail`, `tbl_product`.`prodcutname`, `tbl_product`.`idtbl_product`, `tbl_product`.`productcode` FROM `tbl_production_orderdetail` LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_production_orderdetail`.`tbl_product_idtbl_product` WHERE `tbl_production_orderdetail`.`tbl_production_order_idtbl_production_order`=? AND `tbl_production_orderdetail`.`status`=? AND `tbl_production_orderdetail`.`materialissue`=?";
         $respond=$this->db->query($sql, array($recordID, 1, 0));
 
         echo json_encode($respond->result());

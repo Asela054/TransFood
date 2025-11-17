@@ -632,7 +632,7 @@ $(document).ready(function () {
                 }
             },
 			{
-				"data": "materialcode"
+				"data": "materialinfocode"
 			},
 			{
 				"data": "startdatetime"

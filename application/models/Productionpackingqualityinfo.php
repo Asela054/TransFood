@@ -9,165 +9,164 @@ class Productionpackingqualityinfo extends CI_Model{
         LEFT JOIN `tbl_production_orderdetail` ON `tbl_product`.`idtbl_product` = `tbl_production_orderdetail`.`tbl_product_idtbl_product`
         LEFT JOIN `tbl_production_order` ON `tbl_production_order`.`idtbl_production_order` = `tbl_production_orderdetail`.`tbl_production_order_idtbl_production_order`
         WHERE `tbl_product`.`status` = ? AND `tbl_production_orderdetail`.`tbl_production_order_idtbl_production_order` = ? AND `tbl_product`.`idtbl_product` NOT IN (SELECT `tbl_product_idtbl_product` FROM `tbl_packing_quality` WHERE `status` = ? AND `tbl_production_order_idtbl_production_order` = ?)";
+        $stmt = $this->db->query($sqlmaterial, array(1, $recordID, 1, $recordID));
 
-            $stmt = $this->db->query($sqlmaterial, array(1, $recordID, 1, $recordID));
-
-            if ($stmt->num_rows() > 0) {
+        if ($stmt->num_rows() > 0) {
             $respondmaterial = $stmt->row();
             $productid = $respondmaterial->idtbl_product;
-            } else {
+        } else {
             $productid = null;
-            }
+        }
 
 
-        $sqlbommaterial="SELECT `tbl_product_bom`.`qty`, `tbl_material_info`.`materialinfocode`, `tbl_material_code`.`materialname`, `tbl_unit`.`unitcode`, `tbl_product_bom`.`wastage`  FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_material_info`.`tbl_material_code_idtbl_material_code` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_idtbl_product`=? AND `tbl_product_bom`.`status`=? AND `tbl_material_category`.`idtbl_material_category`=?";
+        $sqlbommaterial="SELECT `tbl_product_bom`.`qty`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode`, `tbl_product_bom`.`wastage`  FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_idtbl_product`=? AND `tbl_product_bom`.`status`=? AND `tbl_material_category`.`idtbl_material_category`=?";
         $respondbommaterial=$this->db->query($sqlbommaterial, array($productid, 1, 1));
 
-        $sqlpackmaterial="SELECT `tbl_product_bom`.`qty`, `tbl_material_info`.`materialinfocode`, `tbl_material_code`.`materialname`, `tbl_unit`.`unitcode`, `tbl_product_bom`.`wastage`  FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_material_info`.`tbl_material_code_idtbl_material_code` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_idtbl_product`=? AND `tbl_product_bom`.`status`=? AND `tbl_material_category`.`idtbl_material_category`=?";
+        $sqlpackmaterial="SELECT `tbl_product_bom`.`qty`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode`, `tbl_product_bom`.`wastage`  FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_idtbl_product`=? AND `tbl_product_bom`.`status`=? AND `tbl_material_category`.`idtbl_material_category`=?";
         $respondpackmaterial=$this->db->query($sqlpackmaterial, array($productid, 1, 2));
 
-        $sqllabelmaterial="SELECT `tbl_product_bom`.`qty`, `tbl_material_info`.`materialinfocode`, `tbl_material_code`.`materialname`, `tbl_unit`.`unitcode`, `tbl_product_bom`.`wastage`  FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_material_info`.`tbl_material_code_idtbl_material_code` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_idtbl_product`=? AND `tbl_product_bom`.`status`=? AND `tbl_material_category`.`idtbl_material_category`=?";
+        $sqllabelmaterial="SELECT `tbl_product_bom`.`qty`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode`, `tbl_product_bom`.`wastage`  FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_idtbl_product`=? AND `tbl_product_bom`.`status`=? AND `tbl_material_category`.`idtbl_material_category`=?";
         $respondlabelmaterial=$this->db->query($sqllabelmaterial, array($productid, 1, 3));
 
         $html='';
 
         $html='
         <div class="form-row">
-        <div class="col">
-            <label class="small font-weight-bold text-dark">Product</label>
-            <select name="materialinfo" id="materialinfo" class="form-control form-control-sm">
-                <option value="">Select</option>';
-                foreach($stmt->result() AS $rowmateriallist){
-                    $html.='<option value="'.$rowmateriallist->idtbl_product.'">'.$rowmateriallist->productcode.'</option>';
-                }
-            $html.='</select>
+            <div class="col">
+                <label class="small font-weight-bold text-dark">Product</label>
+                <select name="materialinfo" id="materialinfo" class="form-control form-control-sm">
+                    <option value="">Select</option>';
+                    foreach($stmt->result() AS $rowmateriallist){
+                        $html.='<option value="'.$rowmateriallist->idtbl_product.'">'.$rowmateriallist->productcode.'</option>';
+                    }
+                $html.='</select>
+            </div>
         </div>
-    </div>
-    ';
-    $html.='
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">EXAMINED QTY</label>
-    		<input type="text" name="exqty" id="exqty" class="form-control form-control-sm">
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">NET WEIGHT</label>
-    		<input type="text" name="netweight" id="netweight" class="form-control form-control-sm">
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">GROSS WEIGHT</label>
-    		<input type="text" name="grossweight" id="grossweight" class="form-control form-control-sm">
-    	</div>
-    </div>
+        ';
+        $html.='
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">EXAMINED QTY</label>
+                <input type="text" name="exqty" id="exqty" class="form-control form-control-sm">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">NET WEIGHT</label>
+                <input type="text" name="netweight" id="netweight" class="form-control form-control-sm">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">GROSS WEIGHT</label>
+                <input type="text" name="grossweight" id="grossweight" class="form-control form-control-sm">
+            </div>
+        </div>
 
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">RAW MATERIAL</label>
-    		';
-    		foreach($respondbommaterial->result() as $rowrawmateriallist){
-    		$html.='
-    		<input type="text" name="adultering" id="adultering" class="form-control form-control-sm"
-    			value="'.$rowrawmateriallist->materialinfocode.'" readonly>
-    		';
-    		}
-    		$html.='
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">PACKING MATERIAL</label>
-    		';
-    		foreach($respondpackmaterial->result() as $rowpackmateriallist){
-    		$html.='
-    		<input type="text" name="adultering" id="adultering" class="form-control form-control-sm"
-    			value="'.$rowpackmateriallist->materialinfocode.'" readonly>
-    		';
-    		}
-    		$html.='
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">Labelling MATERIAL</label>
-    		';
-    		foreach($respondlabelmaterial->result() as $rowlabelmateriallist){
-    		$html.='
-    		<input type="text" name="adultering" id="adultering" class="form-control form-control-sm"
-    			value="'.$rowlabelmateriallist->materialinfocode.'" readonly>
-    		';
-    		}
-    		$html.='
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">MOISTURE%</label>
-    		<input type="text" name="moisture" id="moisture" class="form-control form-control-sm">
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">COLOR</label>
-    		<input type="text" name="color" id="color" class="form-control form-control-sm">
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">TASTE</label>
-    		<input type="text" name="taste" id="taste" class="form-control form-control-sm">
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">SEAL</label><br>
-    		<div class="custom-control custom-radio custom-control-inline">
-    			<input type="radio" id="seal1" name="seal" class="custom-control-input" value="1">
-    			<label class="custom-control-label" for="seal1">YES</label>
-    		</div>
-    		<div class="custom-control custom-radio custom-control-inline">
-    			<input type="radio" id="seal2" name="seal" class="custom-control-input" value="0" checked>
-    			<label class="custom-control-label" for="seal2">NO</label>
-    		</div>
-    	</div>
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">WATER LEAKAGES</label><br>
-    		<div class="custom-control custom-radio custom-control-inline">
-    			<input type="radio" id="leak1" name="leakages" class="custom-control-input" value="1">
-    			<label class="custom-control-label" for="leak1">YES</label>
-    		</div>
-    		<div class="custom-control custom-radio custom-control-inline">
-    			<input type="radio" id="leak22" name="leakages" class="custom-control-input" value="0" checked>
-    			<label class="custom-control-label" for="leak22">NO</label>
-    		</div>
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">PASS/FAIL</label><br>
-    		<div class="custom-control custom-radio custom-control-inline">
-    			<input type="radio" id="passfail1" name="qualityform" class="custom-control-input" value="1">
-    			<label class="custom-control-label" for="passfail1">PASS</label>
-    		</div>
-    		<div class="custom-control custom-radio custom-control-inline">
-    			<input type="radio" id="passfail2" name="qualityform" class="custom-control-input" value="0" checked>
-    			<label class="custom-control-label" for="passfail2">FAIL</label>
-    		</div>
-    	</div>
-    </div>
-    <div class="form-row">
-    	<div class="col">
-    		<label class="small font-weight-bold text-dark">COMMENTS</label>
-    		<textarea name="comment" id="comment" class="form-control form-control-sm"></textarea>
-    	</div>
-    </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">RAW MATERIAL</label>
+                ';
+                foreach($respondbommaterial->result() as $rowrawmateriallist){
+                $html.='
+                <input type="text" name="adultering" id="adultering" class="form-control form-control-sm"
+                    value="'.$rowrawmateriallist->materialinfocode.'" readonly>
+                ';
+                }
+                $html.='
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">PACKING MATERIAL</label>
+                ';
+                foreach($respondpackmaterial->result() as $rowpackmateriallist){
+                $html.='
+                <input type="text" name="adultering" id="adultering" class="form-control form-control-sm"
+                    value="'.$rowpackmateriallist->materialinfocode.'" readonly>
+                ';
+                }
+                $html.='
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">Labelling MATERIAL</label>
+                ';
+                foreach($respondlabelmaterial->result() as $rowlabelmateriallist){
+                $html.='
+                <input type="text" name="adultering" id="adultering" class="form-control form-control-sm"
+                    value="'.$rowlabelmateriallist->materialinfocode.'" readonly>
+                ';
+                }
+                $html.='
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">MOISTURE%</label>
+                <input type="text" name="moisture" id="moisture" class="form-control form-control-sm">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">COLOR</label>
+                <input type="text" name="color" id="color" class="form-control form-control-sm">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">TASTE</label>
+                <input type="text" name="taste" id="taste" class="form-control form-control-sm">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">SEAL</label><br>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="seal1" name="seal" class="custom-control-input" value="1">
+                    <label class="custom-control-label" for="seal1">YES</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="seal2" name="seal" class="custom-control-input" value="0" checked>
+                    <label class="custom-control-label" for="seal2">NO</label>
+                </div>
+            </div>
+            <div class="col">
+                <label class="small font-weight-bold text-dark">WATER LEAKAGES</label><br>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="leak1" name="leakages" class="custom-control-input" value="1">
+                    <label class="custom-control-label" for="leak1">YES</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="leak22" name="leakages" class="custom-control-input" value="0" checked>
+                    <label class="custom-control-label" for="leak22">NO</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">PASS/FAIL</label><br>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="passfail1" name="qualityform" class="custom-control-input" value="1">
+                    <label class="custom-control-label" for="passfail1">PASS</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="passfail2" name="qualityform" class="custom-control-input" value="0" checked>
+                    <label class="custom-control-label" for="passfail2">FAIL</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">COMMENTS</label>
+                <textarea name="comment" id="comment" class="form-control form-control-sm"></textarea>
+            </div>
+        </div>
 
-    ';
+        ';
 
-    echo $html;
+        echo $html;
     }
 
     public function Productionpackqualityinsertupdate(){
@@ -254,7 +253,6 @@ class Productionpackingqualityinfo extends CI_Model{
 
         $sql="SELECT `tbl_production_order`.`idtbl_production_order`,`tbl_product`.`idtbl_product`, `tbl_product`.`productcode` FROM `tbl_product` LEFT JOIN `tbl_production_orderdetail` ON `tbl_product`.`idtbl_product` = `tbl_production_orderdetail`.`tbl_product_idtbl_product`LEFT JOIN `tbl_production_order` ON `tbl_production_order`.`idtbl_production_order` = `tbl_production_orderdetail`.`tbl_production_order_idtbl_production_order` WHERE `tbl_product`.`status`=? AND `tbl_production_orderdetail`.`tbl_production_order_idtbl_production_order` = ?";
         $respond=$this->db->query($sql, array(1, $recordID)); 
-
         
         $html='
         <table class="table table-striped table-bordered table-sm small">

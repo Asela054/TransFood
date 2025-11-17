@@ -318,10 +318,9 @@ class Customerporderinfo extends CI_Model{
         $sql="SELECT `u`.*, `ua`.`name`, `ua`.`contact`, `ua`.`contact2`, `ua`.`address`, `ua`.`email` FROM `tbl_customer_porder` AS `u` LEFT JOIN `tbl_customer` AS `ua` ON (`ua`.`idtbl_customer` = `u`.`tbl_customer_idtbl_customer`) WHERE `u`.`status`=? AND `u`.`idtbl_customer_porder`=?";
         $respond=$this->db->query($sql, array(1, $recordID));
 
-        $this->db->select('tbl_customer_porder_detail.*, tbl_product.productcode, tbl_material_code.materialname');
+        $this->db->select('tbl_customer_porder_detail.*, tbl_product.productcode, tbl_product.prodcutname');
         $this->db->from('tbl_customer_porder_detail');
         $this->db->join('tbl_product', 'tbl_product.idtbl_product = tbl_customer_porder_detail.tbl_product_idtbl_product', 'left');
-        $this->db->join('tbl_material_code', 'tbl_material_code.idtbl_material_code = tbl_product.materialid', 'left');
         $this->db->where('tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder', $recordID);
         $this->db->where('tbl_customer_porder_detail.status', 1);
 
@@ -347,7 +346,7 @@ class Customerporderinfo extends CI_Model{
                     <tbody>';
                     foreach($responddetail->result() as $roworderinfo){
                         $html.='<tr>
-                            <td>'.$roworderinfo->materialname.'-'.$roworderinfo->productcode.'</td>
+                            <td>'.$roworderinfo->prodcutname.'-'.$roworderinfo->productcode.'</td>
                             <td>'.$roworderinfo->suggestprice.'</td>
                             <td>'.$roworderinfo->qty.'</td>
                             <td class="text-right">'.number_format(($roworderinfo->qty*$roworderinfo->suggestprice), 2).'</td>
@@ -575,10 +574,9 @@ class Customerporderinfo extends CI_Model{
 
         $recordID=$this->input->post('recordID');
 
-        $sql="SELECT `tbl_product`.`idtbl_product`,`tbl_product`.`productcode`, `tbl_material_code`.`materialname`, `tbl_customer_porder`.`idtbl_customer_porder` FROM `tbl_product`
+        $sql="SELECT `tbl_product`.`idtbl_product`,`tbl_product`.`productcode`, `tbl_product`.`prodcutname`, `tbl_customer_porder`.`idtbl_customer_porder` FROM `tbl_product`
          LEFT JOIN `tbl_customer_porder_detail` ON `tbl_product`.`idtbl_product` = `tbl_customer_porder_detail`.`tbl_product_idtbl_product` 
          LEFT JOIN `tbl_customer_porder` ON `tbl_customer_porder`.`idtbl_customer_porder` = `tbl_customer_porder_detail`.`tbl_customer_porder_idtbl_customer_porder` 
-         LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code` = `tbl_product`.`materialid`
          WHERE `tbl_customer_porder_detail`.`tbl_customer_porder_idtbl_customer_porder`= $recordID AND `tbl_customer_porder_detail`.`status`= 1";
         $respond=$this->db->query($sql, array(1, $recordID));
 

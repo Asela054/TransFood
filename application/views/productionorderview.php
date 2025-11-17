@@ -558,7 +558,7 @@ function loadfglist(){
             html1 += '<option value="">Select</option>';
             $.each(obj, function (i, item) {
                 html1 += '<option value="' + obj[i].idtbl_product + '">';
-                html1 += obj[i].materialname + ' - ' + obj[i].productcode;
+                html1 += obj[i].prodcutname + ' - ' + obj[i].productcode;
                 html1 += '</option>';
             });
             $('#orderfinishgood').empty().append(html1);

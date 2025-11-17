@@ -70,7 +70,7 @@ $joinQuery = "FROM (SELECT
 `u`.`procode` AS `procode`,
 `u`.`prodate` AS `prodate`,
 `ua`.`materialinfocode` AS `materialinfocode`,
-`ub`.`materialname` AS `materialname`,
+`ua`.`materialname` AS `materialname`,
 `uc`.`qty` AS `qty_daily_complete`,
 `u`.`qty` AS `qty_semi_production`,
 `uc`.`damageqty` AS `damageqty`,
@@ -79,7 +79,6 @@ $joinQuery = "FROM (SELECT
 `u`.`status` AS `status`
 FROM `tbl_semi_production` AS `u`
 LEFT JOIN `tbl_material_info` AS `ua` ON (`ua`.`idtbl_material_info` = `u`.`tbl_material_info_idtbl_material_info`)
-LEFT JOIN `tbl_material_code` AS `ub` ON (`ub`.`idtbl_material_code` = `ua`.`tbl_material_code_idtbl_material_code`)
 LEFT JOIN `tbl_semi_production_daily_complete` AS `uc` ON (`u`.`idtbl_semi_production` = `uc`.`tbl_semi_production_idtbl_semi_production`)
 WHERE `u`.`status` IN (1, 2) AND `u`.`tbl_company_idtbl_company`='$companyid' AND `u`.`tbl_company_branch_idtbl_company_branch`='$branchid' AND (`u`.`approvestatus` = 1 OR `u`.`issueqty` > 0)
 ) AS main";
