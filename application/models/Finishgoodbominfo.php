@@ -491,12 +491,38 @@ class Finishgoodbominfo extends CI_Model{
         return $respond=$this->db->get();
     }
     public function Getmaterialinfo(){
+        // $recordID=$this->input->post('recordID');
+
+        // $sql="SELECT `tbl_material_info`.`idtbl_material_info`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode` FROM `tbl_material_info` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`tbl_material_category_idtbl_material_category`=? AND `tbl_material_info`.`status`=?";
+        // $respond=$this->db->query($sql, array($recordID, 1));
+
+        // echo json_encode($respond->result());
+
+        $searchTerm=$this->input->post('searchTerm');
         $recordID=$this->input->post('recordID');
 
-        $sql="SELECT `tbl_material_info`.`idtbl_material_info`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode` FROM `tbl_material_info` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`tbl_material_category_idtbl_material_category`=? AND `tbl_material_info`.`status`=?";
-        $respond=$this->db->query($sql, array($recordID, 1));
-
-        echo json_encode($respond->result());
+        if(!isset($searchTerm)){
+            $sql="SELECT `tbl_material_info`.`idtbl_material_info`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode` FROM `tbl_material_info` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`tbl_material_category_idtbl_material_category`=? AND `tbl_material_info`.`status`=? LIMIT 5";
+            $respond=$this->db->query($sql, array($recordID, 1));          
+        }
+        else{            
+            if(!empty($searchTerm)){
+                $sql="SELECT `tbl_material_info`.`idtbl_material_info`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode` FROM `tbl_material_info` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`tbl_material_category_idtbl_material_category`=? AND `tbl_material_info`.`status`=? AND (`tbl_material_info`.`materialinfocode` LIKE '%$searchTerm%' OR `tbl_material_info`.`materialname` LIKE '%$searchTerm%')";
+                $respond=$this->db->query($sql, array($recordID, 1));
+            }
+            else{
+                $sql="SELECT `tbl_material_info`.`idtbl_material_info`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname`, `tbl_unit`.`unitcode` FROM `tbl_material_info` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_material_info`.`tbl_material_category_idtbl_material_category`=? AND `tbl_material_info`.`status`=? LIMIT 5";
+                $respond=$this->db->query($sql, array($recordID, 1));
+            }
+        }
+        
+        $data=array();
+        
+        foreach ($respond->result() as $row) {
+            $data[]=array("id"=>$row->idtbl_material_info, "text"=>$row->materialname.' - '.$row->materialinfocode.'/'.$row->unitcode);
+        }
+        
+        echo json_encode($data);
     } 
     public function Getmaterialinfoedit(){
         $recordID=$this->input->post('recordID');

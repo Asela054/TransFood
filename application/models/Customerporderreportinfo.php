@@ -13,11 +13,10 @@ class Customerporderreportinfo extends CI_Model{
 
         $htmlcusdetail = '';
         
-        $sql = "SELECT tbl_customer_porder_detail.*, tbl_customer_porder.*, tbl_product.productcode, tbl_material_code.materialname
+        $sql = "SELECT tbl_customer_porder_detail.*, tbl_customer_porder.*, tbl_product.productcode, tbl_product.prodcutname
                 FROM tbl_customer_porder_detail
                 LEFT JOIN tbl_customer_porder ON tbl_customer_porder.idtbl_customer_porder = tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder
                 LEFT JOIN tbl_product ON tbl_product.idtbl_product = tbl_customer_porder_detail.tbl_product_idtbl_product
-                LEFT JOIN tbl_material_code ON tbl_material_code.idtbl_material_code = tbl_product.materialid
                 WHERE tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder = ?
                 AND tbl_customer_porder_detail.status = ?";
         $respond = $this->db->query($sql, array($recordID, 1));
@@ -54,11 +53,10 @@ class Customerporderreportinfo extends CI_Model{
 
         $tblporder='';
 
-        $sqltable = "SELECT tbl_customer_porder_detail.*, tbl_customer_porder.*, tbl_product.productcode, tbl_product.idtbl_product, tbl_product.weight, tbl_material_code.materialname
+        $sqltable = "SELECT tbl_customer_porder_detail.*, tbl_customer_porder.*, tbl_product.productcode, tbl_product.idtbl_product, tbl_product.weight, tbl_product.prodcutname
         FROM tbl_customer_porder_detail
         LEFT JOIN tbl_customer_porder ON tbl_customer_porder.idtbl_customer_porder = tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder
         LEFT JOIN tbl_product ON tbl_product.idtbl_product = tbl_customer_porder_detail.tbl_product_idtbl_product
-        LEFT JOIN tbl_material_code ON tbl_material_code.idtbl_material_code = tbl_product.materialid
         WHERE tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder = ?
         AND tbl_customer_porder_detail.status = ?";
         $respondtable = $this->db->query($sqltable, array($recordID, 1));

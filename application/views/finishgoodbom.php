@@ -617,22 +617,45 @@ include "include/topnavbar.php";
             const myArray = element.split("materialcategory");
             const ele = myArray[1];
 
-            $.ajax({
-                type: "POST",
-                data: {
-                    recordID: id
-                },
-                url: '<?php echo base_url() ?>Finishgoodbom/Getmaterialinfo',
-                success: function(result) { //alert(result);s
-                    var obj = JSON.parse(result);
-                    var html2 = '';
-                    html2 += '<option value="">Select</option>';
-                    $.each(obj, function (i, item) {
-                        html2 += '<option value="' + obj[i].idtbl_material_info + '">';
-                        html2 += obj[i].materialname + ' - ' + obj[i].materialinfocode +'/'+obj[i].unitcode;
-                        html2 += '</option>';
-                    });
-                    $('#materialinfo'+ele).empty().append(html2).trigger('change');
+            // $.ajax({
+            //     type: "POST",
+            //     data: {
+            //         recordID: id
+            //     },
+            //     url: '<?php // echo base_url() ?>Finishgoodbom/Getmaterialinfo',
+            //     success: function(result) { //alert(result);s
+            //         var obj = JSON.parse(result);
+            //         var html2 = '';
+            //         html2 += '<option value="">Select</option>';
+            //         $.each(obj, function (i, item) {
+            //             html2 += '<option value="' + obj[i].idtbl_material_info + '">';
+            //             html2 += obj[i].materialname + ' - ' + obj[i].materialinfocode +'/'+obj[i].unitcode;
+            //             html2 += '</option>';
+            //         });
+            //         $('#materialinfo'+ele).empty().append(html2).trigger('change');
+            //     }
+            // });
+
+            $("#materialinfo"+ele).select2({
+                dropdownParent: $('#staticBackdrop'),
+                width: '100%',
+                ajax: {
+                    url: "<?php echo base_url() ?>Finishgoodbom/Getmaterialinfo",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            searchTerm: params.term,
+                            recordID: id
+                        };
+                    },
+                    processResults: function (response) {
+                        return {
+                            results: response
+                        };
+                    },
+                    cache: true
                 }
             });
         });

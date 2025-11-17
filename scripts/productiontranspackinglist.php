@@ -66,9 +66,6 @@ require('ssp.customized.class.php' );
 $joinQuery = "FROM `tbl_production_orderdetail` AS `u`
 LEFT JOIN `tbl_production_order` AS `ub` ON `u`.`tbl_production_order_idtbl_production_order` = `ub`.`idtbl_production_order`
 LEFT JOIN `tbl_product` AS `uc` ON `u`.`tbl_product_idtbl_product` = `uc`.`idtbl_product`
-LEFT JOIN `tbl_production_material` AS `ud` ON `ud`.`tbl_production_order_idtbl_production_order`=`ub`.`idtbl_production_order`
-LEFT JOIN `tbl_material_info` AS `ue` ON `ue`.`idtbl_material_info` = `ud`.`tbl_material_info_idtbl_material_info`
-LEFT JOIN `tbl_material_code` AS `uf` ON `uf`.`idtbl_material_code`=`ue`.`tbl_material_code_idtbl_material_code`
 LEFT JOIN `tbl_production_material_issue` AS `ug` ON `ug`.`tbl_production_material_idtbl_production_material`=`ud`.`idtbl_production_material`
 LEFT JOIN `tbl_production_packing` AS `uh` ON `uh`.`tbl_production_material_issue_idtbl_production_material_issue`=`ug`.`idtbl_production_material_issue`";
 

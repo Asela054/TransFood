@@ -762,7 +762,7 @@ include "include/topnavbar.php";
         			html1 += '<option value="">Select</option>';
         			$.each(obj, function (i) {
         				html1 += '<option value="' + obj[i].idtbl_product + '">';
-        				html1 += obj[i].materialname + ' - ' + obj[i].productcode;
+        				html1 += obj[i].prodcutname + ' - ' + obj[i].productcode;
         				html1 += '</option>';
         			});
         			$('#productlist').empty().append(html1);

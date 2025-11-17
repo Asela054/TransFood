@@ -54,7 +54,7 @@ $sql_details = array(
 // require( 'ssp.class.php' );
 require('ssp.customized.class.php' );
 
-$joinQuery = "FROM (SELECT * FROM (SELECT `idtbl_semi_bom_info`, `title`, `status` FROM `tbl_semi_bom_info` WHERE `status` IN (1, 2)) AS `dmain` LEFT JOIN (SELECT `tbl_semi_bom`.`tbl_semi_bom_info_idtbl_semi_bom_info`, `tbl_semi_bom`.`semimaterial`, `tbl_material_info`.`materialinfocode`, `tbl_material_code`.`materialname` FROM `tbl_semi_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_semi_bom`.`semimaterial` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_material_info`.`tbl_material_code_idtbl_material_code` WHERE `tbl_semi_bom`.`status` IN (1, 2) GROUP BY `tbl_semi_bom`.`tbl_semi_bom_info_idtbl_semi_bom_info`) AS `dsub` ON `dsub`.`tbl_semi_bom_info_idtbl_semi_bom_info`=`dmain`.`idtbl_semi_bom_info`) AS `u`";
+$joinQuery = "FROM (SELECT * FROM (SELECT `idtbl_semi_bom_info`, `title`, `status` FROM `tbl_semi_bom_info` WHERE `status` IN (1, 2)) AS `dmain` LEFT JOIN (SELECT `tbl_semi_bom`.`tbl_semi_bom_info_idtbl_semi_bom_info`, `tbl_semi_bom`.`semimaterial`, `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`materialname` FROM `tbl_semi_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_semi_bom`.`semimaterial` WHERE `tbl_semi_bom`.`status` IN (1, 2) GROUP BY `tbl_semi_bom`.`tbl_semi_bom_info_idtbl_semi_bom_info`) AS `dsub` ON `dsub`.`tbl_semi_bom_info_idtbl_semi_bom_info`=`dmain`.`idtbl_semi_bom_info`) AS `u`";
 
 $extraWhere = "";
 
