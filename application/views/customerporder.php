@@ -37,6 +37,7 @@ include "include/topnavbar.php";
                                                 <th>Date</th>
                                                 <th>Sales Order No.</th>
                                                 <th>Customer</th>
+                                                <th>Total ($)</th>
                                                 <th>Total</th>
                                                 <th>Confirm Status</th>
                                                 <th class="text-right">Actions</th>
@@ -228,10 +229,12 @@ include "include/topnavbar.php";
                                 <textarea name="comment" id="comment" class="form-control form-control-sm"></textarea>
                             </div>
                             <div class="form-group mt-3 text-right">
-                                <button type="button" id="formsubmit" class="btn btn-primary btn-sm px-4" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus"></i>&nbsp;Add to list</button>
-                                <input name="submitBtn" type="submit" value="Save" id="submitBtn" class="d-none">
+                                <button type="button" id="formsubmitcreate" class="btn btn-primary btn-sm px-4" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus"></i>&nbsp;Add to list</button>
+                                <input name="submitBtncreate" type="submit" value="Save" id="submitBtncreate" class="d-none">
                             </div>
                             <input type="hidden" name="refillprice" id="refillprice" value="">
+                            <input type="hidden" name="recordOption" id="recordOption" value="1">
+                            <input type="hidden" name="recordID" id="recordID" value="">
                         </form>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8">
@@ -241,21 +244,21 @@ include "include/topnavbar.php";
                                     <th>Product</th>
                                     <th>Comment</th>
                                     <th class="d-none">ProductID</th>
-                                    <th class="d-none">Unitprice</th>
-                                    <th class="text-right d-none">Material Unit Cost</th>
                                     <th class="text-center">Qty</th>
-                                    <th class="d-none">HideTotal</th>
-                                    <th class="text-right">Suggest Price</th>
-                                    <th class="text-right">Total</th>
+                                    <th class="text-right">Unit Price ($)</th>
+                                    <th class="text-right d-none">Unit Price</th>
+                                    <th class="text-right">Total ($)</th>
+                                    <th class="text-right d-none">Total</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
                         <div class="row">
                             <div class="col text-right">
-                                <h1 class="font-weight-600" id="divtotal">Rs. 0.00</h1>
+                                <h1 class="font-weight-600" id="divtotal">$ 0.00</h1>
                             </div>
                             <input type="hidden" id="hidetotalorder" value="0">
+                            <input type="hidden" id="hidetotalorderusd" value="0">
                         </div>
                         <hr>
                         <div class="form-group">
@@ -407,7 +410,7 @@ include "include/topnavbar.php";
 								<button type="button" id="formsubmit2" class="btn btn-primary btn-sm px-4"
 									<?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus"></i>&nbsp;Add to
 									list</button>
-								<input name="submitBtn" type="submit2" value="Save" id="submitBtn" class="d-none">
+								<input name="submitBtn1" type="submit2" value="Save" id="submitBtn1" class="d-none">
 							</div>
 							<input type="hidden" name="refillprice" id="refillprice" value="">
 						</form>
@@ -612,6 +615,14 @@ include "include/topnavbar.php";
                     "className": 'text-right',
                     "data": null,
                     "render": function(data, type, full) {
+                        return addCommas(parseFloat(full['nettotalusd']).toFixed(2));
+                    }
+                },
+                {
+                    "targets": -1,
+                    "className": 'text-right',
+                    "data": null,
+                    "render": function(data, type, full) {
                         return addCommas(parseFloat(full['nettotal']).toFixed(2));
                     }
                 },
@@ -630,30 +641,49 @@ include "include/topnavbar.php";
                     "data": null,
                     "render": function(data, type, full) {
                         var button='';
-                        //button+='<button class="btn btn-warning btn-sm btnAddCosting mr-1" id="'+full['idtbl_customer_porder']+'"><i class="fas fa-list"></i></button>';
-                        button+='<button class="btn btn-primary btn-sm btnAdd mr-1" id="'+full['idtbl_customer_porder']+'"><i class="fas fa-plus"></i></button>';
-                        button+='<button class="btn btn-dark btn-sm btnview mr-1" id="'+full['idtbl_customer_porder']+'" sod_no="' + full[
-                            'sod_no'] + '"><i class="fas fa-eye"></i></button>';
-                        button+='<button class="btn btn-info btn-sm btnEdit mr-1 ';if(editcheck!=1){button+='d-none';}button+='" id="'+full['idtbl_customer_porder']+'" data-toggle="modal" data-target="#pordereditmodal"><i class="fas fa-pen"></i></button>';
-                        button += '<a href="<?php echo base_url() ?>Customerporder/printreport/' + full['idtbl_customer_porder'] + '/' + full['tbl_product_idtbl_product'] + '" target="_blank" name="'+ full['tbl_product_idtbl_product'] +'" class="btn btn-secondary btn-sm mr-1"><i class="fas fa-print"></i></a>';                        if(full['confirmstatus']==1){
-                            button+='<button class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-check"></i></button>';
+                        //button+='<button class="btn btn-warning btn-sm btnAddCosting mr-1" id="'+full['idtbl_customer_porder']+'"><i class="fas fa-list"></i></button>';     
+                        button+='<button class="btn btn-dark btn-sm btnview mr-1" id="'+full['idtbl_customer_porder']+'" sod_no="' + full['sod_no'] + '"><i class="fas fa-eye"></i></button>'; 
+                        if(full['confirmstatus']!=2){
+                            button += '<a href="<?php echo base_url() ?>Customerporder/printreport/' + full['idtbl_customer_porder'] + '/' + full['tbl_product_idtbl_product'] + '" target="_blank" name="'+ full['tbl_product_idtbl_product'] +'" class="btn btn-secondary btn-sm mr-1"><i class="fas fa-print"></i></a>';       
+                        }                 
+                        
+                        if(full['confirmstatus']==1){
+                            if(addcheck==1){
+                                button+='<button class="btn btn-primary btn-sm btnAdd mr-1" id="'+full['idtbl_customer_porder']+'"><i class="fas fa-plus"></i></button>';
+                            }
+                            if(statuscheck==1){
+                                button+='<button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>';
+                            }
                         }else{
-                            button+='<a href="<?php echo base_url() ?>Customerporder/Customerporderstatus/'+full['idtbl_customer_porder']+'/1" onclick="return active_confirm()" target="_self" class="btn btn-orange btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-times"></i></a>';
+                            if(editcheck==1 && full['confirmstatus']==0){
+                                button+='<button class="btn btn-info btn-sm btnEdit mr-1" id="'+full['idtbl_customer_porder']+'"><i class="fas fa-pen"></i></button>';
+                            }
+                            if(statuscheck==1 && full['confirmstatus']==0){
+                                button+='<button class="btn btn-warning btn-sm btnconfirm mr-1" id="'+full['idtbl_customer_porder']+'"><i class="fas fa-times"></i></button>';
+                            }
+                            if(deletecheck==1 && full['confirmstatus']==0){
+								button+='<button type="button" data-url="Customerporder/Customerporderstatus/'+full['idtbl_customer_porder']+'/3" data-actiontype="3" class="btn btn-danger btn-sm text-light btntableaction"><i class="fas fa-trash-alt"></i></button>';
+							}	
                         }
-                        if(full['transproductionstatus']==0){
-                            // button+='<a href="<?php echo base_url() ?>Customerporder/Customerporderstatus/'+full['idtbl_customer_porder']+'/2" onclick="return active_confirm()" target="_self" class="btn btn-danger btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-random"></i></a>';
-                        }
-                        button+='<a href="<?php echo base_url() ?>Customerporder/Customerporderstatus/'+full['idtbl_customer_porder']+'/3" onclick="return delete_confirm()" target="_self" class="btn btn-danger btn-sm ';if(deletecheck!=1){button+='d-none';}button+='"><i class="fas fa-trash-alt"></i></a>';
+                        // if(full['transproductionstatus']==0){
+                        //     button+='<a href="<?php echo base_url() ?>Customerporder/Customerporderstatus/'+full['idtbl_customer_porder']+'/2" onclick="return active_confirm()" target="_self" class="btn btn-danger btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-random"></i></a>';
+                        // }
+                        
                         return button;
                     }
                 }
             ],
+            createdRow: function( row, data, dataIndex){
+                if(data['confirmstatus']  ==  2){
+                    $(row).addClass('bg-danger-soft');
+                }
+            },
             drawCallback: function(settings) {
                 $('[data-toggle="tooltip"]').tooltip();
             }
         });
-        $('#dataTable tbody').on('click', '.btnEdit', function () {
-        	var r = confirm("Are you sure you want to edit this?");
+        $('#dataTable tbody').on('click', '.btnEdit', async function () {
+        	var r = await Otherconfirmation("You want to Edit this ? ");
         	if (r == true) {
         		var id = $(this).attr('id');
         		$.ajax({
@@ -668,44 +698,60 @@ include "include/topnavbar.php";
         					console.log(obj); // Debugging statement
 
         					// Populate the input fields
-        					$('#hiddenporderid').val(obj.id);
-        					$('#orderdate2').val(obj.orderdate);
-        					$('#duedate2').val(obj.duedate);
-        					$('#customer2').val(obj.name);
-        					$('#ordertype2').val(obj.type);
-                            $('#usdrate2').val(obj.usd_rate);
+        					$('#recordID').val(obj.id);
+                            $('#recordOption').val('2');
+                            $('#btncreateorder').html('<i class="far fa-save"></i>&nbsp;Update Sales Order');
+
+        					$('#orderdate').val(obj.orderdate);
+        					$('#duedate').val(obj.duedate);
+        					$('#customer').val(obj.name);
+        					$('#ordertype').val(obj.type);
 
         					// Clear the existing table rows
-        					$('#tableorder2 > tbody').empty();
+        					$('#tableorder > tbody').empty();
 
         					// Check if obj.items exists and is an array
         					if (obj.items && Array.isArray(obj.items)) {
         						// Iterate through each item and add a row to the table
         						obj.items.forEach(function (item) {
-        							var product = item.productcode;
-        							var comment = item.comment;
         							var productID = item.productID;
-        							var unitprice = parseFloat(item.unitprice);
+        							var comment = item.comment;
+        							var product = item.productcode;
         							var suggestprice = item.suggestprice;
+                                    var usdrate = parseFloat(item.unitpriceusd);
         							var newqty = parseFloat(item.qty);
 
-        							var newtotal = parseFloat(suggestprice * newqty);
-        							var total = parseFloat(newtotal);
-        							var showtotal = addCommas(parseFloat(total).toFixed(2));
+                                    var total = addCommas(parseFloat(suggestprice * newqty).toFixed(2));
+                                    var totalusd = addCommas(parseFloat(usdrate * newqty).toFixed(2));
 
-        							$('#tableorder2 > tbody').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-right d-none">' + addCommas(parseFloat(unitprice).toFixed(2)) + '</td><td class="text-center">' + newqty + '</td><td class="total2 d-none">' + total + '</td><td class="text-right">' + suggestprice + '</td><td class="text-right">' + showtotal + '</td></tr>');
-
-        							var sum = 0;
-        							$(".total2").each(function () {
-        								sum += parseFloat($(this).text());
-        							});
-
-        							var showsum = addCommas(parseFloat(sum).toFixed(2));
-
-        							$('#divtotal2').html('Rs. ' + showsum);
-        							$('#hidetotalorder2').val(sum);
-        							$('#product2').focus();
+                                    $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="text-center">' + newqty + '</td><td class="text-right">' + addCommas(usdrate) + '</td><td class="text-right d-none">' + addCommas(suggestprice) + '</td><td class="text-right totalusd">' + totalusd + '</td><td class="text-right total d-none">' + total + '</td></tr>');
         						});
+                                var sum = 0;
+                                $(".total").each(function () {
+                                    var value = $(this).text();
+                                    var num = parseFloat(value.replace(/,/g, ''));
+                                    if (!isNaN(num)) {
+                                        sum += num;
+                                    }
+                                });
+
+                                var sumusd = 0;
+                                $(".totalusd").each(function () {
+                                    var valueusd = $(this).text();
+                                    var numusd = parseFloat(valueusd.replace(/,/g, ''));
+                                    if (!isNaN(numusd)) {
+                                        sumusd += numusd;
+                                    }
+                                });
+
+                                var showsum = addCommas(parseFloat(sumusd).toFixed(2));
+
+                                $('#staticBackdrop').modal('show');
+
+                                $('#divtotal').html('$ ' + showsum);
+                                $('#hidetotalorder').val(sum);
+                                $('#hidetotalorderusd').val(sumusd);
+                                $('#product').focus();
         					} else {
         						console.error('Error: obj.items is undefined or not an array.');
         						// Handle the error here
@@ -813,18 +859,23 @@ include "include/topnavbar.php";
         $('#product').change(function () {
             let productID = $(this).val();
             let saletype = $('#saletype').val();
+            let customer = $('#customer').val();
 
             if(productID!=''){
                 $.ajax({
                     type: "POST",
                     data: {
                         recordID: productID,
-                        saletype: saletype
+                        saletype: saletype,
+                        customer: customer
                     },
                     url: 'Customerporder/Getproductpriceaccoproduct',
                     success: function (result) { //alert(result);
-                        $('#unitprice').val(result);
-                        $('#newqty').focus();
+                        var obj = JSON.parse(result);
+                        $('#suggestprice').val(obj.saleprice);
+                        $('#usdrate').val(obj.salepriceusd);
+                        // $('#unitprice').val(result);
+                        // $('#newqty').focus();
                     }
                 });
             }
@@ -843,26 +894,23 @@ include "include/topnavbar.php";
                 return false;  
             }    
         });
-        $("#formsubmit").click(function () {
+        $("#formsubmitcreate").click(function () {
             if (!$("#createorderform")[0].checkValidity()) {
                 // If the form is invalid, submit it. The form won't actually submit;
                 // this will just cause the browser to display the native HTML5 error messages.
-                $("#submitBtn").click();
+                $("#submitBtncreate").click();
             } else {
                 var productID = $('#product').val();
                 var comment = $('#comment').val();
                 var product = $("#product option:selected").text();
-                var unitprice = parseFloat($('#unitprice').val());
-                var suggestprice = $('#suggestprice').val();
+                var suggestprice = parseFloat($('#suggestprice').val());
+                var usdrate = parseFloat($('#usdrate').val());
                 var newqty = parseFloat($('#newqty').val());
 
-                var newtotal = parseFloat(suggestprice * newqty);
+                var total = addCommas(parseFloat(suggestprice * newqty).toFixed(2));
+                var totalusd = addCommas(parseFloat(usdrate * newqty).toFixed(2));
 
-
-                var total = parseFloat(newtotal);
-                var showtotal = addCommas(parseFloat(total).toFixed(2));
-
-                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-right d-none">' + addCommas(parseFloat(unitprice).toFixed(2)) + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + suggestprice + '</td><td class="text-right">' + showtotal + '</td></tr>');
+                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="text-center">' + newqty + '</td><td class="text-right">' + addCommas(usdrate) + '</td><td class="text-right d-none">' + addCommas(suggestprice) + '</td><td class="text-right totalusd">' + totalusd + '</td><td class="text-right total d-none">' + total + '</td></tr>');
 
                 $('#unitprice').val('');
                 $('#saleprice').val('');
@@ -870,63 +918,77 @@ include "include/topnavbar.php";
                 $('#comment').val('');
                 $('#profitmargin').val('20');
                 $('#suggestprice').val('');
+                $('#usdrate').val('');
                 $('#newqty').val('0');
-
 
                 var sum = 0;
                 $(".total").each(function () {
-                    sum += parseFloat($(this).text());
+                    var value = $(this).text();
+                    var num = parseFloat(value.replace(/,/g, ''));
+                    if (!isNaN(num)) {
+                        sum += num;
+                    }
                 });
 
-                var showsum = addCommas(parseFloat(sum).toFixed(2));
+                var sumusd = 0;
+                $(".totalusd").each(function () {
+                    var valueusd = $(this).text();
+                    var numusd = parseFloat(valueusd.replace(/,/g, ''));
+                    if (!isNaN(numusd)) {
+                        sumusd += numusd;
+                    }
+                });
 
-                $('#divtotal').html('Rs. ' + showsum);
+                var showsum = addCommas(parseFloat(sumusd).toFixed(2));
+
+                $('#divtotal').html('$ ' + showsum);
                 $('#hidetotalorder').val(sum);
+                $('#hidetotalorderusd').val(sumusd);
                 $('#product').focus();
             }
         });
-        $("#formsubmit2").click(function () {
-            if (!$("#createorderform2")[0].checkValidity()) {
-                // If the form is invalid, submit it. The form won't actually submit;
-                // this will just cause the browser to display the native HTML5 error messages.
-                $("#submitBtn2").click();
-            } else {
-                var productID = $('#product2').val();
-                var comment = $('#comment2').val();
-                var product = $("#product2 option:selected").text();
-                var unitprice = parseFloat($('#unitprice2').val());
-                var suggestprice = $('#suggestprice2').val();
-                var newqty = parseFloat($('#newqty2').val());
+        // $("#formsubmit2").click(function () {
+        //     if (!$("#createorderform2")[0].checkValidity()) {
+        //         // If the form is invalid, submit it. The form won't actually submit;
+        //         // this will just cause the browser to display the native HTML5 error messages.
+        //         $("#submitBtn2").click();
+        //     } else {
+        //         var productID = $('#product2').val();
+        //         var comment = $('#comment2').val();
+        //         var product = $("#product2 option:selected").text();
+        //         var unitprice = parseFloat($('#unitprice2').val());
+        //         var suggestprice = $('#suggestprice2').val();
+        //         var newqty = parseFloat($('#newqty2').val());
 
-                var newtotal = parseFloat(suggestprice * newqty);
-
-
-                var total = parseFloat(newtotal);
-                var showtotal = addCommas(parseFloat(total).toFixed(2));
-
-                $('#tableorder2 > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-right d-none">' + addCommas(parseFloat(unitprice).toFixed(2)) + '</td><td class="text-center">' + newqty + '</td><td class="total2 d-none">' + total + '</td><td class="text-right">' + suggestprice + '</td><td class="text-right">' + showtotal + '</td></tr>');
-
-                $('#unitprice2').val('');
-                $('#saleprice2').val('');
-                $('#product2').val('').trigger('change');
-                $('#comment2').val('');
-                $('#profitmargin2').val('20');
-                $('#suggestprice2').val('');
-                $('#newqty2').val('0');
+        //         var newtotal = parseFloat(suggestprice * newqty);
 
 
-                var sum = 0;
-                $(".total2").each(function () {
-                    sum += parseFloat($(this).text());
-                });
+        //         var total = parseFloat(newtotal);
+        //         var showtotal = addCommas(parseFloat(total).toFixed(2));
 
-                var showsum = addCommas(parseFloat(sum).toFixed(2));
+        //         $('#tableorder2 > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-right d-none">' + addCommas(parseFloat(unitprice).toFixed(2)) + '</td><td class="text-center">' + newqty + '</td><td class="total2 d-none">' + total + '</td><td class="text-right">' + suggestprice + '</td><td class="text-right">' + showtotal + '</td></tr>');
 
-                $('#divtotal2').html('Rs. ' + showsum);
-                $('#hidetotalorder2').val(sum);
-                $('#product2').focus();
-            }
-        });
+        //         $('#unitprice2').val('');
+        //         $('#saleprice2').val('');
+        //         $('#product2').val('').trigger('change');
+        //         $('#comment2').val('');
+        //         $('#profitmargin2').val('20');
+        //         $('#suggestprice2').val('');
+        //         $('#newqty2').val('0');
+
+
+        //         var sum = 0;
+        //         $(".total2").each(function () {
+        //             sum += parseFloat($(this).text());
+        //         });
+
+        //         var showsum = addCommas(parseFloat(sum).toFixed(2));
+
+        //         $('#divtotal2').html('Rs. ' + showsum);
+        //         $('#hidetotalorder2').val(sum);
+        //         $('#product2').focus();
+        //     }
+        // });
         $('#tableorder').on('click', 'tr', function () {
             var r = confirm("Are you sure, You want to remove this product ? ");
             if (r == true) {
@@ -944,25 +1006,25 @@ include "include/topnavbar.php";
                 $('#product').focus();
             }
         });
-        $('#tableorder2').on('click', 'tr', function () {
-            var r = confirm("Are you sure, You want to remove this product ? ");
-            if (r == true) {
-                $(this).closest('tr').remove();
+        // $('#tableorder2').on('click', 'tr', function () {
+        //     var r = confirm("Are you sure, You want to remove this product ? ");
+        //     if (r == true) {
+        //         $(this).closest('tr').remove();
 
-                var sum = 0;
-                $(".total2").each(function () {
-                    sum += parseFloat($(this).text());
-                });
+        //         var sum = 0;
+        //         $(".total2").each(function () {
+        //             sum += parseFloat($(this).text());
+        //         });
 
-                var showsum = addCommas(parseFloat(sum).toFixed(2));
+        //         var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-                $('#divtotal2').html('Rs. ' + showsum);
-                $('#hidetotalorder2').val(sum);
-                $('#product2').focus();
-            }
-        });
+        //         $('#divtotal2').html('Rs. ' + showsum);
+        //         $('#hidetotalorder2').val(sum);
+        //         $('#product2').focus();
+        //     }
+        // });
         $('#btncreateorder').click(function () { //alert('IN');
-            $('#btncreateorder').prop('disabled', true).html('<i class="fas fa-circle-notch fa-spin mr-2"></i> Create Order')
+            $('#btncreateorder').prop('disabled', true).html('<i class="fas fa-circle-notch fa-spin mr-2"></i> Create Sales Order')
             var tbody = $("#tableorder tbody");
 
             if (tbody.children().length > 0) {
@@ -974,105 +1036,160 @@ include "include/topnavbar.php";
                     });
                     jsonObj.push(item);
                 });
-                 console.log(jsonObj);
+                // console.log(jsonObj);
 
                 var orderdate = $('#orderdate').val();
                 var duedate = $('#duedate').val();
                 var remark = $('#remark').val();
                 var total = $('#hidetotalorder').val();
+                var totalusd = $('#hidetotalorderusd').val();
                 var customer = $('#customer').val();
                 var profitmargin = $('#profitmargin').val();
                 var ordertype = $('#ordertype').val();
                 var wastage = $('#wastage').val();
                 var othercost = $('#othercost').val();
-                var usdrate = $('#usdrate').val();
+
+                var recordID = $('#recordID').val();
+                var recordOption = $('#recordOption').val();
+                // var usdrate = $('#usdrate').val();
                 // alert(orderdate);
-                $.ajax({
-                    type: "POST",
-                    data: {
-                        tableData: jsonObj,
-                        orderdate: orderdate,
-                        duedate: duedate,
-                        total: total,
-                        remark: remark,
-                        customer: customer,
-                        profitmargin: profitmargin,
-                        ordertype: ordertype,
-                        wastage: wastage,
-                        othercost: othercost,
-                        usdrate: usdrate,
+                Swal.fire({
+                    title: '',
+                    html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
+                    allowOutsideClick: false,
+                    showConfirmButton: false, // Hide the OK button
+                    backdrop: `
+                        rgba(255, 255, 255, 0.5) 
+                    `,
+                    customClass: {
+                        popup: 'fullscreen-swal'
                     },
-                    url: 'Customerporder/Customerporderinsertupdate',
-                    success: function (result) { //alert(result);
-                        // console.log(result);
-                        var obj = JSON.parse(result);
-                        if(obj.status==1){
-                            $('#modalgrnadd').modal('hide');
-                            setTimeout(window.location.reload(), 3000);
-                        }
-                        action(obj.action);
+                    didOpen: () => {
+                        document.body.style.overflow = 'hidden';
+                        $.ajax({
+                            type: "POST",
+                            data: {
+                                tableData: jsonObj,
+                                orderdate: orderdate,
+                                duedate: duedate,
+                                total: total,
+                                remark: remark,
+                                customer: customer,
+                                profitmargin: profitmargin,
+                                ordertype: ordertype,
+                                wastage: wastage,
+                                othercost: othercost,
+                                totalusd: totalusd,
+                                recordID: recordID,
+                                recordOption: recordOption
+                            },
+                            url: 'Customerporder/Customerporderinsertupdate',
+                            success: function (result) { //alert(result);
+                                // console.log(result);
+                                var obj = JSON.parse(result);
+                                if(obj.status==1){
+                                    actionreload(obj.action);
+                                }
+                                else{
+                                    action(obj.action);
+                                }
+                            },
+                            error: function(error) {
+                                // Close the SweetAlert on error
+                                Swal.close();
+                                document.body.style.overflow = 'auto';
+                                
+                                // Show an error alert
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Something went wrong. Please try again later.'
+                                });
+                            }
+                        });
                     }
                 });
             }
 
         });
-        $('#btncreateorder2').click(function () { //alert('IN');
-            $('#btncreateorder2').prop('disabled', true).html('<i class="fas fa-circle-notch fa-spin mr-2"></i> Create Order')
-            var tbody = $("#tableorder2 tbody");
+        // $('#btncreateorder2').click(function () { //alert('IN');
+        //     $('#btncreateorder2').prop('disabled', true).html('<i class="fas fa-circle-notch fa-spin mr-2"></i> Create Order')
+        //     var tbody = $("#tableorder2 tbody");
 
-            if (tbody.children().length > 0) {
-                jsonObj = [];
-                $("#tableorder2 tbody tr").each(function () {
-                    item = {}
-                    $(this).find('td').each(function (col_idx) {
-                        item["col_" + (col_idx + 1)] = $(this).text();
-                    });
-                    jsonObj.push(item);
-                });
-                 console.log(jsonObj);
+        //     if (tbody.children().length > 0) {
+        //         jsonObj = [];
+        //         $("#tableorder2 tbody tr").each(function () {
+        //             item = {}
+        //             $(this).find('td').each(function (col_idx) {
+        //                 item["col_" + (col_idx + 1)] = $(this).text();
+        //             });
+        //             jsonObj.push(item);
+        //         });
+        //          console.log(jsonObj);
 
-                var orderdate = $('#orderdate2').val();
-                var duedate = $('#duedate2').val();
-                var remark = $('#remark2').val();
-                var total = $('#hidetotalorder2').val();
-                var customer = $('#customer2').val();
-                var profitmargin = $('#profitmargin2').val();
-                var ordertype = $('#ordertype2').val();
-                var wastage = $('#wastage').val();
-                var othercost = $('#othercost2').val();
-                var hiddenporderid = $('#hiddenporderid').val();
-                var usdrate2 = $('#usdrate2').val();
-                // alert(orderdate);
-                $.ajax({
-                    type: "POST",
-                    data: {
-                        tableData: jsonObj,
-                        orderdate: orderdate,
-                        duedate: duedate,
-                        total: total,
-                        remark: remark,
-                        customer: customer,
-                        profitmargin: profitmargin,
-                        ordertype: ordertype,
-                        wastage: wastage,
-                        othercost: othercost,
-                        hiddenporderid: hiddenporderid,
-                        usdrate2: usdrate2,
-                    },
-                    url: 'Customerporder/Customerpordertupdate',
-                    success: function (result) { //alert(result);
-                        // console.log(result);
-                        var obj = JSON.parse(result);
-                        if(obj.status==1){
-                            $('#modalgrnadd').modal('hide');
-                            setTimeout(window.location.reload(), 3000);
-                        }
-                        action(obj.action);
-                    }
-                });
-            }
+        //         var orderdate = $('#orderdate2').val();
+        //         var duedate = $('#duedate2').val();
+        //         var remark = $('#remark2').val();
+        //         var total = $('#hidetotalorder2').val();
+        //         var customer = $('#customer2').val();
+        //         var profitmargin = $('#profitmargin2').val();
+        //         var ordertype = $('#ordertype2').val();
+        //         var wastage = $('#wastage').val();
+        //         var othercost = $('#othercost2').val();
+        //         var hiddenporderid = $('#hiddenporderid').val();
+        //         var usdrate2 = $('#usdrate2').val();
+        //         // alert(orderdate);
+        //         $.ajax({
+        //             type: "POST",
+        //             data: {
+        //                 tableData: jsonObj,
+        //                 orderdate: orderdate,
+        //                 duedate: duedate,
+        //                 total: total,
+        //                 remark: remark,
+        //                 customer: customer,
+        //                 profitmargin: profitmargin,
+        //                 ordertype: ordertype,
+        //                 wastage: wastage,
+        //                 othercost: othercost,
+        //                 hiddenporderid: hiddenporderid,
+        //                 usdrate2: usdrate2,
+        //             },
+        //             url: 'Customerporder/Customerpordertupdate',
+        //             success: function (result) { //alert(result);
+        //                 // console.log(result);
+        //                 var obj = JSON.parse(result);
+        //                 if(obj.status==1){
+        //                     $('#modalgrnadd').modal('hide');
+        //                     setTimeout(window.location.reload(), 3000);
+        //                 }
+        //                 action(obj.action);
+        //             }
+        //         });
+        //     }
 
+        // });
+        $('#dataTable tbody').on('click', '.btnconfirm', function() {
+            var id = $(this).attr('id'); 
+            Swal.fire({
+                title: "Do you want to approve this sales order?",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Approve",
+                denyButtonText: `Reject`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var confirmnot = 1;
+                    confirmsalesorder(confirmnot, id);
+                } else if (result.isDenied) {
+                    var confirmnot = 2;
+                    confirmsalesorder(confirmnot, id);
+                } 
+            });
         });
+        $('#staticBackdrop').on('hidden.bs.modal', function (e) {
+            window.location.reload();
+        })
     });
 
     function deactive_confirm() {
@@ -1099,53 +1216,100 @@ include "include/topnavbar.php";
         return x1 + x2;
     }
 
-    function action(data) { //alert(data);
-        var obj = JSON.parse(data);
-        $.notify({
-            // options
-            icon: obj.icon,
-            title: obj.title,
-            message: obj.message,
-            url: obj.url,
-            target: obj.target
-        }, {
-            // settings
-            element: 'body',
-            position: null,
-            type: obj.type,
-            allow_dismiss: true,
-            newest_on_top: false,
-            showProgressbar: false,
-            placement: {
-                from: "top",
-                align: "center"
+    // function action(data) { //alert(data);
+    //     var obj = JSON.parse(data);
+    //     $.notify({
+    //         // options
+    //         icon: obj.icon,
+    //         title: obj.title,
+    //         message: obj.message,
+    //         url: obj.url,
+    //         target: obj.target
+    //     }, {
+    //         // settings
+    //         element: 'body',
+    //         position: null,
+    //         type: obj.type,
+    //         allow_dismiss: true,
+    //         newest_on_top: false,
+    //         showProgressbar: false,
+    //         placement: {
+    //             from: "top",
+    //             align: "center"
+    //         },
+    //         offset: 100,
+    //         spacing: 10,
+    //         z_index: 1031,
+    //         delay: 5000,
+    //         timer: 1000,
+    //         url_target: '_blank',
+    //         mouse_over: null,
+    //         animate: {
+    //             enter: 'animated fadeInDown',
+    //             exit: 'animated fadeOutUp'
+    //         },
+    //         onShow: null,
+    //         onShown: null,
+    //         onClose: null,
+    //         onClosed: null,
+    //         icon_type: 'class',
+    //         template: '<div data-notify="container" class="col-xs-11 col-sm-3 alert alert-{0}" role="alert">' +
+    //             '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+    //             '<span data-notify="icon"></span> ' +
+    //             '<span data-notify="title">{1}</span> ' +
+    //             '<span data-notify="message">{2}</span>' +
+    //             '<div class="progress" data-notify="progressbar">' +
+    //             '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+    //             '</div>' +
+    //             '<a href="{3}" target="{4}" data-notify="url"></a>' +
+    //             '</div>'
+    //     });
+    // }
+
+    function confirmsalesorder(confirmnot, id){
+        Swal.fire({
+            title: '',
+            html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
+            allowOutsideClick: false,
+            showConfirmButton: false, // Hide the OK button
+            backdrop: `
+                rgba(255, 255, 255, 0.5) 
+            `,
+            customClass: {
+                popup: 'fullscreen-swal'
             },
-            offset: 100,
-            spacing: 10,
-            z_index: 1031,
-            delay: 5000,
-            timer: 1000,
-            url_target: '_blank',
-            mouse_over: null,
-            animate: {
-                enter: 'animated fadeInDown',
-                exit: 'animated fadeOutUp'
-            },
-            onShow: null,
-            onShown: null,
-            onClose: null,
-            onClosed: null,
-            icon_type: 'class',
-            template: '<div data-notify="container" class="col-xs-11 col-sm-3 alert alert-{0}" role="alert">' +
-                '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
-                '<span data-notify="icon"></span> ' +
-                '<span data-notify="title">{1}</span> ' +
-                '<span data-notify="message">{2}</span>' +
-                '<div class="progress" data-notify="progressbar">' +
-                '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
-                '</div>' +
-                '<a href="{3}" target="{4}" data-notify="url"></a>' +
-                '</div>'
+            didOpen: () => {
+                document.body.style.overflow = 'hidden';
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        recordID: id,
+                        confirmstatus: confirmnot
+                    },
+                    url: '<?php echo base_url() ?>Customerporder/Customerporderconfirm/' + id + '/' + confirmnot,
+                    success: function(result) { //alert(result);
+                        var obj = JSON.parse(result);
+                        if(obj.status==1){
+                            actionreload(obj.action);
+                        }
+                        else{
+                            action(obj.action);
+                        }
+                    },
+                    error: function(error) {
+                        // Close the SweetAlert on error
+                        Swal.close();
+                        document.body.style.overflow = 'auto';
+                        
+                        // Show an error alert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong. Please try again later.'
+                        });
+                    }
+                });
+            }
         });
     }
 </script>

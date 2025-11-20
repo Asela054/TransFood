@@ -648,31 +648,31 @@ function checkprivilege($arraymenu, $menuID, $type){
                     <?php } ?>
                 </nav>
             </div>
-            <!-- <?php //} if(menucheck($menuprivilegearray, 40)==1  | menucheck($menuprivilegearray, 51)==1 | menucheck($menuprivilegearray, 56)==1 | menucheck($menuprivilegearray, 66)==1| menucheck($menuprivilegearray, 68)==1 | menucheck($menuprivilegearray, 73)==1){ ?>
+            <?php } if(menucheck($menuprivilegearray, 40)==1  | menucheck($menuprivilegearray, 51)==1 | menucheck($menuprivilegearray, 56)==1 | menucheck($menuprivilegearray, 66)==1| menucheck($menuprivilegearray, 68)==1 | menucheck($menuprivilegearray, 73)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse"
             	data-target="#collapseshopinfo" aria-expanded="false" aria-controls="collapseshopinfo">
             	<div class="nav-link-icon"><i class="fas fa-cash-register"></i></div>
             	Invoice
             	<div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse <?php //if($controllermenu=="Directsale" | $controllermenu=="Directinvoice" | $controllermenu=="Invoiceview" | $controllermenu=="Returninvoice"| $controllermenu=="Invoicebank" | $controllermenu=="Returninvoiceview"){echo 'show';} ?>"
+            <div class="collapse <?php if($controllermenu=="Directsale" | $controllermenu=="Directinvoice" | $controllermenu=="Invoiceview" | $controllermenu=="Returninvoice"| $controllermenu=="Invoicebank" | $controllermenu=="Returninvoiceview"){echo 'show';} ?>"
             	id="collapseshopinfo" data-parent="#accordionSidenav">
             	<nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-            		<?php //if(menucheck($menuprivilegearray, 40)==1){ ?>
+            		<?php if(menucheck($menuprivilegearray, 40)==1){ ?>
             		<a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Directsale'; ?>">Outlet Invoice</a> 
-                    <?php //} if(menucheck($menuprivilegearray, 51)==1){ ?>
+                    <?php } if(menucheck($menuprivilegearray, 51)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Directinvoice'; ?>">Direct Invoice</a>
-                    <?php //} if(menucheck($menuprivilegearray, 56)==1){ ?>
+                    <?php } if(menucheck($menuprivilegearray, 56)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Invoiceview'; ?>">View Invoice</a>
-                    <?php //} if(menucheck($menuprivilegearray, 66)==1){ ?>
+                    <?php } if(menucheck($menuprivilegearray, 66)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Returninvoice'; ?>">Create Return Invoice</a>
-                    <?php //} if(menucheck($menuprivilegearray, 73)==1){ ?>
+                    <?php } if(menucheck($menuprivilegearray, 73)==1){ ?>
                         <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Returninvoiceview'; ?>">View Return Invoice</a>
-                    <?php //} if(menucheck($menuprivilegearray, 68)==1){ ?>
+                    <?php } if(menucheck($menuprivilegearray, 68)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Invoicebank'; ?>">Invoice Bank</a>
-                    <?php //} ?>
+                    <?php } ?>
             	</nav>
-            </div> -->
+            </div>
             <!-- <?php //} if(menucheck($menuprivilegearray, 52)==1){ ?> 
             <a class="nav-link p-0 px-3 py-2 text-dark" href="<?php echo base_url().'Productionfg'; ?>">
                 <div class="nav-link-icon"><i class="fas fa-exchange-alt"></i></div>

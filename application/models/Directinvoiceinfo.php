@@ -213,11 +213,10 @@ class Directinvoiceinfo extends CI_Model{
  
         $recordID=$this->input->post('recordID');
 
-        $sql="SELECT `tbl_customer_porder`.`idtbl_customer_porder`, `tbl_customer`.`name`, `tbl_product`.`idtbl_product`,`tbl_product`.`productcode`, `tbl_material_code`.`materialname`
+        $sql="SELECT `tbl_customer_porder`.`idtbl_customer_porder`, `tbl_customer`.`name`, `tbl_product`.`idtbl_product`,`tbl_product`.`productcode`, `tbl_product`.`prodcutname`
         FROM `tbl_customer_porder` LEFT JOIN `tbl_customer` ON `tbl_customer`.`idtbl_customer`=`tbl_customer_porder`.`tbl_customer_idtbl_customer`
         LEFT JOIN `tbl_customer_porder_detail` ON `tbl_customer_porder`.`idtbl_customer_porder`=`tbl_customer_porder_detail`.`tbl_customer_porder_idtbl_customer_porder` 
         LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_customer_porder_detail`.`tbl_product_idtbl_product`
-        LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_product`.`materialid`
         WHERE `tbl_customer_porder`.`idtbl_customer_porder`=? AND `tbl_customer_porder`.`status` =? AND `tbl_product`.`idtbl_product` NOT IN (SELECT `tbl_product_idtbl_product` FROM `tbl_invoice_detail` LEFT JOIN `tbl_invoice` ON `tbl_invoice`.`idtbl_invoice`=`tbl_invoice_detail`.`tbl_invoice_idtbl_invoice` WHERE `tbl_invoice_detail`.`status`=? AND `tbl_invoice`.`tbl_customer_porder_idtbl_customer_porder`=?)";
         $respond=$this->db->query($sql, array($recordID, 1, 1, $recordID));
 
@@ -293,7 +292,7 @@ class Directinvoiceinfo extends CI_Model{
         $recordID=$this->input->post('recordID');
         $orderid=$this->input->post('orderid');
     
-         $this->db->select('tbl_customer_porder_detail.qty,tbl_customer_porder_detail.suggestprice');
+         $this->db->select('tbl_customer_porder_detail.qty,tbl_customer_porder_detail.suggestprice,tbl_customer_porder_detail.unitpriceusd');
          $this->db->from('tbl_customer_porder_detail');
          $this->db->join('tbl_customer_porder', 'tbl_customer_porder.idtbl_customer_porder = tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder', 'left');
          $this->db->join('tbl_product', 'tbl_product.idtbl_product = tbl_customer_porder_detail.tbl_product_idtbl_product', 'left');
@@ -307,6 +306,7 @@ class Directinvoiceinfo extends CI_Model{
          $obj=new stdClass();
          $obj->orderqty=$respond->row(0)->qty;
          $obj->saleprice=$respond->row(0)->suggestprice;
+         $obj->unitpriceusd=$respond->row(0)->unitpriceusd;
     
          echo json_encode($obj); 
         }

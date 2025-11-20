@@ -11,16 +11,16 @@ class Customerporderinfo extends CI_Model{
         $searchTerm=$this->input->post('searchTerm');
 
         if(!isset($searchTerm)){
-            $sql="SELECT `idtbl_product`, `productcode` FROM `tbl_product` WHERE `status`=? LIMIT 5";
+            $sql="SELECT `idtbl_product`, `productcode`, `prodcutname` FROM `tbl_product` WHERE `status`=? LIMIT 5";
             $respond=$this->db->query($sql, array(1));                       
         }
         else{            
             if(!empty($searchTerm)){
-                $sql="SELECT `idtbl_product`, `productcode` FROM `tbl_product` WHERE `status`=? AND `productcode` LIKE '%$searchTerm%'";
+                $sql="SELECT `idtbl_product`, `productcode`, `prodcutname` FROM `tbl_product` WHERE `status`=? AND `productcode` LIKE '%$searchTerm%'";
                 $respond=$this->db->query($sql, array(1));    
             }
             else{
-                $sql="SELECT `idtbl_product`, `productcode` FROM `tbl_product` WHERE `status`=? LIMIT 5";
+                $sql="SELECT `idtbl_product`, `productcode`, `prodcutname` FROM `tbl_product` WHERE `status`=? LIMIT 5";
                 $respond=$this->db->query($sql, array(1));                
             }
         }
@@ -28,7 +28,7 @@ class Customerporderinfo extends CI_Model{
         $data=array();
         
         foreach ($respond->result() as $row) {
-            $data[]=array("id"=>$row->idtbl_product, "text"=>$row->productcode);
+            $data[]=array("id"=>$row->idtbl_product, "text"=>$row->prodcutname.' - '.$row->productcode);
         }
         
         echo json_encode($data);
@@ -36,24 +36,54 @@ class Customerporderinfo extends CI_Model{
     public function Getproductpriceaccoproduct(){
         $recordID=$this->input->post('recordID');
         $saletype=$this->input->post('saletype');
+        $customer=$this->input->post('customer');
+
+        $this->db->select('tbl_customer_porder_detail.suggestprice, tbl_customer_porder_detail.unitpriceusd');
+        $this->db->from('tbl_customer_porder_detail');
+        $this->db->join('tbl_customer_porder', 'tbl_customer_porder.idtbl_customer_porder = tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder', 'left');
+        $this->db->where('tbl_customer_porder_detail.status', 1);
+        $this->db->where('tbl_customer_porder.tbl_customer_idtbl_customer', $customer);
+        $this->db->where('tbl_customer_porder_detail.tbl_product_idtbl_product', $recordID);
+        $this->db->order_by('tbl_customer_porder_detail.idtbl_customer_porder_detail', 'DESC');
+        $this->db->limit(1);
+        $respond=$this->db->get();
+           
+        if ($respond->num_rows() > 0) {
+            $obj=new stdClass();
+            $obj->saleprice=$respond->row(0)->suggestprice;
+            $obj->salepriceusd=$respond->row(0)->unitpriceusd;
+        }
+        else{
+            $this->db->select('`retailprice`, `retailpriceusd`');
+            $this->db->from('tbl_product');
+            $this->db->where('status', 1);
+            $this->db->where('idtbl_product', $recordID);
+            $respond=$this->db->get();
+
+            $obj=new stdClass();
+            $obj->saleprice=$respond->row(0)->retailprice;
+            $obj->salepriceusd=$respond->row(0)->retailpriceusd;
+        }
+        
+        echo json_encode($obj);
 
         // $sql="SELECT * FROM (SELECT `tbl_product_bom`.`qty` AS `rowqty`, AVG(`tbl_grndetail`.`costunitprice`) AS `avgrowmate`, `tbl_product_bom`.`tbl_product_idtbl_product`, `tbl_material_info`.`tbl_unit_idtbl_unit` AS `rowunit` FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_stock` ON `tbl_stock`.`tbl_material_info_idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_grndetail` ON `tbl_grndetail`.`tbl_material_info_idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` WHERE `tbl_product_bom`.`status`=1 AND `tbl_product_bom`.`tbl_product_idtbl_product`='$recordID' AND `tbl_material_info`.`tbl_material_category_idtbl_material_category`=1 AND `tbl_stock`.`qty`>0 AND `tbl_stock`.`status`=1 AND `tbl_grndetail`.`status`=1) AS `drow` LEFT JOIN (SELECT `tbl_product_bom`.`qty` AS `packqty`, AVG(`tbl_grndetail`.`costunitprice`) AS `avgpackmate`, `tbl_product_bom`.`tbl_product_idtbl_product`, `tbl_material_info`.`tbl_unit_idtbl_unit` AS `packunit` FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_stock` ON `tbl_stock`.`tbl_material_info_idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_grndetail` ON `tbl_grndetail`.`tbl_material_info_idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` WHERE `tbl_product_bom`.`status`=1 AND `tbl_product_bom`.`tbl_product_idtbl_product`='$recordID' AND `tbl_material_info`.`tbl_material_category_idtbl_material_category`=2 AND `tbl_stock`.`qty`>0 AND `tbl_stock`.`status`=1 AND `tbl_grndetail`.`status`=1) AS `dpack` ON `dpack`.`tbl_product_idtbl_product`=`drow`.`tbl_product_idtbl_product` LEFT JOIN (SELECT `tbl_product_bom`.`qty` AS `labelqty`, AVG(`tbl_grndetail`.`costunitprice`) AS `avglabelmate`, `tbl_product_bom`.`tbl_product_idtbl_product`, `tbl_material_info`.`tbl_unit_idtbl_unit` AS `labelunit` FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_stock` ON `tbl_stock`.`tbl_material_info_idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_grndetail` ON `tbl_grndetail`.`tbl_material_info_idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` WHERE `tbl_product_bom`.`status`=1 AND `tbl_product_bom`.`tbl_product_idtbl_product`='$recordID' AND `tbl_material_info`.`tbl_material_category_idtbl_material_category`=3 AND `tbl_stock`.`qty`>0 AND `tbl_stock`.`status`=1 AND `tbl_grndetail`.`status`=1) AS `dlabel` ON `dlabel`.`tbl_product_idtbl_product`=`drow`.`tbl_product_idtbl_product`";
-        $sql="SELECT
-            `tbl_product_bom`.`qty` AS `rowqty`,
-            AVG(`tbl_grndetail`.`costunitprice`) AS `avgrowmate`,
-            `tbl_product_bom`.`tbl_product_idtbl_product`,
-            `tbl_material_info`.`tbl_unit_idtbl_unit` AS `rowunit`,
-            (AVG(`tbl_grndetail`.`costunitprice`)*`tbl_product_bom`.`qty`) AS `totalunitcost`
-        FROM
-            `tbl_product_bom`
-        LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info` = `tbl_product_bom`.`tbl_material_info_idtbl_material_info`
-        LEFT JOIN `tbl_stock` ON `tbl_stock`.`tbl_material_info_idtbl_material_info` = `tbl_product_bom`.`tbl_material_info_idtbl_material_info`
-        LEFT JOIN `tbl_grndetail` ON `tbl_grndetail`.`tbl_material_info_idtbl_material_info` = `tbl_product_bom`.`tbl_material_info_idtbl_material_info`
-        WHERE
-            `tbl_product_bom`.`status` = 1 AND `tbl_product_bom`.`tbl_product_idtbl_product` = '$recordID' AND `tbl_stock`.`qty` > 0 AND `tbl_stock`.`status` = 1 AND `tbl_grndetail`.`status` = 1
-        GROUP BY
-            `tbl_product_bom`.`tbl_material_info_idtbl_material_info`";
-        $respond=$this->db->query($sql);    
+        // $sql="SELECT
+        //     `tbl_product_bom`.`qty` AS `rowqty`,
+        //     AVG(`tbl_grndetail`.`costunitprice`) AS `avgrowmate`,
+        //     `tbl_product_bom`.`tbl_product_idtbl_product`,
+        //     `tbl_material_info`.`tbl_unit_idtbl_unit` AS `rowunit`,
+        //     (AVG(`tbl_grndetail`.`costunitprice`)*`tbl_product_bom`.`qty`) AS `totalunitcost`
+        // FROM
+        //     `tbl_product_bom`
+        // LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info` = `tbl_product_bom`.`tbl_material_info_idtbl_material_info`
+        // LEFT JOIN `tbl_stock` ON `tbl_stock`.`tbl_material_info_idtbl_material_info` = `tbl_product_bom`.`tbl_material_info_idtbl_material_info`
+        // LEFT JOIN `tbl_grndetail` ON `tbl_grndetail`.`tbl_material_info_idtbl_material_info` = `tbl_product_bom`.`tbl_material_info_idtbl_material_info`
+        // WHERE
+        //     `tbl_product_bom`.`status` = 1 AND `tbl_product_bom`.`tbl_product_idtbl_product` = '$recordID' AND `tbl_stock`.`qty` > 0 AND `tbl_stock`.`status` = 1 AND `tbl_grndetail`.`status` = 1
+        // GROUP BY
+        //     `tbl_product_bom`.`tbl_material_info_idtbl_material_info`";
+        // $respond=$this->db->query($sql);    
 
         // if(!empty($respond->row(0)->avgrowmate)){$rowmaterialcost=$respond->row(0)->avgrowmate*$respond->row(0)->rowqty;}
         // else{$rowmaterialcost=0;}
@@ -68,12 +98,12 @@ class Customerporderinfo extends CI_Model{
 
         // echo $totalunitprice;
 
-        $totalunitprice=0;
-        foreach($respond->result() as $rowlist){
-            $totalunitprice=$totalunitprice+$rowlist->totalunitcost;
-        }
+        // $totalunitprice=0;
+        // foreach($respond->result() as $rowlist){
+        //     $totalunitprice=$totalunitprice+$rowlist->totalunitcost;
+        // }
 
-        echo $totalunitprice;
+        // echo $totalunitprice;
     }
     public function Productlist(){
         $sql="SELECT `tbl_product`.`idtbl_product`, `tbl_product`.`productcode`, `tbl_material_code`.`materialname` FROM `tbl_product` LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_product`.`materialid` WHERE `tbl_product`.`status`=?";
@@ -82,8 +112,6 @@ class Customerporderinfo extends CI_Model{
         return $respond;
     }
     public function Customerporderinsertupdate(){
-        $this->db->trans_begin();
-
         $userID=$_SESSION['userid'];
         $companyid=$_SESSION['companyid'];
         $branchid=$_SESSION['branchid'];
@@ -96,134 +124,30 @@ class Customerporderinfo extends CI_Model{
         $customer=$this->input->post('customer');
         $ordertype=$this->input->post('ordertype');
         $profitmargin=$this->input->post('profitmargin');
-        $usdrate=$this->input->post('usdrate');
+        $totalusd=$this->input->post('totalusd');
+
+        if(!empty($this->input->post('recordID'))){$recordID=$this->input->post('recordID');}
+        $recordOption=$this->input->post('recordOption');
+
         $updatedatetime=date('Y-m-d H:i:s');
 
-        $sqlnextno = "SELECT IFNULL(MAX(`sod_no`), 0) + 1 AS next_sod_no FROM `tbl_customer_porder` WHERE `tbl_company_idtbl_company`=?";
-        $respondnextno=$this->db->query($sqlnextno, array($companyid));
+        if($recordOption==1):
+            $this->db->trans_begin();
 
-        $data = array(
-            'sod_no'=> $respondnextno->row(0)->next_sod_no, 
-            'orderdate'=> $orderdate, 
-            'duedate'=> $duedate, 
-            'subtotal'=> $total, 
-            'discount'=> '0', 
-            'discountamount'=> '0', 
-            'nettotal'=> $total, 
-            'usd_rate'=> $usdrate, 
-            'confirmstatus'=> '0', 
-            'transproductionstatus'=> '0', 
-            'remark'=> $remark, 
-            'status'=> '1', 
-            'insertdatetime'=> $updatedatetime, 
-            'tbl_user_idtbl_user'=> $userID,
-            'tbl_customer_idtbl_customer'=> $customer,
-            'tbl_order_type_idtbl_order_type'=> $ordertype,
-            'tbl_company_idtbl_company'=> $companyid,
-            'tbl_company_branch_idtbl_company_branch'=> $branchid
-        );
+            $sqlnextno = "SELECT IFNULL(MAX(`sod_no`), 0) + 1 AS next_sod_no FROM `tbl_customer_porder` WHERE `tbl_company_idtbl_company`=?";
+            $respondnextno=$this->db->query($sqlnextno, array($companyid));
 
-        $this->db->insert('tbl_customer_porder', $data);
-
-        $porderID=$this->db->insert_id();
-
-        foreach($tableData as $rowtabledata){
-            $productname=$rowtabledata['col_1'];
-            $comment=$rowtabledata['col_2'];
-            $productID=$rowtabledata['col_3'];
-            $unit=$rowtabledata['col_4'];
-            $nettotal=$rowtabledata['col_5'];
-            $qty=$rowtabledata['col_6'];
-            $suggestprice=$rowtabledata['col_8'];
-
-            $dataone = array(
-                'qty'=> $qty, 
-                'unitprice'=> $unit, 
-                'suggestprice'=> $suggestprice,  
-                'discount'=> '0', 
-                'discountamount'=> '0', 
-                'comment'=> $comment, 
-                'profitmargin'=> $profitmargin, 
-                'status'=> '1', 
-                'insertdatetime'=> $updatedatetime,
-                'tbl_user_idtbl_user'=> $userID, 
-                'tbl_product_idtbl_product'=> $productID, 
-                'tbl_customer_porder_idtbl_customer_porder'=> $porderID
-            );
-
-            $this->db->insert('tbl_customer_porder_detail', $dataone);
-        }
-
-        $this->db->trans_complete();
-
-        if ($this->db->trans_status() === TRUE) {
-            $this->db->trans_commit();
-            
-            $actionObj=new stdClass();
-            $actionObj->icon='fas fa-save';
-            $actionObj->title='';
-            $actionObj->message='Record Added Successfully';
-            $actionObj->url='';
-            $actionObj->target='_blank';
-            $actionObj->type='success';
-
-            $actionJSON=json_encode($actionObj);
-
-            $obj=new stdClass();
-            $obj->status=1;          
-            $obj->action=$actionJSON;  
-            
-            echo json_encode($obj);
-        } else {
-            $this->db->trans_rollback();
-
-            $actionObj=new stdClass();
-            $actionObj->icon='fas fa-exclamation-triangle';
-            $actionObj->title='';
-            $actionObj->message='Record Error';
-            $actionObj->url='';
-            $actionObj->target='_blank';
-            $actionObj->type='danger';
-
-            $actionJSON=json_encode($actionObj);
-
-            $obj=new stdClass();
-            $obj->status=0;          
-            $obj->action=$actionJSON;  
-            
-            echo json_encode($obj);
-        }
-    }
-    public function Customerpordertupdate(){
-        $this->db->trans_begin();
-    
-        $userID=$_SESSION['userid'];
-        $companyid=$_SESSION['companyid'];
-        $branchid=$_SESSION['branchid'];
-    
-        $tableData=$this->input->post('tableData');
-    
-        // Check if $tableData is an array and not empty
-        if(is_array($tableData) && !empty($tableData)){
-            $orderdate=$this->input->post('orderdate');
-            $duedate=$this->input->post('duedate');
-            $total=$this->input->post('total');
-            $remark=$this->input->post('remark');
-            $customer=$this->input->post('customer');
-            $ordertype=$this->input->post('ordertype');
-            $profitmargin=$this->input->post('profitmargin');
-            $hiddenporderid=$this->input->post('hiddenporderid');
-            $usdrate=$this->input->post('usdrate2');
-            $updatedatetime=date('Y-m-d H:i:s');
-    
             $data = array(
+                'sod_no'=> $respondnextno->row(0)->next_sod_no, 
                 'orderdate'=> $orderdate, 
                 'duedate'=> $duedate, 
                 'subtotal'=> $total, 
-                'usd_rate'=> $usdrate, 
                 'discount'=> '0', 
                 'discountamount'=> '0', 
                 'nettotal'=> $total, 
+                'subtotalusd'=> $totalusd, 
+                'discountamountusd'=> '0', 
+                'nettotalusd'=> $totalusd, 
                 'confirmstatus'=> '0', 
                 'transproductionstatus'=> '0', 
                 'remark'=> $remark, 
@@ -235,82 +159,323 @@ class Customerporderinfo extends CI_Model{
                 'tbl_company_idtbl_company'=> $companyid,
                 'tbl_company_branch_idtbl_company_branch'=> $branchid
             );
-    
-            $this->db->where('idtbl_customer_porder', $hiddenporderid);
-            $this->db->update('tbl_customer_porder', $data);
-    
-    
-            $this->db->where('tbl_customer_porder_idtbl_customer_porder', $hiddenporderid);
-            $this->db->delete('tbl_customer_porder_detail');
-    
+
+            $this->db->insert('tbl_customer_porder', $data);
+
+            $porderID=$this->db->insert_id();
+
             foreach($tableData as $rowtabledata){
                 $productname=$rowtabledata['col_1'];
                 $comment=$rowtabledata['col_2'];
                 $productID=$rowtabledata['col_3'];
-                $unit=$rowtabledata['col_4'];
-                $nettotal=$rowtabledata['col_5'];
-                $qty=$rowtabledata['col_6'];
-                $suggestprice=$rowtabledata['col_8'];
-    
+                $qty=$rowtabledata['col_4'];
+                $salepriceusd=str_replace(',', '', $rowtabledata['col_5']);
+                $saleprice = str_replace(',', '', $rowtabledata['col_6']);
+                $totalusd=str_replace(',', '', $rowtabledata['col_7']);
+                $total=str_replace(',', '', $rowtabledata['col_8']);
+
                 $dataone = array(
-                    'qty'=> $qty, 
-                    'unitprice'=> $unit, 
-                    'suggestprice'=> $suggestprice,  
+                    'qty'=> $qty,
+                    'suggestprice'=> $saleprice,  
                     'discount'=> '0', 
                     'discountamount'=> '0', 
+                    'netsaleprice'=> $total,  
+                    'unitpriceusd'=> $salepriceusd,  
+                    'discountamountusd'=> '0',  
+                    'netsalepriceusd'=> $totalusd,  
                     'comment'=> $comment, 
                     'profitmargin'=> $profitmargin, 
                     'status'=> '1', 
                     'insertdatetime'=> $updatedatetime,
                     'tbl_user_idtbl_user'=> $userID, 
                     'tbl_product_idtbl_product'=> $productID, 
-                    'tbl_customer_porder_idtbl_customer_porder'=> $hiddenporderid
+                    'tbl_customer_porder_idtbl_customer_porder'=> $porderID
                 );
-    
+
                 $this->db->insert('tbl_customer_porder_detail', $dataone);
-        }
+            }
 
-        $this->db->trans_complete();
+            $this->db->trans_complete();
 
-        if ($this->db->trans_status() === TRUE) {
-            $this->db->trans_commit();
-            
-            $actionObj=new stdClass();
-            $actionObj->icon='fas fa-save';
-            $actionObj->title='';
-            $actionObj->message='Record Added Successfully';
-            $actionObj->url='';
-            $actionObj->target='_blank';
-            $actionObj->type='success';
+            if ($this->db->trans_status() === TRUE) {
+                $this->db->trans_commit();
+                
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-save';
+                $actionObj->title='';
+                $actionObj->message='Record Added Successfully';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='success';
 
-            $actionJSON=json_encode($actionObj);
+                $actionJSON=json_encode($actionObj);
 
-            $obj=new stdClass();
-            $obj->status=1;          
-            $obj->action=$actionJSON;  
-            
-            echo json_encode($obj);
-        } else {
-            $this->db->trans_rollback();
+                $obj=new stdClass();
+                $obj->status=1;          
+                $obj->action=$actionJSON;  
+                
+                echo json_encode($obj);
+            } else {
+                $this->db->trans_rollback();
 
-            $actionObj=new stdClass();
-            $actionObj->icon='fas fa-exclamation-triangle';
-            $actionObj->title='';
-            $actionObj->message='Record Error';
-            $actionObj->url='';
-            $actionObj->target='_blank';
-            $actionObj->type='danger';
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-exclamation-triangle';
+                $actionObj->title='';
+                $actionObj->message='Record Error';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='danger';
 
-            $actionJSON=json_encode($actionObj);
+                $actionJSON=json_encode($actionObj);
 
-            $obj=new stdClass();
-            $obj->status=0;          
-            $obj->action=$actionJSON;  
-            
-            echo json_encode($obj);
-        }
+                $obj=new stdClass();
+                $obj->status=0;          
+                $obj->action=$actionJSON;  
+                
+                echo json_encode($obj);
+            }
+        else:
+            $this->db->select('`confirmstatus`');
+            $this->db->from('tbl_customer_porder');
+            $this->db->where('idtbl_customer_porder', $recordID);
+            $this->db->where('status', 1);
+            $respond=$this->db->get();
+
+            if($respond->row(0)->confirmstatus>0):
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-exclamation-triangle';
+                $actionObj->title='';
+                $actionObj->message='Cannot Edit Confirmed Or Reject Sales Order';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='danger';
+
+                $actionJSON=json_encode($actionObj);
+
+                $obj=new stdClass();
+                $obj->status=0;          
+                $obj->action=$actionJSON;  
+                
+                echo json_encode($obj);
+            else:
+                $this->db->trans_begin();
+
+                $data = array(
+                    'orderdate'=> $orderdate, 
+                    'duedate'=> $duedate, 
+                    'subtotal'=> $total, 
+                    'discount'=> '0', 
+                    'discountamount'=> '0', 
+                    'nettotal'=> $total, 
+                    'subtotalusd'=> $totalusd, 
+                    'discountamountusd'=> '0', 
+                    'nettotalusd'=> $totalusd, 
+                    'confirmstatus'=> '0', 
+                    'transproductionstatus'=> '0', 
+                    'remark'=> $remark, 
+                    'status'=> '1', 
+                    'insertdatetime'=> $updatedatetime, 
+                    'tbl_user_idtbl_user'=> $userID,
+                    'tbl_order_type_idtbl_order_type'=> $ordertype,
+                    'tbl_company_idtbl_company'=> $companyid,
+                    'tbl_company_branch_idtbl_company_branch'=> $branchid
+                );
+                $this->db->where('idtbl_customer_porder', $recordID);
+                $this->db->update('tbl_customer_porder', $data);
+
+                $this->db->where('tbl_customer_porder_idtbl_customer_porder', $recordID);
+                $this->db->delete('tbl_customer_porder_detail');
+
+                foreach($tableData as $rowtabledata){
+                    $productname=$rowtabledata['col_1'];
+                    $comment=$rowtabledata['col_2'];
+                    $productID=$rowtabledata['col_3'];
+                    $qty=$rowtabledata['col_4'];
+                    $salepriceusd=str_replace(',', '', $rowtabledata['col_5']);
+                    $saleprice = str_replace(',', '', $rowtabledata['col_6']);
+                    $totalusd=str_replace(',', '', $rowtabledata['col_7']);
+                    $total=str_replace(',', '', $rowtabledata['col_8']);
+
+                    $dataone = array(
+                        'qty'=> $qty,
+                        'suggestprice'=> $saleprice,  
+                        'discount'=> '0', 
+                        'discountamount'=> '0', 
+                        'netsaleprice'=> $total,  
+                        'unitpriceusd'=> $salepriceusd,  
+                        'discountamountusd'=> '0',  
+                        'netsalepriceusd'=> $totalusd,  
+                        'comment'=> $comment, 
+                        'profitmargin'=> $profitmargin, 
+                        'status'=> '1', 
+                        'insertdatetime'=> $updatedatetime,
+                        'tbl_user_idtbl_user'=> $userID, 
+                        'tbl_product_idtbl_product'=> $productID, 
+                        'tbl_customer_porder_idtbl_customer_porder'=> $recordID
+                    );
+
+                    $this->db->insert('tbl_customer_porder_detail', $dataone);
+                }
+
+                $this->db->trans_complete();
+
+                if ($this->db->trans_status() === TRUE) {
+                    $this->db->trans_commit();
+                    
+                    $actionObj=new stdClass();
+                    $actionObj->icon='fas fa-save';
+                    $actionObj->title='';
+                    $actionObj->message='Record Update Successfully';
+                    $actionObj->url='';
+                    $actionObj->target='_blank';
+                    $actionObj->type='success';
+
+                    $actionJSON=json_encode($actionObj);
+
+                    $obj=new stdClass();
+                    $obj->status=1;          
+                    $obj->action=$actionJSON;  
+                    
+                    echo json_encode($obj);
+                } else {
+                    $this->db->trans_rollback();
+
+                    $actionObj=new stdClass();
+                    $actionObj->icon='fas fa-exclamation-triangle';
+                    $actionObj->title='';
+                    $actionObj->message='Record Error';
+                    $actionObj->url='';
+                    $actionObj->target='_blank';
+                    $actionObj->type='danger';
+
+                    $actionJSON=json_encode($actionObj);
+
+                    $obj=new stdClass();
+                    $obj->status=0;          
+                    $obj->action=$actionJSON;  
+                    
+                    echo json_encode($obj);
+                }
+            endif;
+        endif;
     }
-    }
+    // public function Customerpordertupdate(){
+    //     $this->db->trans_begin();
+    
+    //     $userID=$_SESSION['userid'];
+    //     $companyid=$_SESSION['companyid'];
+    //     $branchid=$_SESSION['branchid'];
+    
+    //     $tableData=$this->input->post('tableData');
+    
+    //     // Check if $tableData is an array and not empty
+    //     if(is_array($tableData) && !empty($tableData)){
+    //         $orderdate=$this->input->post('orderdate');
+    //         $duedate=$this->input->post('duedate');
+    //         $total=$this->input->post('total');
+    //         $remark=$this->input->post('remark');
+    //         $customer=$this->input->post('customer');
+    //         $ordertype=$this->input->post('ordertype');
+    //         $profitmargin=$this->input->post('profitmargin');
+    //         $hiddenporderid=$this->input->post('hiddenporderid');
+    //         $usdrate=$this->input->post('usdrate2');
+    //         $updatedatetime=date('Y-m-d H:i:s');
+    
+    //         $data = array(
+    //             'orderdate'=> $orderdate, 
+    //             'duedate'=> $duedate, 
+    //             'subtotal'=> $total, 
+    //             'usd_rate'=> $usdrate, 
+    //             'discount'=> '0', 
+    //             'discountamount'=> '0', 
+    //             'nettotal'=> $total, 
+    //             'confirmstatus'=> '0', 
+    //             'transproductionstatus'=> '0', 
+    //             'remark'=> $remark, 
+    //             'status'=> '1', 
+    //             'insertdatetime'=> $updatedatetime, 
+    //             'tbl_user_idtbl_user'=> $userID,
+    //             'tbl_customer_idtbl_customer'=> $customer,
+    //             'tbl_order_type_idtbl_order_type'=> $ordertype,
+    //             'tbl_company_idtbl_company'=> $companyid,
+    //             'tbl_company_branch_idtbl_company_branch'=> $branchid
+    //         );
+    
+    //         $this->db->where('idtbl_customer_porder', $hiddenporderid);
+    //         $this->db->update('tbl_customer_porder', $data);
+    
+    
+    //         $this->db->where('tbl_customer_porder_idtbl_customer_porder', $hiddenporderid);
+    //         $this->db->delete('tbl_customer_porder_detail');
+    
+    //         foreach($tableData as $rowtabledata){
+    //             $productname=$rowtabledata['col_1'];
+    //             $comment=$rowtabledata['col_2'];
+    //             $productID=$rowtabledata['col_3'];
+    //             $unit=$rowtabledata['col_4'];
+    //             $nettotal=$rowtabledata['col_5'];
+    //             $qty=$rowtabledata['col_6'];
+    //             $suggestprice=$rowtabledata['col_8'];
+    
+    //             $dataone = array(
+    //                 'qty'=> $qty, 
+    //                 'unitprice'=> $unit, 
+    //                 'suggestprice'=> $suggestprice,  
+    //                 'discount'=> '0', 
+    //                 'discountamount'=> '0', 
+    //                 'comment'=> $comment, 
+    //                 'profitmargin'=> $profitmargin, 
+    //                 'status'=> '1', 
+    //                 'insertdatetime'=> $updatedatetime,
+    //                 'tbl_user_idtbl_user'=> $userID, 
+    //                 'tbl_product_idtbl_product'=> $productID, 
+    //                 'tbl_customer_porder_idtbl_customer_porder'=> $hiddenporderid
+    //             );
+    
+    //             $this->db->insert('tbl_customer_porder_detail', $dataone);
+    //         }
+
+    //         $this->db->trans_complete();
+
+    //         if ($this->db->trans_status() === TRUE) {
+    //             $this->db->trans_commit();
+                
+    //             $actionObj=new stdClass();
+    //             $actionObj->icon='fas fa-save';
+    //             $actionObj->title='';
+    //             $actionObj->message='Record Added Successfully';
+    //             $actionObj->url='';
+    //             $actionObj->target='_blank';
+    //             $actionObj->type='success';
+
+    //             $actionJSON=json_encode($actionObj);
+
+    //             $obj=new stdClass();
+    //             $obj->status=1;          
+    //             $obj->action=$actionJSON;  
+                
+    //             echo json_encode($obj);
+    //         } else {
+    //             $this->db->trans_rollback();
+
+    //             $actionObj=new stdClass();
+    //             $actionObj->icon='fas fa-exclamation-triangle';
+    //             $actionObj->title='';
+    //             $actionObj->message='Record Error';
+    //             $actionObj->url='';
+    //             $actionObj->target='_blank';
+    //             $actionObj->type='danger';
+
+    //             $actionJSON=json_encode($actionObj);
+
+    //             $obj=new stdClass();
+    //             $obj->status=0;          
+    //             $obj->action=$actionJSON;  
+                
+    //             echo json_encode($obj);
+    //         }
+    //     }
+    // }
     public function Customerporderview(){
         $recordID=$this->input->post('recordID');
         $companyid=$_SESSION['companyid'];
@@ -372,48 +537,7 @@ class Customerporderinfo extends CI_Model{
         $updatedatetime=date('Y-m-d H:i:s');
 
         if($type==1){
-            $data = array(
-                'confirmstatus' => '1',
-                'updateuser'=> $userID, 
-                'updatedatetime'=> $updatedatetime
-            );
-
-            $this->db->where('idtbl_customer_porder', $recordID);
-            $this->db->update('tbl_customer_porder', $data);
-
-            $this->db->trans_complete();
-
-            if ($this->db->trans_status() === TRUE) {
-                $this->db->trans_commit();
-                
-                $actionObj=new stdClass();
-                $actionObj->icon='fas fa-check';
-                $actionObj->title='';
-                $actionObj->message='Purchase Order Approve Successfully';
-                $actionObj->url='';
-                $actionObj->target='_blank';
-                $actionObj->type='success';
-
-                $actionJSON=json_encode($actionObj);
-                
-                $this->session->set_flashdata('msg', $actionJSON);
-                redirect('Customerporder');                
-            } else {
-                $this->db->trans_rollback();
-
-                $actionObj=new stdClass();
-                $actionObj->icon='fas fa-warning';
-                $actionObj->title='';
-                $actionObj->message='Record Error';
-                $actionObj->url='';
-                $actionObj->target='_blank';
-                $actionObj->type='danger';
-
-                $actionJSON=json_encode($actionObj);
-                
-                $this->session->set_flashdata('msg', $actionJSON);
-                redirect('Customerporder');
-            }
+            
         }
         else if($type==2){
             $data = array(
@@ -563,6 +687,74 @@ class Customerporderinfo extends CI_Model{
             }
         }
     }
+    public function Customerporderconfirm($x, $y){
+        $this->db->trans_begin();
+
+        $userID=$_SESSION['userid'];
+        $recordID=$x;
+        $confirmstatus=$y;
+        $updatedatetime=date('Y-m-d H:i:s');
+
+        $data = array(
+            'confirmstatus' => $confirmstatus,
+            'updateuser'=> $userID, 
+            'updatedatetime'=> $updatedatetime
+        );
+
+        $this->db->where('idtbl_customer_porder', $recordID);
+        $this->db->update('tbl_customer_porder', $data);
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === TRUE) {
+            $this->db->trans_commit();
+            
+            if($confirmstatus==1){
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-check';
+                $actionObj->title='';
+                $actionObj->message='Sales Order Confirm Successfully';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='success';
+            }
+            else{
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-times';
+                $actionObj->title='';
+                $actionObj->message='Sales Order rejected Successfully';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='danger';
+            }        
+            
+            $actionJSON=json_encode($actionObj);
+            
+            $obj=new stdClass();
+            $obj->status=1;          
+            $obj->action=$actionJSON;  
+            
+            echo json_encode($obj);         
+        } else {
+            $this->db->trans_rollback();
+
+            $actionObj=new stdClass();
+            $actionObj->icon='fas fa-warning';
+            $actionObj->title='';
+            $actionObj->message='Record Error';
+            $actionObj->url='';
+            $actionObj->target='_blank';
+            $actionObj->type='danger';
+
+            $actionJSON=json_encode($actionObj);
+            
+            $obj=new stdClass();
+            $obj->status=0;          
+            $obj->action=$actionJSON;  
+            
+            echo json_encode($obj);
+        }
+    }
     public function Getordertype(){
         $this->db->select('`idtbl_order_type`, `type`');
         $this->db->from('tbl_order_type');
@@ -699,8 +891,7 @@ class Customerporderinfo extends CI_Model{
 
     }
 
-    public function Customerporderedit()
-    {
+    public function Customerporderedit(){
         $recordID = $this->input->post('recordID');
     
         $this->db->select('tbl_customer_porder.*, tbl_customer_porder_detail.*, tbl_order_type.*, tbl_customer.*, tbl_product.*');
@@ -725,11 +916,11 @@ class Customerporderinfo extends CI_Model{
         $items = array();
         foreach ($respond->result() as $row) {
             $item = new stdClass();
-            $item->productcode = $row->productcode;
+            $item->productcode = $row->prodcutname.' - '.$row->productcode;
             $item->comment = $row->comment;
             $item->productID = $row->idtbl_product;
-            $item->unitprice = $row->unitprice;
             $item->suggestprice = $row->suggestprice;
+            $item->unitpriceusd = $row->unitpriceusd;
             $item->qty = $row->qty;
             $items[] = $item;
         }

@@ -337,7 +337,7 @@ include "include/topnavbar.php";
 						html1 += '<option value="">Select</option>';
 						$.each(obj, function (i) {
 							html1 += '<option value="' + obj[i].idtbl_product + '">';
-							html1 += obj[i].materialname + ' - ' + obj[i].productcode;
+							html1 += obj[i].prodcutname + ' - ' + obj[i].productcode;
 							html1 += '</option>';
 						});
 						$('#productlist').empty().append(html1);
@@ -362,38 +362,38 @@ include "include/topnavbar.php";
 
 
 		$('#productlist').on('change', function () {
-		var productId = $(this).val();
-		var fromlocation = $('#location').val();
+			var productId = $(this).val();
+			var fromlocation = $('#location').val();
 
-		$.ajax({
-			type: "POST",
-			data: {
-				productId: productId,
-				fromlocation: fromlocation
-			},
-			url: '<?php echo base_url("Directinvoice/Getbatchlist"); ?>',
-			success: function (result) { //alert(result);
-				var obj = JSON.parse(result);
-				var options = '';
+			$.ajax({
+				type: "POST",
+				data: {
+					productId: productId,
+					fromlocation: fromlocation
+				},
+				url: '<?php echo base_url("Directinvoice/Getbatchlist"); ?>',
+				success: function (result) { //alert(result);
+					var obj = JSON.parse(result);
+					var options = '';
 
-				obj.forEach(function (product) {
-					options += '<option value="' + product.fgbatchno + '">' + product.fgbatchno + '/' + product.qty + '</option>';
-				});
+					obj.forEach(function (product) {
+						options += '<option value="' + product.fgbatchno + '">' + product.fgbatchno + '/' + product.qty + '</option>';
+					});
 
-				$('#batchlist').html(options);
+					$('#batchlist').html(options);
 
-				$('#batchlist').on('change', function () {
-					var selectedBatch = obj.filter(product => $(this).val().indexOf(product.idtbl_product_stock.toString()) !== -1);
-					$('#hiddenbatchid').val($(this).val());
-					var batchCodes = selectedBatch.map(product => product.fgbatchno).join(', ');
-					$('input[name="hiddenbatchcode[]"]').val(batchCodes);
-				});
-			},
-			error: function (xhr, status, error) {
-				console.log(xhr.responseText);
-			}
+					$('#batchlist').on('change', function () {
+						var selectedBatch = obj.filter(product => $(this).val().indexOf(product.idtbl_product_stock.toString()) !== -1);
+						$('#hiddenbatchid').val($(this).val());
+						var batchCodes = selectedBatch.map(product => product.fgbatchno).join(', ');
+						$('input[name="hiddenbatchcode[]"]').val(batchCodes);
+					});
+				},
+				error: function (xhr, status, error) {
+					console.log(xhr.responseText);
+				}
+			});
 		});
-	});
 
 		$(document).on('click', '.btnInvoice2', function () {
     		var id = $(this).attr('id');

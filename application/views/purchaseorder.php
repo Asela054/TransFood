@@ -155,6 +155,8 @@ include "include/topnavbar.php";
                                 <input name="submitBtn" type="submit" value="Save" id="submitBtn" class="d-none">
                             </div>
                             <input type="hidden" name="refillprice" id="refillprice" value="">
+                            <input type="hidden" name="recordOption" id="recordOption" value="1">
+                            <input type="hidden" name="recordID" id="recordID" value="">
                         </form>
                     </div>
                     <div class="col-sm-12 col-md-12 col-lg-8 col-xl-8">
@@ -338,6 +340,7 @@ include "include/topnavbar.php";
                     "data": null,
                     "render": function(data, type, full) {
                         if(full['confirmstatus']==1){return '<i class="fas fa-check text-success mr-2"></i>Confirm Order';}
+                        else if(full['confirmstatus']==2){return '<i class="fas fa-times text-danger mr-2"></i>Rejected';}
                         else{return 'Not Confirm Order';}
                     }
                 },
@@ -346,8 +349,11 @@ include "include/topnavbar.php";
                     "className": '',
                     "data": null,
                     "render": function(data, type, full) {
-                        if(full['grnconfirm']==1){return '<i class="fas fa-check text-success mr-2"></i>Issue GRN';}
-                        else{return 'Not Issue GRN';}
+                        if(full['confirmstatus']==2){return '<i class="fas fa-times text-danger mr-2"></i>Rejected';}
+                        else{
+                            if(full['grnconfirm']==1){return '<i class="fas fa-check text-success mr-2"></i>Issue GRN';}
+                            else{return 'Not Issue GRN';}
+                        }
                     }
                 },
                 {
@@ -359,25 +365,30 @@ include "include/topnavbar.php";
                     "data": null,
                     "render": function(data, type, full) {
                         var button='';
-                    button += '<a href="<?php echo base_url() ?>Purchaseorder/Printpurchaseorder/' +
-                        full['idtbl_porder'] +
-                        '" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print PO" class="btn btn-danger btn-sm mr-1 ';
-                    if (editcheck != 1) {
-                        button += 'd-none';
-                    }
-                    button += '"><i class="fas fa-file-pdf"></i></a>';
-                        button+='<button class="btn btn-dark btn-sm btnview mr-1" id="'+full['idtbl_porder']+'" po_no="' + full[
-                            'po_no'] + '"><i class="fas fa-eye"></i></button>';
-                        if(full['confirmstatus']==1){
-                            button+='<button class="btn btn-success btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-check"></i></button>';
-                        }else{
-                            button+='<a href="<?php echo base_url() ?>Purchaseorder/Purchaseorderstatus/'+full['idtbl_porder']+'/1" onclick="return active_confirm()" target="_self" class="btn btn-danger btn-sm mr-1 ';if(statuscheck!=1){button+='d-none';}button+='"><i class="fas fa-times"></i></a>';
+                        if(full['confirmstatus']<2){
+                            button += '<a href="<?php echo base_url() ?>Purchaseorder/Printpurchaseorder/' + full['idtbl_porder'] + '" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print PO" class="btn btn-danger btn-sm mr-1"><i class="fas fa-file-pdf"></i></a>';
+                        }
+                        button+='<button class="btn btn-dark btn-sm btnview mr-1" id="'+full['idtbl_porder']+'" po_no="' + full['po_no'] + '"><i class="fas fa-eye"></i></button>';
+                        if(full['confirmstatus']==1 && statuscheck==1){
+                            button+='<button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>';
+                        }else if(full['confirmstatus']==0){
+                            if(statuscheck==1){
+                                button+='<button class="btn btn-warning btn-sm btnconfirm mr-1" id="'+full['idtbl_porder']+'"><i class="fas fa-times"></i></button>';
+                            }
+                            if(editcheck==1){
+                                button+='<button class="btn btn-primary btn-sm btnEdit mr-1" id="'+full['idtbl_porder']+'"><i class="fas fa-pen"></i></button>';
+                            }
                         }
                         
                         return button;
                     }
                 }
             ],
+            createdRow: function( row, data, dataIndex){
+                if(data['confirmstatus']  ==  2){
+                    $(row).addClass('bg-danger-soft');
+                }
+            },
             drawCallback: function(settings) {
                 $('[data-toggle="tooltip"]').tooltip();
             }
@@ -408,7 +419,82 @@ include "include/topnavbar.php";
                     $('#viewhtml').html(result);
                 }
             });
-        });  
+        }); 
+        $('#dataTable tbody').on('click', '.btnconfirm', function() {
+            var id = $(this).attr('id'); 
+            Swal.fire({
+                title: "Do you want to approve this purchase order?",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Approve",
+                denyButtonText: `Reject`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var confirmnot = 1;
+                    confirmporder(confirmnot, id);
+                } else if (result.isDenied) {
+                    var confirmnot = 2;
+                    confirmporder(confirmnot, id);
+                } 
+            });
+        });
+        $('#dataTable tbody').on('click', '.btnEdit', async function() {
+            var r = await Otherconfirmation("You want to Edit this ? ");
+            if (r == true) {
+                var id = $(this).attr('id');
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        recordID: id
+                    },
+                    url: '<?php echo base_url() ?>Purchaseorder/Purchaseorderedit',
+                    success: function(result) { //alert(result);
+                        // console.log(result);
+                        
+                        var obj = JSON.parse(result);
+                        
+                        $('#recordID').val(obj.recorddata['idtbl_porder']);
+                        $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);                       
+                        $('#poclass').val(obj.recorddata['class']);                       
+                        $('#orderdate').val(obj.recorddata['orderdate']);                       
+                        $('#duedate').val(obj.recorddata['duedate']);                       
+                        $('#location').val(obj.recorddata['tbl_location_idtbl_location']);     
+                        var newOptionSupp = new Option(obj.recorddata['suppliername'], obj.recorddata['idtbl_supplier'], true, true);
+                        $('#supplier').append(newOptionSupp).trigger('change');            
+
+                        $('#recordOption').val('2');
+                        $('#btncreateorder').html('<i class="far fa-save"></i>&nbsp;Update Order');
+                        $.each(obj.recorddetaildata, function(i, item) {
+                            var product = item['materialname'] + ' / ' + item['materialinfocode'];
+                            var unit_price = parseFloat(item['unitprice']);
+                            var unitprice = addCommas(parseFloat(unit_price).toFixed(2));
+                            var unitperctn = parseFloat(item['unitperctn']);
+                            var ctn = parseFloat(item['ctn']);
+                            var newqty = parseFloat(item['qty']);
+
+                            var newtotal = parseFloat(unitprice * newqty);
+
+                            var total = parseFloat(newtotal);
+                            var showtotal = addCommas(parseFloat(total).toFixed(2));
+
+                            $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + item['comment'] + '</td><td class="d-none">' + item['tbl_material_info_idtbl_material_info'] + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitprice + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
+                        });
+                        var sum = 0;
+                        $(".total").each(function () {
+                            sum += parseFloat($(this).text());
+                        });
+
+                        var showsum = addCommas(parseFloat(sum).toFixed(2));
+
+                        $('#divtotal').html('Rs. ' + showsum);
+                        $('#hidetotalorder').val(sum);
+                        $('#product').focus();
+                        
+                        $('#staticBackdrop').modal('show');
+                    }
+                });
+            }
+        });
         $('#supplier').change(function () {
             let supplierID = $(this).val()
 
@@ -544,6 +630,8 @@ include "include/topnavbar.php";
                 var supplier = $('#supplier').val();
                 var location = $('#location').val();
                 var ordertype = $('#ordertype').val();
+                var recordID = $('#recordID').val();
+                var recordOption = $('#recordOption').val();
                 // alert(orderdate);
                 $.ajax({
                     type: "POST",
@@ -556,22 +644,27 @@ include "include/topnavbar.php";
                         remark: remark,
                         supplier: supplier,
                         location: location,
-                        ordertype: ordertype
+                        ordertype: ordertype,
+                        recordID: recordID,
+                        recordOption: recordOption
                     },
                     url: 'Purchaseorder/Purchaseorderinsertupdate',
                     success: function (result) { //alert(result);
                         // console.log(result);
                         var obj = JSON.parse(result);
                         if(obj.status==1){
-                            $('#modalgrnadd').modal('hide');
-                            setTimeout(window.location.reload(), 3000);
+                            actionreload(obj.action);
                         }
-                        action(obj.action);
+                        else{
+                            action(obj.action);
+                        }
                     }
                 });
             }
-
         });
+        $('#staticBackdrop').on('hidden.bs.modal', function (e) {
+            window.location.reload();
+        })
     });
 
     function deactive_confirm() {
@@ -598,54 +691,101 @@ include "include/topnavbar.php";
         return x1 + x2;
     }
 
-    function action(data) { //alert(data);
-        var obj = JSON.parse(data);
-        $.notify({
-            // options
-            icon: obj.icon,
-            title: obj.title,
-            message: obj.message,
-            url: obj.url,
-            target: obj.target
-        }, {
-            // settings
-            element: 'body',
-            position: null,
-            type: obj.type,
-            allow_dismiss: true,
-            newest_on_top: false,
-            showProgressbar: false,
-            placement: {
-                from: "top",
-                align: "center"
+    // function action(data) { //alert(data);
+    //     var obj = JSON.parse(data);
+    //     $.notify({
+    //         // options
+    //         icon: obj.icon,
+    //         title: obj.title,
+    //         message: obj.message,
+    //         url: obj.url,
+    //         target: obj.target
+    //     }, {
+    //         // settings
+    //         element: 'body',
+    //         position: null,
+    //         type: obj.type,
+    //         allow_dismiss: true,
+    //         newest_on_top: false,
+    //         showProgressbar: false,
+    //         placement: {
+    //             from: "top",
+    //             align: "center"
+    //         },
+    //         offset: 100,
+    //         spacing: 10,
+    //         z_index: 1031,
+    //         delay: 5000,
+    //         timer: 1000,
+    //         url_target: '_blank',
+    //         mouse_over: null,
+    //         animate: {
+    //             enter: 'animated fadeInDown',
+    //             exit: 'animated fadeOutUp'
+    //         },
+    //         onShow: null,
+    //         onShown: null,
+    //         onClose: null,
+    //         onClosed: null,
+    //         icon_type: 'class',
+    //         template: '<div data-notify="container" class="col-xs-11 col-sm-3 alert alert-{0}" role="alert">' +
+    //             '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+    //             '<span data-notify="icon"></span> ' +
+    //             '<span data-notify="title">{1}</span> ' +
+    //             '<span data-notify="message">{2}</span>' +
+    //             '<div class="progress" data-notify="progressbar">' +
+    //             '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+    //             '</div>' +
+    //             '<a href="{3}" target="{4}" data-notify="url"></a>' +
+    //             '</div>'
+    //     });
+    // }
+    function confirmporder(confirmnot, id){
+        Swal.fire({
+            title: '',
+            html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
+            allowOutsideClick: false,
+            showConfirmButton: false, // Hide the OK button
+            backdrop: `
+                rgba(255, 255, 255, 0.5) 
+            `,
+            customClass: {
+                popup: 'fullscreen-swal'
             },
-            offset: 100,
-            spacing: 10,
-            z_index: 1031,
-            delay: 5000,
-            timer: 1000,
-            url_target: '_blank',
-            mouse_over: null,
-            animate: {
-                enter: 'animated fadeInDown',
-                exit: 'animated fadeOutUp'
-            },
-            onShow: null,
-            onShown: null,
-            onClose: null,
-            onClosed: null,
-            icon_type: 'class',
-            template: '<div data-notify="container" class="col-xs-11 col-sm-3 alert alert-{0}" role="alert">' +
-                '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
-                '<span data-notify="icon"></span> ' +
-                '<span data-notify="title">{1}</span> ' +
-                '<span data-notify="message">{2}</span>' +
-                '<div class="progress" data-notify="progressbar">' +
-                '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
-                '</div>' +
-                '<a href="{3}" target="{4}" data-notify="url"></a>' +
-                '</div>'
+            didOpen: () => {
+                document.body.style.overflow = 'hidden';
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        recordID: id,
+                        confirmstatus: confirmnot
+                    },
+                    url: '<?php echo base_url() ?>Purchaseorder/Purchaseorderstatus/' + id + '/' + confirmnot,
+                    success: function(result) { //alert(result);
+                        var obj = JSON.parse(result);
+                        if(obj.status==1){
+                            actionreload(obj.action);
+                        }
+                        else{
+                            action(obj.action);
+                        }
+                    },
+                    error: function(error) {
+                        // Close the SweetAlert on error
+                        Swal.close();
+                        document.body.style.overflow = 'auto';
+                        
+                        // Show an error alert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong. Please try again later.'
+                        });
+                    }
+                });
+            }
         });
     }
+
 </script>
 <?php include "include/footer.php"; ?>

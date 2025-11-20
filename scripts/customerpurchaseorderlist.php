@@ -36,6 +36,7 @@ $columns = array(
 	array( 'db' => '`u`.`sod_no`', 'dt' => 'sod_no', 'field' => 'sod_no' ),
 	array( 'db' => '`u`.`orderdate`', 'dt' => 'orderdate', 'field' => 'orderdate' ),
 	array( 'db' => '`u`.`nettotal`', 'dt' => 'nettotal', 'field' => 'nettotal' ),
+	array( 'db' => '`u`.`nettotalusd`', 'dt' => 'nettotalusd', 'field' => 'nettotalusd' ),
 	array( 'db' => '`u`.`confirmstatus`', 'dt' => 'confirmstatus', 'field' => 'confirmstatus' ),
 	array( 'db' => '`u`.`transproductionstatus`', 'dt' => 'transproductionstatus', 'field' => 'transproductionstatus' ),
 	array( 'db' => '`u`.`remark`', 'dt' => 'remark', 'field' => 'remark' ),
