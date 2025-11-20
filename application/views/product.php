@@ -107,9 +107,13 @@ include "include/topnavbar.php";
 											<label class="small font-weight-bold">Weight</label>
 											<input type="text" class="form-control form-control-sm" name="weight" id="weight">
 										</div>
-										<div class="col-6">
+										<div class="col">
 											<label class="small font-weight-bold">Retail Price</label>
 											<input type="text" class="form-control form-control-sm" name="retailprice" id="retailprice">
+										</div>
+										<div class="col">
+											<label class="small font-weight-bold">Retail Price ($)</label>
+											<input type="text" class="form-control form-control-sm" name="retailpriceusd" id="retailpriceusd">
 										</div>
 									</div>
 									<div class="form-row mb-1">
@@ -142,6 +146,7 @@ include "include/topnavbar.php";
 												<th>Prodcut Code</th>
 												<th>Weight</th>
 												<th>Retail Price</th>
+												<th>Retail Price ($)</th>
 												<th>Pkts Per Ctn</th>
 												<th>Master carton</th>
 												<th class="text-right">Actions</th>
@@ -321,6 +326,9 @@ include "include/topnavbar.php";
 					"data": "retailprice"
 				},
 				{
+					"data": "retailpriceusd"
+				},
+				{
 					"data": "nopckperctn"
 				},
 				{
@@ -371,6 +379,7 @@ include "include/topnavbar.php";
 						$('#desc').val(obj.desc);
 						$('#weight').val(obj.weight);
 						$('#retailprice').val(obj.retailprice);
+						$('#retailpriceusd').val(obj.retailpriceusd);
 						$('#pktperctn').val(obj.nopckperctn);                                   
 						$('#masterctn').val(obj.mastercartoon);                                   
 

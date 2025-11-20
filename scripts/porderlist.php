@@ -69,7 +69,7 @@ LEFT JOIN `tbl_order_type` AS `ue` ON (`u`.`tbl_order_type_idtbl_order_type` = `
 LEFT JOIN `tbl_invoice` AS `uf` ON (`u`.`idtbl_customer_porder` = `uf`.`tbl_customer_porder_idtbl_customer_porder`)";
 
 
-$extraWhere = "`u`.`status`=1 AND `name` !='BUFFER ORDERS' AND `u`.`tbl_company_idtbl_company`='$companyid' AND `u`.`tbl_company_branch_idtbl_company_branch`='$branchid'";
+$extraWhere = "`u`.`status`=1 AND `u`.`confirmstatus`=1 AND `name` !='BUFFER ORDERS' AND `u`.`tbl_company_idtbl_company`='$companyid' AND `u`.`tbl_company_branch_idtbl_company_branch`='$branchid'";
 $groupBy = "`u`.`idtbl_customer_porder`";
 
 $i = 1;

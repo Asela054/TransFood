@@ -11,6 +11,7 @@ class Productinfo extends CI_Model{
         $desc=$this->input->post('desc');  
         $weight=$this->input->post('weight');  
         $retailprice=$this->input->post('retailprice'); 
+        $retailpriceusd=$this->input->post('retailpriceusd'); 
         $pktperctn=$this->input->post('pktperctn'); 
         $masterctn=$this->input->post('masterctn'); 
 
@@ -26,6 +27,7 @@ class Productinfo extends CI_Model{
                 'desc'=> $desc, 
                 'weight'=> $weight, 
                 'retailprice'=> $retailprice, 
+                'retailpriceusd'=> $retailpriceusd, 
                 'wholesaleprice'=> '0', 
                 'nopckperctn'=> $pktperctn, 
                 'mastercartoon'=> $masterctn, 
@@ -77,6 +79,7 @@ class Productinfo extends CI_Model{
                 'desc'=> $desc, 
                 'weight'=> $weight, 
                 'retailprice'=> $retailprice, 
+                'retailpriceusd'=> $retailpriceusd, 
                 'wholesaleprice'=> '0', 
                 'nopckperctn'=> $pktperctn, 
                 'mastercartoon'=> $masterctn, 
@@ -280,6 +283,7 @@ class Productinfo extends CI_Model{
         $obj->desc=$respond->row(0)->desc;
         $obj->weight=$respond->row(0)->weight;
         $obj->retailprice=$respond->row(0)->retailprice;
+        $obj->retailpriceusd=$respond->row(0)->retailpriceusd;
         $obj->nopckperctn=$respond->row(0)->nopckperctn;
         $obj->mastercartoon=$respond->row(0)->mastercartoon;
 

@@ -34,6 +34,7 @@ $columns = array(
 	array( 'db' => '`u`.`productcode`', 'dt' => 'productcode', 'field' => 'productcode' ),
     array( 'db' => '`u`.`weight`', 'dt' => 'weight', 'field' => 'weight' ),
 	array( 'db' => '`u`.`retailprice`', 'dt' => 'retailprice', 'field' => 'retailprice' ),
+	array( 'db' => '`u`.`retailpriceusd`', 'dt' => 'retailpriceusd', 'field' => 'retailpriceusd' ),
 	array( 'db' => '`u`.`wholesaleprice`', 'dt' => 'wholesaleprice', 'field' => 'wholesaleprice' ),
 	array( 'db' => '`u`.`semistatus`', 'dt' => 'semistatus', 'field' => 'semistatus' ),
 	array( 'db' => '`u`.`nopckperctn`', 'dt' => 'nopckperctn', 'field' => 'nopckperctn' ),

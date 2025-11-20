@@ -251,100 +251,7 @@ class Goodreceiveinfo extends CI_Model{
         $updatedatetime=date('Y-m-d H:i:s');
 
         if($type==1){
-            $data = array(
-                'approvestatus' => '1',
-                'updateuser'=> $userID, 
-                'updatedatetime'=> $updatedatetime
-            );
-
-            $this->db->where('idtbl_grn', $recordID);
-            $this->db->update('tbl_grn', $data);
-
-            $this->db->select('`batchno`, `tbl_porder_idtbl_porder`, `tbl_location_idtbl_location`');
-            $this->db->from('tbl_grn');
-            $this->db->where('status', 1);
-            $this->db->where('idtbl_grn', $recordID);
-
-            $respondgrn=$this->db->get();
-
-            $porderID=$respondgrn->row(0)->tbl_porder_idtbl_porder;
-
-            $dataporder = array(
-                'grnconfirm' => '1',
-                'updateuser'=> $userID, 
-                'updatedatetime'=> $updatedatetime
-            );
-
-            $this->db->where('idtbl_porder', $porderID);
-            $this->db->update('tbl_porder', $dataporder);
-
-            $this->db->select('tbl_grn.batchno, tbl_grn.tbl_company_idtbl_company, tbl_grn.tbl_company_branch_idtbl_company_branch, tbl_grn.tbl_location_idtbl_location, tbl_grndetail.qty, tbl_grndetail.unitprice, tbl_grndetail.tbl_material_info_idtbl_material_info');
-			$this->db->from('tbl_grn');
-			$this->db->join('tbl_grndetail', 'tbl_grn.idtbl_grn = tbl_grndetail.tbl_grn_idtbl_grn', 'left');
-			$this->db->where('tbl_grn.status', 1);
-			$this->db->where('tbl_grn.idtbl_grn', $recordID);
-			$respond = $this->db->get();
-
-			if ($respond->num_rows() > 0) {
-				foreach ($respond->result() as $row) {
-					$batchno = $row->batchno;
-					$location = $row->tbl_location_idtbl_location;
-					$qty = $row->qty;
-					$unitprice = $row->unitprice;
-					$materialID = $row->tbl_material_info_idtbl_material_info;
-					$companyid = $row->tbl_company_idtbl_company;
-					$branchid = $row->tbl_company_branch_idtbl_company_branch;
-
-					$stockData = array(
-						'batchno' => $batchno,
-						'qty' => $qty,
-						'unitprice' => $unitprice,
-						'status' => '1',
-						'insertdatetime' => $updatedatetime,
-						'tbl_user_idtbl_user' => $userID,
-                        'tbl_material_info_idtbl_material_info' => $materialID,
-                        'tbl_location_idtbl_location' => $location,
-						'tbl_company_idtbl_company' => $companyid,
-						'tbl_company_branch_idtbl_company_branch' => $branchid
-					);
-
-					$this->db->insert('tbl_stock', $stockData);
-				}
-			}
-
-            $this->db->trans_complete();
-
-            if ($this->db->trans_status() === TRUE) {
-                $this->db->trans_commit();
-                
-                $actionObj=new stdClass();
-                $actionObj->icon='fas fa-check';
-                $actionObj->title='';
-                $actionObj->message='Order Confirm Successfully';
-                $actionObj->url='';
-                $actionObj->target='_blank';
-                $actionObj->type='success';
-
-                $actionJSON=json_encode($actionObj);
-                
-                $this->session->set_flashdata('msg', $actionJSON);
-                redirect('Goodreceive');                
-            } else {
-                $this->db->trans_rollback();
-
-                $actionObj=new stdClass();
-                $actionObj->icon='fas fa-warning';
-                $actionObj->title='';
-                $actionObj->message='Record Error';
-                $actionObj->url='';
-                $actionObj->target='_blank';
-                $actionObj->type='danger';
-
-                $actionJSON=json_encode($actionObj);
-                
-                $this->session->set_flashdata('msg', $actionJSON);
-                redirect('Goodreceive');
-            }
+            
         }
         else if($type==3){
             $data = array(
@@ -665,5 +572,127 @@ class Goodreceiveinfo extends CI_Model{
         $respond=$this->db->query($sql, array($recordID, $materialID, 1));
 
         echo json_encode($respond->row(0));
+    }
+    public function Goodreceiveconfirm($x, $y){
+        $this->db->trans_begin();
+
+        $userID=$_SESSION['userid'];
+        $recordID=$x;
+        $confirmstatus=$y;
+        $updatedatetime=date('Y-m-d H:i:s');
+
+        $data = array(
+            'approvestatus' => $confirmstatus,
+            'updateuser'=> $userID, 
+            'updatedatetime'=> $updatedatetime
+        );
+
+        $this->db->where('idtbl_grn', $recordID);
+        $this->db->update('tbl_grn', $data);
+
+        if($confirmstatus==1):
+            $this->db->select('`batchno`, `tbl_porder_idtbl_porder`, `tbl_location_idtbl_location`');
+            $this->db->from('tbl_grn');
+            $this->db->where('status', 1);
+            $this->db->where('idtbl_grn', $recordID);
+
+            $respondgrn=$this->db->get();
+
+            $porderID=$respondgrn->row(0)->tbl_porder_idtbl_porder;
+
+            $dataporder = array(
+                'grnconfirm' => '1',
+                'updateuser'=> $userID, 
+                'updatedatetime'=> $updatedatetime
+            );
+
+            $this->db->where('idtbl_porder', $porderID);
+            $this->db->update('tbl_porder', $dataporder);
+
+            $this->db->select('tbl_grn.batchno, tbl_grn.tbl_company_idtbl_company, tbl_grn.tbl_company_branch_idtbl_company_branch, tbl_grn.tbl_location_idtbl_location, tbl_grndetail.qty, tbl_grndetail.unitprice, tbl_grndetail.tbl_material_info_idtbl_material_info');
+            $this->db->from('tbl_grn');
+            $this->db->join('tbl_grndetail', 'tbl_grn.idtbl_grn = tbl_grndetail.tbl_grn_idtbl_grn', 'left');
+            $this->db->where('tbl_grn.status', 1);
+            $this->db->where('tbl_grn.idtbl_grn', $recordID);
+            $respond = $this->db->get();
+
+            if ($respond->num_rows() > 0) {
+                foreach ($respond->result() as $row) {
+                    $batchno = $row->batchno;
+                    $location = $row->tbl_location_idtbl_location;
+                    $qty = $row->qty;
+                    $unitprice = $row->unitprice;
+                    $materialID = $row->tbl_material_info_idtbl_material_info;
+                    $companyid = $row->tbl_company_idtbl_company;
+                    $branchid = $row->tbl_company_branch_idtbl_company_branch;
+
+                    $stockData = array(
+                        'batchno' => $batchno,
+                        'qty' => $qty,
+                        'unitprice' => $unitprice,
+                        'status' => '1',
+                        'insertdatetime' => $updatedatetime,
+                        'tbl_user_idtbl_user' => $userID,
+                        'tbl_material_info_idtbl_material_info' => $materialID,
+                        'tbl_location_idtbl_location' => $location,
+                        'tbl_company_idtbl_company' => $companyid,
+                        'tbl_company_branch_idtbl_company_branch' => $branchid
+                    );
+
+                    $this->db->insert('tbl_stock', $stockData);
+                }
+            }
+        endif;
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === TRUE) {
+            $this->db->trans_commit();
+            
+            if($confirmstatus==1){
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-check';
+                $actionObj->title='';
+                $actionObj->message='Good receive note Confirm Successfully';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='success';
+            }
+            else{
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-times';
+                $actionObj->title='';
+                $actionObj->message='Good receive note rejected Successfully';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='danger';
+            }        
+            
+            $actionJSON=json_encode($actionObj);
+            
+            $obj=new stdClass();
+            $obj->status=1;          
+            $obj->action=$actionJSON;  
+            
+            echo json_encode($obj);         
+        } else {
+            $this->db->trans_rollback();
+
+            $actionObj=new stdClass();
+            $actionObj->icon='fas fa-warning';
+            $actionObj->title='';
+            $actionObj->message='Record Error';
+            $actionObj->url='';
+            $actionObj->target='_blank';
+            $actionObj->type='danger';
+
+            $actionJSON=json_encode($actionObj);
+            
+            $obj=new stdClass();
+            $obj->status=0;          
+            $obj->action=$actionJSON;  
+            
+            echo json_encode($obj);
+        }
     }
 }

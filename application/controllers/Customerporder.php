@@ -65,4 +65,8 @@ class Customerporder extends CI_Controller {
 		$this->load->model('Customerporderinfo');
         $result=$this->Customerporderinfo->Getproductlist();
 	}
+	public function Customerporderconfirm($x, $y){
+		$this->load->model('Customerporderinfo');
+        $result=$this->Customerporderinfo->Customerporderconfirm($x, $y);
+	}
 }

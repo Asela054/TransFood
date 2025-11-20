@@ -475,10 +475,10 @@ include "include/topnavbar.php";
 		sessionStorage.setItem('companyid', '<?php echo $this->session->userdata('companyid'); ?>');
 
 		$('#staticBackdrop').on('shown.bs.modal', function () {
-        $('.selecter2').select2({
-            width: '100%',
-            dropdownParent: $('#staticBackdrop')
-          });
+			$('.selecter2').select2({
+				width: '100%',
+				dropdownParent: $('#staticBackdrop')
+			});
         });
 
         $('#dataTable').DataTable({
@@ -575,38 +575,36 @@ include "include/topnavbar.php";
     				"data": null,
     				"render": function (data, type, full) {
     					var button = '';
-						button += '<a href="<?php echo base_url() ?>Goodreceive/Printgoodreceive/' +full['idtbl_grn'] + '" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print PO" class="btn btn-danger btn-sm mr-1 ';
-						if (editcheck != 1) {
-							button += 'd-none';
+						if (full['approvestatus'] < 2) {
+							button += '<a href="<?php echo base_url() ?>Goodreceive/Printgoodreceive/' +full['idtbl_grn'] + '" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print PO" class="btn btn-danger btn-sm mr-1"><i class="fas fa-file-pdf"></i></a>';
 						}
-						button += '"><i class="fas fa-file-pdf"></i></a>';
                         button+='<button class="btn btn-secondary btn-sm btnLabel mr-1" id="'+full['idtbl_grn']+'"><i class="fas fa-tag"></i></button>';
 						button += '<button class="btn btn-dark btn-sm btnview mr-1" id="' + full['idtbl_grn'] + '" value="'+ full['grn_no'] +'"><i class="fas fa-eye"></i></button>';
-    					if (full['approvestatus'] == 1) {
-    						button += '<button class="btn btn-success btn-sm mr-1 ';
-    						if (statuscheck != 1) {
-    							button += 'd-none';
-    						}
-    						button += '"><i class="fas fa-check"></i></button>';
-    					} else {
-    						button += '<a href="<?php echo base_url() ?>Goodreceive/Goodreceivestatus/' + full['idtbl_grn'] + '/1" onclick="return active_confirm()" target="_self" class="btn btn-danger btn-sm mr-1 ';
-    						if (statuscheck != 1) {
-    							button += 'd-none';
-    						}
-    						button += '"><i class="fas fa-times"></i></a>';
-    					}
-    					if (full['approvestatus'] == 0) {
-    						button += '<a href="<?php echo base_url() ?>Goodreceive/Goodreceivestatus/' + full['idtbl_grn'] + '/3" onclick="return delete_confirm()" target="_self" class="btn btn-danger btn-sm mr-1 ';
-    						if (statuscheck != 1) {
-    							button += 'd-none';
-    						}
-    						button += '"><i class="fas fa-trash-alt"></i></a>';
+    					if (full['approvestatus'] == 1 && statuscheck == 1) {
+    						button += '<button class="btn btn-success btn-sm mr-1"><i class="fas fa-check"></i></button>';
+    					} else if(full['approvestatus']==0) {
+    						// button += '<a href="<?php echo base_url() ?>Goodreceive/Goodreceivestatus/' + full['idtbl_grn'] + '/1" onclick="return active_confirm()" target="_self" class="btn btn-danger btn-sm mr-1 ';
+    						// if (statuscheck != 1) {
+    						// 	button += 'd-none';
+    						// }
+    						// button += '"><i class="fas fa-times"></i></a>';
+							if(statuscheck==1){
+                                button+='<button class="btn btn-warning btn-sm btnconfirm mr-1" id="'+full['idtbl_grn']+'"><i class="fas fa-times"></i></button>';
+                            }
+							if(deletecheck==1){
+								button+='<button type="button" data-url="Goodreceive/Goodreceivestatus/'+full['idtbl_grn']+'/3" data-actiontype="3" class="btn btn-danger btn-sm text-light btntableaction"><i class="fas fa-trash-alt"></i></button>';
+							}	
     					}
 
     					return button;
     				}
     			}
             ],
+			createdRow: function( row, data, dataIndex){
+                if(data['approvestatus']  ==  2){
+                    $(row).addClass('bg-danger-soft');
+                }
+            },
             drawCallback: function(settings) {
                 $('[data-toggle="tooltip"]').tooltip();
             }
@@ -708,6 +706,24 @@ include "include/topnavbar.php";
     			}
     		});
     	});
+		$('#dataTable tbody').on('click', '.btnconfirm', function() {
+            var id = $(this).attr('id'); 
+            Swal.fire({
+                title: "Do you want to approve this good receive note?",
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: "Approve",
+                denyButtonText: `Reject`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var confirmnot = 1;
+                    confirmgoodreceive(confirmnot, id);
+                } else if (result.isDenied) {
+                    var confirmnot = 2;
+                    confirmgoodreceive(confirmnot, id);
+                } 
+            });
+        });
     	$('#supplier').change(function () {
     		let supplierID = $(this).val();
     		getbatchno();
@@ -1129,6 +1145,53 @@ include "include/topnavbar.php";
     			$('#batchno').val(result);
     		}
     	});
+    }
+
+	function confirmgoodreceive(confirmnot, id){
+        Swal.fire({
+            title: '',
+            html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
+            allowOutsideClick: false,
+            showConfirmButton: false, // Hide the OK button
+            backdrop: `
+                rgba(255, 255, 255, 0.5) 
+            `,
+            customClass: {
+                popup: 'fullscreen-swal'
+            },
+            didOpen: () => {
+                document.body.style.overflow = 'hidden';
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        recordID: id,
+                        confirmstatus: confirmnot
+                    },
+                    url: '<?php echo base_url() ?>Goodreceive/Goodreceiveconfirm/' + id + '/' + confirmnot,
+                    success: function(result) { //alert(result);
+                        var obj = JSON.parse(result);
+                        if(obj.status==1){
+                            actionreload(obj.action);
+                        }
+                        else{
+                            action(obj.action);
+                        }
+                    },
+                    error: function(error) {
+                        // Close the SweetAlert on error
+                        Swal.close();
+                        document.body.style.overflow = 'auto';
+                        
+                        // Show an error alert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong. Please try again later.'
+                        });
+                    }
+                });
+            }
+        });
     }
 	
 </script>

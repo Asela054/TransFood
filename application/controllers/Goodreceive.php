@@ -23,6 +23,10 @@ class Goodreceive extends CI_Controller {
 		$this->load->model('Goodreceiveinfo');
         $result=$this->Goodreceiveinfo->Goodreceivestatus($x, $y);
 	}
+    public function Goodreceiveconfirm($x, $y){
+		$this->load->model('Goodreceiveinfo');
+        $result=$this->Goodreceiveinfo->Goodreceiveconfirm($x, $y);
+	}
     public function Goodreceiveedit(){
 		$this->load->model('Goodreceiveinfo');
         $result=$this->Goodreceiveinfo->Goodreceiveedit();

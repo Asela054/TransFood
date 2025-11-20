@@ -46,8 +46,6 @@ class Purchaseorderinfo extends CI_Model{
         }
     }
     public function Purchaseorderinsertupdate(){
-        $this->db->trans_begin();
-
         $userID=$_SESSION['userid'];
         $companyid=$_SESSION['companyid'];
         $branchid=$_SESSION['branchid'];
@@ -62,9 +60,15 @@ class Purchaseorderinfo extends CI_Model{
         $location=$this->input->post('location');
         $ordertype=$this->input->post('ordertype');
 
+        if(!empty($this->input->post('recordID'))){$recordID=$this->input->post('recordID');}
+        $recordOption=$this->input->post('recordOption');
+
         $updatedatetime=date('Y-m-d H:i:s');
 
-        $sql = "SELECT MAX(`po_no`) AS `count` FROM `tbl_porder` WHERE `tbl_supplier_idtbl_supplier` != 1 AND `po_no`> 0 AND `tbl_company_idtbl_company`='$companyid' AND `tbl_company_branch_idtbl_company_branch`='$branchid'";
+        if($recordOption==1): // insert
+            $this->db->trans_begin();
+
+            $sql = "SELECT MAX(`po_no`) AS `count` FROM `tbl_porder` WHERE `tbl_supplier_idtbl_supplier` != 1 AND `po_no`> 0 AND `tbl_company_idtbl_company`='$companyid' AND `tbl_company_branch_idtbl_company_branch`='$branchid'";
             $respond = $this->db->query($sql);
 
             if ($respond->row(0)->count == 0) {
@@ -73,99 +77,212 @@ class Purchaseorderinfo extends CI_Model{
                 $i = $respond->row(0)->count + 1;
             }
 
-        $data = array(
-            'po_no'=> $i, 
-            'class'=> $poclass, 
-            'orderdate'=> $orderdate, 
-            'duedate'=> $duedate, 
-            'subtotal'=> $total, 
-            'discount'=> '0', 
-            'discountamount'=> '0', 
-            'nettotal'=> $total, 
-            'confirmstatus'=> '0', 
-            'grnconfirm'=> '0', 
-            'remark'=> $remark, 
-            'status'=> '1', 
-            'insertdatetime'=> $updatedatetime, 
-            'tbl_user_idtbl_user'=> $userID,
-            'tbl_location_idtbl_location'=> $location,
-            'tbl_supplier_idtbl_supplier'=> $supplier,
-            'tbl_order_type_idtbl_order_type'=> $ordertype,
-            'tbl_company_idtbl_company'=> $companyid,
-            'tbl_company_branch_idtbl_company_branch'=> $branchid
-        );
-
-        $this->db->insert('tbl_porder', $data);
-
-        $porderID=$this->db->insert_id();
-
-        foreach($tableData as $rowtabledata){
-            $materialname=$rowtabledata['col_1'];
-            $comment=$rowtabledata['col_2'];
-            $materialID=$rowtabledata['col_3'];
-            $unit=$rowtabledata['col_4'];
-            $unitperctn=$rowtabledata['col_6'];
-            $ctn=$rowtabledata['col_7'];
-            $qty=$rowtabledata['col_8'];
-            $nettotal=$rowtabledata['col_9'];
-
-            $dataone = array(
-                'unitperctn'=> $unitperctn, 
-                'ctn'=> $ctn, 
-                'qty'=> $qty, 
-                'unitprice'=> $unit, 
+            $data = array(
+                'po_no'=> $i, 
+                'class'=> $poclass, 
+                'orderdate'=> $orderdate, 
+                'duedate'=> $duedate, 
+                'subtotal'=> $total, 
                 'discount'=> '0', 
                 'discountamount'=> '0', 
-                'total'=> $nettotal, 
-                'comment'=> $comment, 
+                'nettotal'=> $total, 
+                'confirmstatus'=> '0', 
+                'grnconfirm'=> '0', 
+                'remark'=> $remark, 
                 'status'=> '1', 
-                'insertdatetime'=> $updatedatetime,
-                'tbl_porder_idtbl_porder'=> $porderID, 
-                'tbl_material_info_idtbl_material_info'=> $materialID
+                'insertdatetime'=> $updatedatetime, 
+                'tbl_user_idtbl_user'=> $userID,
+                'tbl_location_idtbl_location'=> $location,
+                'tbl_supplier_idtbl_supplier'=> $supplier,
+                'tbl_order_type_idtbl_order_type'=> $ordertype,
+                'tbl_company_idtbl_company'=> $companyid,
+                'tbl_company_branch_idtbl_company_branch'=> $branchid
             );
 
-            $this->db->insert('tbl_porder_detail', $dataone);
-        }
+            $this->db->insert('tbl_porder', $data);
 
-        $this->db->trans_complete();
+            $porderID=$this->db->insert_id();
 
-        if ($this->db->trans_status() === TRUE) {
-            $this->db->trans_commit();
-            
-            $actionObj=new stdClass();
-            $actionObj->icon='fas fa-save';
-            $actionObj->title='';
-            $actionObj->message='Record Added Successfully';
-            $actionObj->url='';
-            $actionObj->target='_blank';
-            $actionObj->type='success';
+            foreach($tableData as $rowtabledata){
+                $materialname=$rowtabledata['col_1'];
+                $comment=$rowtabledata['col_2'];
+                $materialID=$rowtabledata['col_3'];
+                $unit=$rowtabledata['col_4'];
+                $unitperctn=$rowtabledata['col_6'];
+                $ctn=$rowtabledata['col_7'];
+                $qty=$rowtabledata['col_8'];
+                $nettotal=$rowtabledata['col_9'];
 
-            $actionJSON=json_encode($actionObj);
+                $dataone = array(
+                    'unitperctn'=> $unitperctn, 
+                    'ctn'=> $ctn, 
+                    'qty'=> $qty, 
+                    'unitprice'=> $unit, 
+                    'discount'=> '0', 
+                    'discountamount'=> '0', 
+                    'total'=> $nettotal, 
+                    'comment'=> $comment, 
+                    'status'=> '1', 
+                    'insertdatetime'=> $updatedatetime,
+                    'tbl_porder_idtbl_porder'=> $porderID, 
+                    'tbl_material_info_idtbl_material_info'=> $materialID
+                );
 
-            $obj=new stdClass();
-            $obj->status=1;          
-            $obj->action=$actionJSON;  
-            
-            echo json_encode($obj);
-        } else {
-            $this->db->trans_rollback();
+                $this->db->insert('tbl_porder_detail', $dataone);
+            }
 
-            $actionObj=new stdClass();
-            $actionObj->icon='fas fa-exclamation-triangle';
-            $actionObj->title='';
-            $actionObj->message='Record Error';
-            $actionObj->url='';
-            $actionObj->target='_blank';
-            $actionObj->type='danger';
+            $this->db->trans_complete();
 
-            $actionJSON=json_encode($actionObj);
+            if ($this->db->trans_status() === TRUE) {
+                $this->db->trans_commit();
+                
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-save';
+                $actionObj->title='';
+                $actionObj->message='Record Added Successfully';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='success';
 
-            $obj=new stdClass();
-            $obj->status=0;          
-            $obj->action=$actionJSON;  
-            
-            echo json_encode($obj);
-        }
+                $actionJSON=json_encode($actionObj);
+
+                $obj=new stdClass();
+                $obj->status=1;          
+                $obj->action=$actionJSON;  
+                
+                echo json_encode($obj);
+            } else {
+                $this->db->trans_rollback();
+
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-exclamation-triangle';
+                $actionObj->title='';
+                $actionObj->message='Record Error';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='danger';
+
+                $actionJSON=json_encode($actionObj);
+
+                $obj=new stdClass();
+                $obj->status=0;          
+                $obj->action=$actionJSON;  
+                
+                echo json_encode($obj);
+            }
+        else: // update
+            $this->db->select('`confirmstatus`');
+            $this->db->from('tbl_porder');
+            $this->db->where('idtbl_porder', $recordID);
+            $this->db->where('status', 1);
+            $respond=$this->db->get();
+
+            if($respond->row(0)->confirmstatus>0):
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-exclamation-triangle';
+                $actionObj->title='';
+                $actionObj->message='Cannot Edit Confirmed Or Reject Order';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='danger';
+
+                $actionJSON=json_encode($actionObj);
+
+                $obj=new stdClass();
+                $obj->status=0;          
+                $obj->action=$actionJSON;  
+                
+                echo json_encode($obj);
+            else:
+                $this->db->trans_begin();
+
+                $data = array(
+                    'class'=> $poclass, 
+                    'orderdate'=> $orderdate, 
+                    'duedate'=> $duedate, 
+                    'subtotal'=> $total, 
+                    'nettotal'=> $total, 
+                    'remark'=> $remark, 
+                    'updateuser'=> $userID, 
+                    'updatedatetime'=> $updatedatetime,
+                    'tbl_location_idtbl_location'=> $location,
+                    'tbl_order_type_idtbl_order_type'=> $ordertype
+                );
+                $this->db->where('idtbl_porder', $recordID);
+                $this->db->update('tbl_porder', $data);
+
+                $this->db->where('tbl_porder_idtbl_porder', $recordID);
+                $this->db->delete('tbl_porder_detail');
+
+                foreach($tableData as $rowtabledata){
+                    $materialname=$rowtabledata['col_1'];
+                    $comment=$rowtabledata['col_2'];
+                    $materialID=$rowtabledata['col_3'];
+                    $unit=$rowtabledata['col_4'];
+                    $unitperctn=$rowtabledata['col_6'];
+                    $ctn=$rowtabledata['col_7'];
+                    $qty=$rowtabledata['col_8'];
+                    $nettotal=$rowtabledata['col_9'];
+
+                    $dataone = array(
+                        'unitperctn'=> $unitperctn, 
+                        'ctn'=> $ctn, 
+                        'qty'=> $qty, 
+                        'unitprice'=> $unit, 
+                        'discount'=> '0', 
+                        'discountamount'=> '0', 
+                        'total'=> $nettotal, 
+                        'comment'=> $comment, 
+                        'status'=> '1', 
+                        'insertdatetime'=> $updatedatetime,
+                        'tbl_porder_idtbl_porder'=> $recordID, 
+                        'tbl_material_info_idtbl_material_info'=> $materialID
+                    );
+
+                    $this->db->insert('tbl_porder_detail', $dataone);
+                }
+
+                $this->db->trans_complete();
+
+                if ($this->db->trans_status() === TRUE) {
+                    $this->db->trans_commit();
+                    
+                    $actionObj=new stdClass();
+                    $actionObj->icon='fas fa-save';
+                    $actionObj->title='';
+                    $actionObj->message='Record Update Successfully';
+                    $actionObj->url='';
+                    $actionObj->target='_blank';
+                    $actionObj->type='primary';
+
+                    $actionJSON=json_encode($actionObj);
+
+                    $obj=new stdClass();
+                    $obj->status=1;          
+                    $obj->action=$actionJSON;  
+                    
+                    echo json_encode($obj);
+                } else {
+                    $this->db->trans_rollback();
+
+                    $actionObj=new stdClass();
+                    $actionObj->icon='fas fa-exclamation-triangle';
+                    $actionObj->title='';
+                    $actionObj->message='Record Error';
+                    $actionObj->url='';
+                    $actionObj->target='_blank';
+                    $actionObj->type='danger';
+
+                    $actionJSON=json_encode($actionObj);
+
+                    $obj=new stdClass();
+                    $obj->status=0;          
+                    $obj->action=$actionJSON;  
+                    
+                    echo json_encode($obj);
+                }
+            endif;
+        endif;
     }
     public function Purchaseorderview(){
         $recordID=$this->input->post('recordID');
@@ -232,24 +349,25 @@ class Purchaseorderinfo extends CI_Model{
 
         $userID=$_SESSION['userid'];
         $recordID=$x;
-        $type=$y;
+        $confirmstatus=$y;
         $updatedatetime=date('Y-m-d H:i:s');
 
-        if($type==1){
-            $data = array(
-                'confirmstatus' => '1',
-                'updateuser'=> $userID, 
-                'updatedatetime'=> $updatedatetime
-            );
+        // if($type==1){
+        $data = array(
+            'confirmstatus' => $confirmstatus,
+            'updateuser'=> $userID, 
+            'updatedatetime'=> $updatedatetime
+        );
 
-            $this->db->where('idtbl_porder', $recordID);
-            $this->db->update('tbl_porder', $data);
+        $this->db->where('idtbl_porder', $recordID);
+        $this->db->update('tbl_porder', $data);
 
-            $this->db->trans_complete();
+        $this->db->trans_complete();
 
-            if ($this->db->trans_status() === TRUE) {
-                $this->db->trans_commit();
-                
+        if ($this->db->trans_status() === TRUE) {
+            $this->db->trans_commit();
+            
+            if($confirmstatus==1){
                 $actionObj=new stdClass();
                 $actionObj->icon='fas fa-check';
                 $actionObj->title='';
@@ -257,27 +375,66 @@ class Purchaseorderinfo extends CI_Model{
                 $actionObj->url='';
                 $actionObj->target='_blank';
                 $actionObj->type='success';
-
-                $actionJSON=json_encode($actionObj);
-                
-                $this->session->set_flashdata('msg', $actionJSON);
-                redirect('Purchaseorder');                
-            } else {
-                $this->db->trans_rollback();
-
+            }
+            else{
                 $actionObj=new stdClass();
-                $actionObj->icon='fas fa-warning';
+                $actionObj->icon='fas fa-times';
                 $actionObj->title='';
-                $actionObj->message='Record Error';
+                $actionObj->message='Order rejected Successfully';
                 $actionObj->url='';
                 $actionObj->target='_blank';
                 $actionObj->type='danger';
+            }            
 
-                $actionJSON=json_encode($actionObj);
-                
-                $this->session->set_flashdata('msg', $actionJSON);
-                redirect('Purchaseorder');
-            }
+            $actionJSON=json_encode($actionObj);
+            
+            $obj=new stdClass();
+            $obj->status=1;          
+            $obj->action=$actionJSON;  
+            
+            echo json_encode($obj);    
+        } else {
+            $this->db->trans_rollback();
+
+            $actionObj=new stdClass();
+            $actionObj->icon='fas fa-warning';
+            $actionObj->title='';
+            $actionObj->message='Record Error';
+            $actionObj->url='';
+            $actionObj->target='_blank';
+            $actionObj->type='danger';
+
+            $actionJSON=json_encode($actionObj);
+            
+            $obj=new stdClass();
+            $obj->status=0;          
+            $obj->action=$actionJSON;  
+            
+            echo json_encode($obj);
         }
+        // }
+    }
+    public function Purchaseorderedit(){
+        $recordID=$this->input->post('recordID');
+
+        $this->db->select('`tbl_porder`.`idtbl_porder`, `tbl_porder`.`class`, `tbl_porder`.`orderdate`, `tbl_porder`.`duedate`, `tbl_porder`.`subtotal`, `tbl_porder`.`discount`, `tbl_porder`.`discountamount`, `tbl_porder`.`nettotal`, `tbl_porder`.`tbl_location_idtbl_location`, `tbl_porder`.`tbl_order_type_idtbl_order_type`, `tbl_supplier`.`idtbl_supplier`, `tbl_supplier`.`suppliername`');
+        $this->db->from('tbl_porder');
+        $this->db->join('tbl_supplier', 'tbl_supplier.idtbl_supplier = tbl_porder.tbl_supplier_idtbl_supplier', 'left');
+        $this->db->where('tbl_porder.idtbl_porder', $recordID);
+        $this->db->where('tbl_porder.status', 1);
+
+        $respond=$this->db->get();
+
+        $this->db->select('`tbl_porder_detail`.*, `tbl_material_info`.`materialname`, `tbl_material_info`.`materialinfocode`');
+        $this->db->from('tbl_porder_detail');
+        $this->db->join('tbl_material_info', 'tbl_material_info.idtbl_material_info = tbl_porder_detail.tbl_material_info_idtbl_material_info', 'left');
+        $this->db->where('tbl_porder_detail.tbl_porder_idtbl_porder', $recordID);
+        $this->db->where('tbl_porder_detail.status', 1);
+        $responddetail=$this->db->get();
+
+        $obj=new stdClass();
+        $obj->recorddata=$respond->row();
+        $obj->recorddetaildata=$responddetail->result();
+        echo json_encode($obj);
     }
 }
