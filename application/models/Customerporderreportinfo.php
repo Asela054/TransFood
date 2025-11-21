@@ -146,7 +146,7 @@ class Customerporderreportinfo extends CI_Model{
 
     	<table>
     		<tr>
-    			<td><img src="'.base_url().'images/unistarimg.jpeg" class="img-fluid" alt="" style="width: 180px; height: 120px;">
+    			<td><img src="'.base_url().'images/logobw.png" class="img-fluid" alt="" style="width: 180px; height: 120px;">
     			</td>
     			<td>
     				<address style="font-size:9px; font-weight:bold; margin-left:245px;">
