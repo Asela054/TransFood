@@ -207,12 +207,12 @@ include "include/topnavbar.php";
 							</div>
                             <div class="form-row mb-1">
 								<div class="col">
-									<label class="small font-weight-bold text-dark">Suggest Price</label>
+									<label class="small font-weight-bold text-dark">Unit Price</label>
 									<input type="text" id="suggestprice" name="suggestprice"
 										class="form-control form-control-sm">
 								</div>
                                 <div class="col">
-									<label class="small font-weight-bold text-dark">USD Rate</label>
+									<label class="small font-weight-bold text-dark">USD Price ($)</label>
 									<input type="text" id="usdrate" name="usdrate"
 										class="form-control form-control-sm">
 								</div>
@@ -1051,8 +1051,8 @@ include "include/topnavbar.php";
 
                 var recordID = $('#recordID').val();
                 var recordOption = $('#recordOption').val();
-                // var usdrate = $('#usdrate').val();
-                // alert(orderdate);
+                var usdrate = $('#gcw_valFL0GridDR1').val();
+                // alert(usdrate);
                 Swal.fire({
                     title: '',
                     html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
@@ -1080,6 +1080,7 @@ include "include/topnavbar.php";
                                 wastage: wastage,
                                 othercost: othercost,
                                 totalusd: totalusd,
+                                usdrate: usdrate,
                                 recordID: recordID,
                                 recordOption: recordOption
                             },
