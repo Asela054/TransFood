@@ -125,6 +125,7 @@ class Customerporderinfo extends CI_Model{
         $ordertype=$this->input->post('ordertype');
         $profitmargin=$this->input->post('profitmargin');
         $totalusd=$this->input->post('totalusd');
+        $usdrate=$this->input->post('usdrate');
 
         if(!empty($this->input->post('recordID'))){$recordID=$this->input->post('recordID');}
         $recordOption=$this->input->post('recordOption');
@@ -148,6 +149,7 @@ class Customerporderinfo extends CI_Model{
                 'subtotalusd'=> $totalusd, 
                 'discountamountusd'=> '0', 
                 'nettotalusd'=> $totalusd, 
+                'usd_rate'=> $usdrate, 
                 'confirmstatus'=> '0', 
                 'transproductionstatus'=> '0', 
                 'remark'=> $remark, 
