@@ -244,9 +244,12 @@ class Directinvoiceinfo extends CI_Model{
 
     $recordID=$this->input->post('recordID');
 
-     $this->db->select('tbl_product.*');
+     $this->db->select('tbl_product.*, tbl_material_code.materialname');
      $this->db->from('tbl_product');
+     $this->db->join('tbl_material_code', 'tbl_material_code.idtbl_material_code = tbl_product.materialid', 'left');
      $this->db->where('tbl_product.idtbl_product', $recordID);
+     $this->db->where('tbl_product.status', 1);
+     $this->db->where('tbl_product.status', 1);
      $this->db->where('tbl_product.status', 1);
      $respond=$this->db->get();
 
@@ -254,7 +257,7 @@ class Directinvoiceinfo extends CI_Model{
      
      $obj=new stdClass();
      $obj->id=$respond->row(0)->idtbl_product;
-     $obj->code=$respond->row(0)->prodcutname.'-'.$respond->row(0)->productcode;
+     $obj->code=$respond->row(0)->materialname.'-'.$respond->row(0)->productcode;
      $obj->saleprice=$respond->row(0)->retailprice;
 
      echo json_encode($obj); 

@@ -203,8 +203,9 @@ class Invoiceviewreportinfo extends CI_Model{
 
 					header {
 						position: fixed;
-						top: -60; 
-						width: 100%;
+						top: -80px;
+						left: 50px;
+						right: 50px;
 						height: 80px;
 					}
 
@@ -227,17 +228,11 @@ class Invoiceviewreportinfo extends CI_Model{
 			<body>
 				<!-- Define header and footer blocks before your content -->
 				<header>
-					<table style="width:100%; border-collapse: collapse;">
+					<table style="width:100%;border-collapse: collapse;">
 						<tr>
-							<!-- Logo column: fixed width -->
-							<td style="text-align: left; width: 150px;">
-								<img src="'.base_url().'images/logo.png" style="width: 140px; height: 80px; margin-right: 10px;">
-							</td>
-							<!-- Text column: remaining width -->
-							<td style="text-align: left; font-size: 12px;">
-								<h3 style="color: #FF0000; font-size: 25px; font-weight: bold; margin: 0;">
-									Transfood Lanka (Pvt) Ltd.
-								</h3>
+							<td style="text-align: right;"><img src="'.base_url().'images/logo.png" style="width: 140px; height: 80px; margin-right: 20px;"></td>
+							<td style="font-size: 12px;">
+								<h3 style="color: #FF0000;font-size: 25px;font-weight: bold;margin: 0;">Transfood Lanka (Pvt) Ltd.</h3>
 								17/A, Vihara Mawatha, Katunayake, Sri Lanka<br>
 								Tel/Fax: +94 11-2254441 Email: info@tflanka.com<br>
 								www.transfoodlanka.com or www.tflanka.com
@@ -257,7 +252,7 @@ class Invoiceviewreportinfo extends CI_Model{
 						<table width="100%" style="margin-bottom: 20px;">
 							<tr>
 								<td width="50%" style="vertical-align: top;">
-									<table style="width: 100%; font-size: 12px;">
+									<table style="width: 100%; font-size: 14px;">
 										<tr>
 											<th style="text-align: left;vertical-align: top;">INVOICE DATE</th>
 											<td style="text-align: left;vertical-align: top;">:</td>
@@ -276,7 +271,7 @@ class Invoiceviewreportinfo extends CI_Model{
 									</table>
 								</td>
 								<td width="50%" style="vertical-align: top;">
-									<table style="width: 100%; font-size: 12px;">
+									<table style="width: 100%; font-size: 14px;">
 										<tr>
 											<th style="text-align: left;vertical-align: top;">YOUR REF</th>
 											<td style="text-align: left;vertical-align: top;">:</td>
@@ -314,30 +309,30 @@ class Invoiceviewreportinfo extends CI_Model{
 							</thead>
 							<tbody>'.$tblinvoice.'</tbody>
 							<tfoot>
-								<tr style="background-color: #d3d3d3;">
+								<tr>
 								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
 								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: left; border: thin 1px solid; padding: 8px; font-weight: bold;">TOTAL</td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
+								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;">TOTAL</td>
 								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
 								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
 								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;">'.number_format($total, 2).'</td>
+								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
+								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
+								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
+								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold; background-color: #d3d3d3;">'.number_format($total, 2).'</td>
 								</tr>
-								<tr style="background-color: #d3d3d3;">
-									<td colspan="9" style="text-align: left; border: thin 1px solid; padding: 8px; font-weight: bold;">FREIGHT</td>
+								<tr>
+									<td colspan="9" style="text-align: left; border: thin 1px solid; padding: 8px; font-weight: bold; background-color: #d3d3d3;">FREIGHT</td>
 									<td style="text-align: right; border: thin 1px solid; padding: 8px;">0.00</td>
 								</tr>
-								<tr style="background-color: #d3d3d3;">
+								<tr>
 									<td colspan="9" style="text-align: left; border: thin 1px solid; padding: 8px; font-weight: bold;">GRAND TOTAL</td>
 									<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;">'.number_format($nettotal, 2).'</td>
 								</tr>
 							</tfoot>
 						</table>
 						
-						<table width="60%" style="margin-top: 20px;">
+						<table width="100%" style="margin-top: 20px;">
 							<tr>
 								<td colspan="2"><h4 style="margin-top:5px;font-weight: normal;font-size: 10px;">REX - GSP NOTE:</h4></td>
 							</tr>

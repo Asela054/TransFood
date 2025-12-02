@@ -254,7 +254,7 @@ class Directinvoiceinfo extends CI_Model{
      
      $obj=new stdClass();
      $obj->id=$respond->row(0)->idtbl_product;
-     $obj->code=$respond->row(0)->prodcutname.'-'.$respond->row(0)->productcode;
+     $obj->code=$respond->row(0)->productname.'-'.$respond->row(0)->productcode;
      $obj->saleprice=$respond->row(0)->retailprice;
 
      echo json_encode($obj); 

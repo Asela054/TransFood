@@ -203,8 +203,9 @@ class Invoiceviewreportinfo extends CI_Model{
 
 					header {
 						position: fixed;
-						top: -60; 
-						width: 100%;
+						top: -80px;
+						left: 50px;
+						right: 50px;
 						height: 80px;
 					}
 
@@ -228,13 +229,13 @@ class Invoiceviewreportinfo extends CI_Model{
 				<!-- Define header and footer blocks before your content -->
 				<header>
 					<table style="width:100%; border-collapse: collapse;">
-						<tr>
+						<tr sty>
 							<!-- Logo column: fixed width -->
 							<td style="text-align: left; width: 150px;">
 								<img src="'.base_url().'images/logo.png" style="width: 140px; height: 80px; margin-right: 10px;">
 							</td>
 							<!-- Text column: remaining width -->
-							<td style="text-align: left; font-size: 12px;">
+							<td style="text-align: left; font-size: 12px; width: calc(100% - 150px);">
 								<h3 style="color: #FF0000; font-size: 25px; font-weight: bold; margin: 0;">
 									Transfood Lanka (Pvt) Ltd.
 								</h3>
@@ -257,7 +258,7 @@ class Invoiceviewreportinfo extends CI_Model{
 						<table width="100%" style="margin-bottom: 20px;">
 							<tr>
 								<td width="50%" style="vertical-align: top;">
-									<table style="width: 100%; font-size: 12px;">
+									<table style="width: 100%; font-size: 14px;">
 										<tr>
 											<th style="text-align: left;vertical-align: top;">INVOICE DATE</th>
 											<td style="text-align: left;vertical-align: top;">:</td>
@@ -276,7 +277,7 @@ class Invoiceviewreportinfo extends CI_Model{
 									</table>
 								</td>
 								<td width="50%" style="vertical-align: top;">
-									<table style="width: 100%; font-size: 12px;">
+									<table style="width: 100%; font-size: 14px;">
 										<tr>
 											<th style="text-align: left;vertical-align: top;">YOUR REF</th>
 											<td style="text-align: left;vertical-align: top;">:</td>
@@ -337,7 +338,7 @@ class Invoiceviewreportinfo extends CI_Model{
 							</tfoot>
 						</table>
 						
-						<table width="60%" style="margin-top: 20px;">
+						<table width="100%" style="margin-top: 20px;">
 							<tr>
 								<td colspan="2"><h4 style="margin-top:5px;font-weight: normal;font-size: 10px;">REX - GSP NOTE:</h4></td>
 							</tr>

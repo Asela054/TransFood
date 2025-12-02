@@ -337,7 +337,7 @@ class Invoiceviewreportinfo extends CI_Model{
 							</tfoot>
 						</table>
 						
-						<table width="60%" style="margin-top: 20px;">
+						<table width="70%" style="margin-top: 20px;">
 							<tr>
 								<td colspan="2"><h4 style="margin-top:5px;font-weight: normal;font-size: 10px;">REX - GSP NOTE:</h4></td>
 							</tr>

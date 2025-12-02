@@ -99,7 +99,7 @@ class Invoiceviewreportinfo extends CI_Model{
 
         $tblinvoice='';
 
-        $sql = "SELECT `tbl_invoice_detail`.`idtbl_invoice_detail`, `tbl_invoice_detail`.`qty`, `tbl_invoice_detail`.`saleprice`, `tbl_invoice_detail`.`total`,`tbl_product`.`productcode`, `tbl_product`.`prodcutname`, `tbl_product`.`weight`,`tbl_customer_porder_detail`.`unitprice`
+        $sql = "SELECT `tbl_invoice_detail`.`idtbl_invoice_detail`, `tbl_invoice_detail`.`qty`, `tbl_invoice_detail`.`saleprice`, `tbl_invoice_detail`.`total`,`tbl_product`.`productcode`, `tbl_product`.`desc`, `tbl_product`.`weight`,`tbl_customer_porder_detail`.`unitprice`
         FROM `tbl_invoice_detail`
         LEFT JOIN `tbl_invoice`  ON `tbl_invoice`.`idtbl_invoice` = `tbl_invoice_detail`.`tbl_invoice_idtbl_invoice`
          LEFT JOIN `tbl_customer_porder`  ON `tbl_customer_porder`.`idtbl_customer_porder` = `tbl_invoice`.`tbl_customer_porder_idtbl_customer_porder`
@@ -153,19 +153,14 @@ class Invoiceviewreportinfo extends CI_Model{
 		if ($rowCount % $pageLimit == 0 && $rowCount > 0) {
 			$tblinvoice .= '</tbody></table><div style="page-break-after: always;"></div><table width="100%" style="border-collapse: collapse; margin: 0 auto;">
 				<thead>
-					
-			<tr>
-				<th style="text-align: center; width:8%; border: thin 1px solid;" scope="col">SN</th>
-				<th style="text-align: center; width:42%; border: thin 1px solid;" scope="col">Item Code</th>
-				<th style="text-align: center; width:42%; border: thin 1px solid;" scope="col">Item</th>
-				<th style="text-align: center; width:10%; border: thin 1px solid;" scope="col">Unit</th>
-				<th style="text-align: center; width:10%; border: thin 1px solid;" scope="col">No. of Pks Per carton</th>
-				<th style="text-align: center; width:15%; border: thin 1px solid;" scope="col">No of MC</th>
-				<th style="text-align: center; width:10%; border: thin 1px solid;" scope="col">Qty</th>
-				<th style="text-align: center; width:15%; border: thin 1px solid;" scope="col">Unit Price $ FOB</th>
-				<th style="text-align: center; width:15%; border: thin 1px solid;" scope="col">Price Per MCT FOB $</th>
-				<th style="text-align: center; width:15%; border: thin 1px solid;" scope="col">TOTAL VALUE FOB $</th>
-			</tr>
+					<tr>
+						<th style="text-align: center; border: thin 1px solid; padding: 8px;">SN</th>
+						<th style="text-align: center; border: thin 1px solid; padding: 8px;">Item</th>
+						<th style="text-align: center; border: thin 1px solid; padding: 8px;">Unit</th>
+						<th style="text-align: center; border: thin 1px solid; padding: 8px;">Unit Price</th>
+						<th style="text-align: center; border: thin 1px solid; padding: 8px;">Qty</th>
+						<th style="text-align: center; border: thin 1px solid; padding: 8px;">Total</th>
+					</tr>
 				</thead>
 				<tbody>';
 		}
@@ -173,14 +168,14 @@ class Invoiceviewreportinfo extends CI_Model{
 		$tblinvoice .= '
 			<tr>			
 				<td style="text-align: center; border: thin 1px solid;padding:5px;">'.$i++.'</td>
-				<td style="text-align: center; border: thin 1px solid;padding:5px;">'.$rowlist->productcode.'</td>
-				<td style="text-align: center; border: thin 1px solid;padding:5px;">'.$rowlist->prodcutname.'</td>
+				<td style="border: thin 1px solid;padding:5px;">'.$rowlist->desc.'</td>
+				<td style="text-align: center; border: thin 1px solid;padding:5px;">'.$rowlist->weight.'</td>
 				<td style="text-align: center; border: thin 1px solid;padding:5px;">'.number_format($rowlist->saleprice, 2).'</td>
-				<td style="text-align: center; border: thin 1px solid;padding:5px;"></td>
-				<td style="text-align: right; border: thin 1px solid;padding:5px;"></td>
-				<td style="text-align: right; border: thin 1px solid;padding:5px;">'.$rowlist->qty.'</td>
-				<td style="text-align: right; border: thin 1px solid;padding:5px;"></td>
-				<td style="text-align: right; border: thin 1px solid;padding:5px;"></td>
+				<td style="text-align: center; border: thin 1px solid;padding:5px;">'.$rowlist->qty.'</td>
+				<td style="text-align: right; border: thin 1px solid;padding:5px;">'.number_format($rowlist->total, 2).'</td>
+				<td style="text-align: right; border: thin 1px solid;padding:5px;">'.number_format($rowlist->total, 2).'</td>
+				<td style="text-align: right; border: thin 1px solid;padding:5px;">'.number_format($rowlist->total, 2).'</td>
+				<td style="text-align: right; border: thin 1px solid;padding:5px;">'.number_format($rowlist->total, 2).'</td>
 				<td style="text-align: right; border: thin 1px solid;padding:5px;">'.number_format($rowlist->total, 2).'</td>
 			</tr>';
 		
@@ -203,8 +198,9 @@ class Invoiceviewreportinfo extends CI_Model{
 
 					header {
 						position: fixed;
-						top: -60; 
-						width: 100%;
+						top: -80px;
+						left: 50px;
+						right: 50px;
 						height: 80px;
 					}
 
@@ -227,17 +223,11 @@ class Invoiceviewreportinfo extends CI_Model{
 			<body>
 				<!-- Define header and footer blocks before your content -->
 				<header>
-					<table style="width:100%; border-collapse: collapse;">
+					<table style="width:100%;border-collapse: collapse;">
 						<tr>
-							<!-- Logo column: fixed width -->
-							<td style="text-align: left; width: 150px;">
-								<img src="'.base_url().'images/logo.png" style="width: 140px; height: 80px; margin-right: 10px;">
-							</td>
-							<!-- Text column: remaining width -->
-							<td style="text-align: left; font-size: 12px;">
-								<h3 style="color: #FF0000; font-size: 25px; font-weight: bold; margin: 0;">
-									Transfood Lanka (Pvt) Ltd.
-								</h3>
+							<td style="text-align: right;"><img src="'.base_url().'images/logo.png" style="width: 140px; height: 80px; margin-right: 20px;"></td>
+							<td style="font-size: 12px;">
+								<h3 style="color: #FF0000;font-size: 25px;font-weight: bold;margin: 0;">Transfood Lanka (Pvt) Ltd.</h3>
 								17/A, Vihara Mawatha, Katunayake, Sri Lanka<br>
 								Tel/Fax: +94 11-2254441 Email: info@tflanka.com<br>
 								www.transfoodlanka.com or www.tflanka.com
@@ -257,7 +247,7 @@ class Invoiceviewreportinfo extends CI_Model{
 						<table width="100%" style="margin-bottom: 20px;">
 							<tr>
 								<td width="50%" style="vertical-align: top;">
-									<table style="width: 100%; font-size: 12px;">
+									<table style="width: 100%; font-size: 14px;">
 										<tr>
 											<th style="text-align: left;vertical-align: top;">INVOICE DATE</th>
 											<td style="text-align: left;vertical-align: top;">:</td>
@@ -276,7 +266,7 @@ class Invoiceviewreportinfo extends CI_Model{
 									</table>
 								</td>
 								<td width="50%" style="vertical-align: top;">
-									<table style="width: 100%; font-size: 12px;">
+									<table style="width: 100%; font-size: 14px;">
 										<tr>
 											<th style="text-align: left;vertical-align: top;">YOUR REF</th>
 											<td style="text-align: left;vertical-align: top;">:</td>
@@ -298,46 +288,34 @@ class Invoiceviewreportinfo extends CI_Model{
 						</table>
 						
 						<table class="center-table" style="border-collapse: collapse; margin: 20px auto; width: 100%; font-size: 12px;">
-							<thead>						
+							<thead>
 								<tr>
-									<th style="text-align: center; width:8%; border: thin 1px solid;" scope="col">SN</th>
-									<th style="text-align: center; width:15%; border: thin 1px solid;" scope="col">Item Code</th>
-									<th style="text-align: center; width:35%; border: thin 1px solid;" scope="col">Item</th>
-									<th style="text-align: center; width:10%; border: thin 1px solid;" scope="col">Unit</th>
-									<th style="text-align: center; width:10%; border: thin 1px solid;" scope="col">No. of Pks Per carton</th>
-									<th style="text-align: center; width:15%; border: thin 1px solid;" scope="col">No of MC</th>
-									<th style="text-align: center; width:10%; border: thin 1px solid;" scope="col">Qty</th>
-									<th style="text-align: center; width:15%; border: thin 1px solid;" scope="col">Unit Price $ FOB</th>
-									<th style="text-align: center; width:15%; border: thin 1px solid;" scope="col">Price Per MCT FOB $</th>
-									<th style="text-align: center; width:15%; border: thin 1px solid;" scope="col">TOTAL VALUE FOB $</th>
+									<th style="text-align: center; border: thin 1px solid; padding: 8px; width: 5%;">SN</th>
+									<th style="text-align: center; border: thin 1px solid; padding: 8px; width: 40%;">Item</th>
+									<th style="text-align: center; border: thin 1px solid; padding: 8px; width: 10%;">Unit</th>
+									<th style="text-align: center; border: thin 1px solid; padding: 8px; width: 15%;">Unit Price</th>
+									<th style="text-align: center; border: thin 1px solid; padding: 8px; width: 10%;">Qty</th>
+									<th style="text-align: center; border: thin 1px solid; padding: 8px; width: 20%;">Total</th>
 								</tr>
 							</thead>
 							<tbody>'.$tblinvoice.'</tbody>
 							<tfoot>
-								<tr style="background-color: #d3d3d3;">
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: left; border: thin 1px solid; padding: 8px; font-weight: bold;">TOTAL</td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;"></td>
-								<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;">'.number_format($total, 2).'</td>
+								<tr>
+									<td colspan="5" style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;">TOTAL</td>
+									<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;">'.number_format($total, 2).'</td>
 								</tr>
-								<tr style="background-color: #d3d3d3;">
-									<td colspan="9" style="text-align: left; border: thin 1px solid; padding: 8px; font-weight: bold;">FREIGHT</td>
+								<tr>
+									<td colspan="5" style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;">FREIGHT</td>
 									<td style="text-align: right; border: thin 1px solid; padding: 8px;">0.00</td>
 								</tr>
-								<tr style="background-color: #d3d3d3;">
-									<td colspan="9" style="text-align: left; border: thin 1px solid; padding: 8px; font-weight: bold;">GRAND TOTAL</td>
+								<tr>
+									<td colspan="5" style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;">GRAND TOTAL</td>
 									<td style="text-align: right; border: thin 1px solid; padding: 8px; font-weight: bold;">'.number_format($nettotal, 2).'</td>
 								</tr>
 							</tfoot>
 						</table>
 						
-						<table width="60%" style="margin-top: 20px;">
+						<table width="100%" style="margin-top: 20px;">
 							<tr>
 								<td colspan="2"><h4 style="margin-top:5px;font-weight: normal;font-size: 10px;">REX - GSP NOTE:</h4></td>
 							</tr>
