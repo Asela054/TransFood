@@ -26,6 +26,9 @@
 <script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.print.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Include jsPDF and jsPDF autoTable from CDN -->
+<script src="<?php echo base_url() ?>assets/js/jspdf.umd.js"></script>
+<script src="<?php echo base_url() ?>assets/js/jspdf.plugin.autotable.min.js"></script>
 <script>   
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
