@@ -45,4 +45,12 @@ class Miscellaneous extends CI_Controller {
 		$this->load->model('Miscellaneousinfo');
         $result=$this->Miscellaneousinfo->Getmateriallist();
 	}
+    public function Miscellaneousview(){
+		$this->load->model('Miscellaneousinfo');
+        $result=$this->Miscellaneousinfo->Miscellaneousview();
+	}
+    public function Approvestatus(){
+		$this->load->model('Miscellaneousinfo');
+        $result=$this->Miscellaneousinfo->Approvestatus();
+	}
 }

@@ -65,11 +65,6 @@ include "include/topnavbar.php";
                                         				<select class="form-control form-control-sm" style="width: 100%;" name="material"
                                         					id="material" required>
                                         					<option value="">Select</option>
-                                        					<?php foreach($material->result() as $rowmaterial){ ?>
-                                        					<option
-                                        						value="<?php echo $rowmaterial->idtbl_material_info ?>">
-                                        						<?php echo $rowmaterial->materialinfocode?></option>
-                                        					<?php } ?>
                                         				</select>
                                         			</div>
                                         			<div class="form-group mb-1">
@@ -166,11 +161,6 @@ include "include/topnavbar.php";
                                         				<select class="form-control form-control-sm" style="width: 100%;" name="product2"
                                         					id="product2" required>
                                         					<option value="">Select</option>
-                                        					<?php foreach($product->result() as $rowproduct){ ?>
-                                        					<option
-                                        						value="<?php echo $rowproduct->idtbl_product ?>">
-                                        						<?php echo $rowproduct->productcode?></option>
-                                        					<?php } ?>
                                         				</select>
                                         			</div>
                                         			<div class="form-group mb-1">
@@ -256,8 +246,61 @@ include "include/topnavbar.php";
                     </div>
                 </div>
             </div>
+			<div class="container-fluid mt-2 p-0 p-2">
+				<div class="card">
+					<div class="card-body p-0 p-2">
+						<div class="row">
+							<div class="col-12">
+								<div class="scrollbar pb-3" id="style-2">
+									<table class="table table-bordered table-striped table-sm nowrap" id="dataTable">
+										<thead>
+											<tr>
+												<th>#</th>
+												<th>Company</th>
+												<th>Branch</th>
+												<th>Ammend Date</th>
+												<th>Ammend Type</th>
+												<th>Status</th>
+												<th class="text-right">Actions</th>
+											</tr>
+										</thead>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
         </main>
         <?php include "include/footerbar.php"; ?>
+    </div>
+</div>
+<div class="modal fade" id="viewmodal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">View Ammendment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="GRNView">
+
+                <div id="viewhtml"></div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="col-12 text-right">
+                    <hr>
+                	<button id="btnapprovereject" class="btn btn-primary btn-sm px-3 mb-2"><i class="fas fa-check mr-2"></i>Approve or Reject</button>
+                    <input type="hidden" name="miscellaneousid" id="miscellaneousid">
+                </div>
+                <div class="col-12 text-center">
+                    <div id="alertdiv"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <?php include "include/footerscripts.php"; ?>
@@ -269,8 +312,7 @@ include "include/topnavbar.php";
         var deletecheck='<?php echo $deletecheck; ?>';
 
 		$("#material").select2({
-			// dropdownParent: $('#productioncreatemodal'),
-			// placeholder: 'Select supplier',
+
 			ajax: {
 				url: "<?php echo base_url() ?>Miscellaneous/Getmateriallist",
 				type: "post",
@@ -291,8 +333,7 @@ include "include/topnavbar.php";
 		});
 
 		$("#product2").select2({
-			// dropdownParent: $('#productioncreatemodal'),
-			// placeholder: 'Select supplier',
+
 			ajax: {
 				url: "<?php echo base_url() ?>Miscellaneous/Getproductlist",
 				type: "post",
@@ -310,6 +351,156 @@ include "include/topnavbar.php";
 				},
 				cache: true
 			}
+		});
+
+
+		$('#dataTable').DataTable({
+			"destroy": true,
+			"processing": true,
+			"serverSide": true,
+			dom: "<'row'<'col-sm-5'B><'col-sm-2'l><'col-sm-5'f>>" + "<'row'<'col-sm-12'tr>>" +
+				"<'row'<'col-sm-5'i><'col-sm-7'p>>",
+			responsive: true,
+			lengthMenu: [
+				[10, 25, 50, -1],
+				[10, 25, 50, 'All'],
+			],
+			"buttons": [{
+					extend: 'csv',
+					className: 'btn btn-success btn-sm',
+					title: 'Good Receive Note Information',
+					text: '<i class="fas fa-file-csv mr-2"></i> CSV',
+				},
+				{
+					extend: 'pdf',
+					className: 'btn btn-danger btn-sm',
+					title: 'Good Receive Note Information',
+					text: '<i class="fas fa-file-pdf mr-2"></i> PDF',
+				},
+				{
+					extend: 'print',
+					title: 'Good Receive Note Information',
+					className: 'btn btn-primary btn-sm',
+					text: '<i class="fas fa-print mr-2"></i> Print',
+					customize: function (win) {
+						$(win.document.body).find('table')
+							.addClass('compact')
+							.css('font-size', 'inherit');
+					},
+				},
+				// 'copy', 'csv', 'excel', 'pdf', 'print'
+			],
+			ajax: {
+				url: "<?php echo base_url() ?>scripts/miscellaneouslist.php",
+				type: "POST", // you can use GET
+			},
+			"order": [
+				[0, "desc"]
+			],
+			"columns": [
+				{
+                    "data": null,
+                    "render": function(data, type, full, meta) {
+                        return meta.row + 1;
+                    }
+                },
+				{
+					"data": "company"
+				},
+				{
+					"data": "branch"
+				},
+				{
+					"data": "date"
+				},
+				{
+					"data": "type",
+					"render": function (data, type, row) {
+						if (data == 1) {
+							return '<span style="color: green; font-weight:bold;">Material</span>';
+						} else if (data == 2) {
+							return '<span style="color: blue; font-weight:bold;">Product</span>';
+						} else {
+							return '<span style="color: gray;">' + data + '</span>';
+						}
+					}
+				},
+                {
+					"targets": -1,
+					"className": '',
+					"data": "approvestatus_display",
+					"render": function(data, type, row) {
+						return data;
+					}
+				}, 
+				{
+					"targets": -1,
+					"className": 'text-right',
+					"data": null,
+					"render": function (data, type, full) {
+						var button = '';
+                        if(statuscheck==1){
+						button += '<button data-toggle="tooltip" data-placement="bottom" title="View Ammendment" class="btn btn-dark btn-sm btnview mr-1" id="' + full[
+							'idtbl_miscellaneous'] + '" aproval_id="' + full[
+							'approvestatus'] + '"><i class="fas fa-eye"></i></button>';
+						}
+						return button;
+					}
+				}
+			],
+			drawCallback: function (settings) {
+				$('[data-toggle="tooltip"]').tooltip();
+			}
+		});
+
+		$('#dataTable tbody').on('click', '.btnview', function () {
+			var id = $(this).attr('id');
+			$('#miscellaneousid').val(id);
+
+			var approvestatus = $(this).attr('aproval_id');
+
+			$.ajax({
+				type: "POST",
+				data: {
+					recordID: id
+				},
+				url: '<?php echo base_url() ?>Miscellaneous/Miscellaneousview',
+				success: function (result) { //alert(result);
+					$('#viewmodal').modal('show');
+					$('#viewhtml').html(result.html);
+					if (approvestatus > 0) {
+						$('#btnapprovereject').addClass('d-none').prop('disabled', true);
+						if (approvestatus == 1) {
+							$('#alertdiv').html('<div class="alert alert-success" role="alert"><i class="fas fa-check-circle mr-2"></i> Ammendment approved</div>');
+						} else if (approvestatus == 2) {
+							$('#alertdiv').html('<div class="alert alert-danger" role="alert"><i class="fas fa-times-circle mr-2"></i> Ammendment rejected</div>');
+						}
+					}
+				}
+			});
+
+			$('#viewmodal').on('hidden.bs.modal', function (event) {
+				$('#alertdiv').html('');
+				$('#btnapprovereject').removeClass('d-none').prop('disabled', false);
+			});
+		});
+
+		$('#btnapprovereject').click(function () {
+			Swal.fire({
+				title: "Do you want to approve this Ammendmment?",
+				showDenyButton: true,
+				showCancelButton: true,
+				confirmButtonText: "Approve",
+				denyButtonText: `Reject`
+			}).then((result) => {
+				if (result.isConfirmed) {
+					var confirmnot = 1;
+					approvejob(confirmnot);
+				} else if (result.isDenied) {
+					var confirmnot = 2;
+					approvejob(confirmnot);
+				}
+			});
 		});
 
         $("#formsubmit").click(function () {
@@ -368,7 +559,7 @@ include "include/topnavbar.php";
                 $('#product').focus();
             }
         });
-        $('#btncreateorder').click(function () { //alert('IN');
+        $('#btncreateorder').click(function () {
             $('#btncreateorder').prop('disabled', true).html('<i class="fas fa-circle-notch fa-spin mr-2"></i> save')
             var tbody = $("#tableorder tbody");
 
@@ -401,10 +592,6 @@ include "include/topnavbar.php";
                     success: function (result) { //alert(result);
                         // console.log(result);
                         var obj = JSON.parse(result);
-                        // if(obj.status==1){
-                        //     setTimeout(window.location.reload(), 3000);
-                        // }
-                        // action(obj.action);
 
 						if(obj.status==1){
 							actionreload(obj.action);
@@ -486,7 +673,6 @@ include "include/topnavbar.php";
                     });
                     jsonObj.push(item);
                 });
-                // console.log(jsonObj);
 
                 var type = $('#type2').val();
                 var date = $('#date2').val();
@@ -509,10 +695,6 @@ include "include/topnavbar.php";
                     success: function (result) { //alert(result);
                         // console.log(result);
                         var obj = JSON.parse(result);
-                        // if(obj.status==1){
-                        //     setTimeout(window.location.reload(), 3000);
-                        // }
-                        // action(obj.action);
 
 						if(obj.status==1){
 							actionreload(obj.action);
@@ -570,6 +752,52 @@ include "include/topnavbar.php";
         	});
         });
     });
+
+	function approvejob(confirmnot) {
+		Swal.fire({
+			title: '',
+			html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
+			allowOutsideClick: false,
+			showConfirmButton: false,
+			backdrop: `
+            rgba(255, 255, 255, 0.5) 
+        `,
+			customClass: {
+				popup: 'fullscreen-swal'
+			},
+			didOpen: () => {
+				document.body.style.overflow = 'hidden';
+
+				$.ajax({
+					type: "POST",
+					data: {
+						miscellaneousid: $('#miscellaneousid').val(),
+						confirmnot: confirmnot
+					},
+					url: '<?php echo base_url() ?>Miscellaneous/Approvestatus',
+					success: function (result) {
+							Swal.close();
+							document.body.style.overflow = 'auto';
+							var obj = JSON.parse(result);
+							if (obj.status == 1) {
+								actionreload(obj.action);
+							} else {
+								action(obj.action);
+							}
+						},
+						error: function (error) {
+							Swal.close();
+							document.body.style.overflow = 'auto';
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: 'Something went wrong. Please try again later.'
+							});
+						}
+				});
+			}
+		});
+	}
 
     function addCommas(nStr) {
         nStr += '';
