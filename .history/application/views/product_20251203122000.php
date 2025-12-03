@@ -377,6 +377,8 @@ include "include/topnavbar.php";
 					"render": function (data, type, full) {
 						var button = '';
 						button+='<button class="btn btn-warning btn-sm btnStockAdd mr-1" data-toggle="tooltip" data-placement="bottom" title="Stock Add" id="'+full['idtbl_product']+'"><i class="fas fa-plus"></i></button>';
+												button+='<button class="btn btn-warning btn-sm btnStockAdd mr-1" data-toggle="tooltip" data-placement="bottom" title="Stock Add" id="'+full['idtbl_product']+'"><i class="fas fa-plus"></i></button>';
+
                         button += '<a href="<?php echo base_url() ?>Product/Barcode/'+full['productcode']+'" class="btn btn-dark btn-sm mr-1" target="_blank"><i class="fas fa-barcode"></i></a>';
 						if (editcheck == 1) {
 							button += '<button class="btn btn-primary btn-sm btnEdit mr-1" id="' + full['idtbl_product'] + '"><i class="fas fa-pen"></i></button>';

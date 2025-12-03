@@ -89,7 +89,7 @@ include "include/topnavbar.php";
 						<div class="row">
 							<div class="col-4">
 								<form action="<?php echo base_url() ?>Product/Productinsertupdate" method="post"
-									autocomplete="off" enctype="multipart/form-data">
+									autocomplete="off">
 									<div class="form-group mb-1">
 										<label class="small font-weight-bold">Product Name*</label>
 										<input type="text" class="form-control form-control-sm" name="productname" id="productname">
@@ -99,9 +99,9 @@ include "include/topnavbar.php";
 										<input type="text" class="form-control form-control-sm" name="productcode" id="productcode">
 									</div>
 									<div class="form-group mb-1">
-										<label class="small font-weight-bold">Product Image*</label>
-										<input type="file" class="form-control form-control-sm" name="productimage" id="productimage" accept="image/*">
-									</div>
+    <label class="small font-weight-bold">Product Image*</label>
+    <input type="file" class="form-control form-control-sm" name="productimage" id="productimage" accept="image/*">
+</div>
 									<div class="form-group mb-1">
 										<label class="small font-weight-bold">Description</label>
 										<textarea type="text" class="form-control form-control-sm" name="desc" id="desc"></textarea>

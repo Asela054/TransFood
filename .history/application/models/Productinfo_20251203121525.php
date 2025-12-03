@@ -21,6 +21,7 @@ class Productinfo extends CI_Model{
         $updatedatetime=date('Y-m-d H:i:s');
 
         $imagePath = '';
+
         if (!empty($_FILES['productimage']['name'])) {
 
             $config['upload_path']   = FCPATH . 'images/ProductImg/';
@@ -33,8 +34,9 @@ class Productinfo extends CI_Model{
 
             if ($this->upload->do_upload('productimage')) {
                 $uploadData = $this->upload->data();
-                $imagePath = 'images/ProductImg/' . $uploadData['file_name'];
+                $imagePath = 'images/ProductImg/' . $uploadData['file_name']; // ✅ DB Path
             } else {
+                // ✅ SHOW UPLOAD ERROR (THIS WILL TELL US EXACT ISSUE)
                 echo $this->upload->display_errors();
                 exit;
             }

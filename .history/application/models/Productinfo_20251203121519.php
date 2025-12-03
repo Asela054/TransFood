@@ -21,20 +21,22 @@ class Productinfo extends CI_Model{
         $updatedatetime=date('Y-m-d H:i:s');
 
         $imagePath = '';
+
         if (!empty($_FILES['productimage']['name'])) {
 
             $config['upload_path']   = FCPATH . 'images/ProductImg/';
             $config['allowed_types'] = 'jpg|jpeg|png|webp';
             $config['max_size']      = 2048;
-            $config['encrypt_name'] = TRUE;
+            $config['encrypt_name'] = TRUE; // ✅ safer file name
 
             $this->load->library('upload');
-            $this->upload->initialize($config);
+            $this->upload->initialize($config); // ✅ VERY IMPORTANT
 
             if ($this->upload->do_upload('productimage')) {
                 $uploadData = $this->upload->data();
-                $imagePath = 'images/ProductImg/' . $uploadData['file_name'];
+                $imagePath = 'images/ProductImg/' . $uploadData['file_name']; // ✅ DB Path
             } else {
+                // ✅ SHOW UPLOAD ERROR (THIS WILL TELL US EXACT ISSUE)
                 echo $this->upload->display_errors();
                 exit;
             }

@@ -89,7 +89,7 @@ include "include/topnavbar.php";
 						<div class="row">
 							<div class="col-4">
 								<form action="<?php echo base_url() ?>Product/Productinsertupdate" method="post"
-									autocomplete="off" enctype="multipart/form-data">
+									autocomplete="off">
 									<div class="form-group mb-1">
 										<label class="small font-weight-bold">Product Name*</label>
 										<input type="text" class="form-control form-control-sm" name="productname" id="productname">

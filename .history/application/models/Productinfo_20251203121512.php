@@ -20,25 +20,29 @@ class Productinfo extends CI_Model{
 
         $updatedatetime=date('Y-m-d H:i:s');
 
-        $imagePath = '';
-        if (!empty($_FILES['productimage']['name'])) {
+        // ✅ IMAGE UPLOAD
+$imagePath = '';
 
-            $config['upload_path']   = FCPATH . 'images/ProductImg/';
-            $config['allowed_types'] = 'jpg|jpeg|png|webp';
-            $config['max_size']      = 2048;
-            $config['encrypt_name'] = TRUE;
+if (!empty($_FILES['productimage']['name'])) {
 
-            $this->load->library('upload');
-            $this->upload->initialize($config);
+    $config['upload_path']   = FCPATH . 'images/ProductImg/'; // ✅ Correct full path
+    $config['allowed_types'] = 'jpg|jpeg|png|webp';
+    $config['max_size']      = 2048;
+    $config['encrypt_name'] = TRUE; // ✅ safer file name
 
-            if ($this->upload->do_upload('productimage')) {
-                $uploadData = $this->upload->data();
-                $imagePath = 'images/ProductImg/' . $uploadData['file_name'];
-            } else {
-                echo $this->upload->display_errors();
-                exit;
-            }
-        }
+    $this->load->library('upload');
+    $this->upload->initialize($config); // ✅ VERY IMPORTANT
+
+    if ($this->upload->do_upload('productimage')) {
+        $uploadData = $this->upload->data();
+        $imagePath = 'images/ProductImg/' . $uploadData['file_name']; // ✅ DB Path
+    } else {
+        // ✅ SHOW UPLOAD ERROR (THIS WILL TELL US EXACT ISSUE)
+        echo $this->upload->display_errors();
+        exit;
+    }
+}
+
 
         if($recordOption==1){
             $data = array(

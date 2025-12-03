@@ -21,30 +21,25 @@ class Productinfo extends CI_Model{
         $updatedatetime=date('Y-m-d H:i:s');
 
         $imagePath = '';
-        if (!empty($_FILES['productimage']['name'])) {
+    if (!empty($_FILES['productimage']['name'])) {
 
-            $config['upload_path']   = FCPATH . 'images/ProductImg/';
-            $config['allowed_types'] = 'jpg|jpeg|png|webp';
-            $config['max_size']      = 2048;
-            $config['encrypt_name'] = TRUE;
+        $config['upload_path']   = 'images/ProductImg/';
+        $config['allowed_types'] = 'jpg|jpeg|png|webp';
+        $config['max_size']      = 2048;
+        $config['file_name']    = time() . '_' . $_FILES['productimage']['name'];
 
-            $this->load->library('upload');
-            $this->upload->initialize($config);
+        $this->load->library('upload', $config);
 
-            if ($this->upload->do_upload('productimage')) {
-                $uploadData = $this->upload->data();
-                $imagePath = 'images/ProductImg/' . $uploadData['file_name'];
-            } else {
-                echo $this->upload->display_errors();
-                exit;
-            }
+        if ($this->upload->do_upload('productimage')) {
+            $uploadData = $this->upload->data();
+            $imagePath = 'images/ProductImg/' . $uploadData['file_name'];
         }
+    }
 
         if($recordOption==1){
             $data = array(
                 'prodcutname'=> $productname, 
                 'productcode'=> $productcode, 
-                'productimg'=> $imagePath,
                 'desc'=> $desc, 
                 'weight'=> $weight, 
                 'retailprice'=> $retailprice, 
@@ -107,11 +102,6 @@ class Productinfo extends CI_Model{
                 'updatedatetime'=> $updatedatetime, 
                 'updateuser'=> $userID,
             );
-
-            if($imagePath != ''){
-                $data['productimg'] = $imagePath;
-            }
-
 
             $this->db->where('idtbl_product', $recordID);
             $this->db->update('tbl_product', $data);
