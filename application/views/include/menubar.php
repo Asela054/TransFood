@@ -574,16 +574,18 @@ function checkprivilege($arraymenu, $menuID, $type){
                     <?php } ?>
                 </nav>
             </div>
-            <?php } if(menucheck($menuprivilegearray, 26)==1 | menucheck($menuprivilegearray, 43)==1){ ?>
+            <?php } if(menucheck($menuprivilegearray, 26)==1 | menucheck($menuprivilegearray, 43)==1 | menucheck($menuprivilegearray, 76)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseSalesinfo" aria-expanded="false" aria-controls="collapseSalesinfo">
                 <div class="nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
                 Sales Information
                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse <?php if($controllermenu=="Customerporder" | $controllermenu=="Salesordercost"){echo 'show';} ?>" id="collapseSalesinfo" data-parent="#accordionSidenav">
+            <div class="collapse <?php if($controllermenu=="Customerporder" | $controllermenu=="Salesordercost" | $controllermenu=="Salesordercostcount"){echo 'show';} ?>" id="collapseSalesinfo" data-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                     <?php if(menucheck($menuprivilegearray, 26)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Customerporder'; ?>">Sales Order</a>
+                    <?php } if(menucheck($menuprivilegearray, 76)==1){ ?>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Salesordercostcount'; ?>">Sales Order Cost Count</a>
                     <!-- <?php //} if(menucheck($menuprivilegearray, 43)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Salesordercost'; ?>">Sales Order Cost List</a> -->
                     <?php } ?>

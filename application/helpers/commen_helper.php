@@ -15,7 +15,6 @@ function CompanyBranchList($companyid){
     $CI->db->from('tbl_company_branch');
     echo json_encode($CI->db->get()->result());
 }
-
 function SearchSupplierList($searchTerm){
     $companyid=$_SESSION['company_id'];
     $branchid=$_SESSION['branch_id'];
@@ -51,6 +50,44 @@ function SearchSupplierList($searchTerm){
     
     foreach ($respond->result() as $row) {
         $data[]=array("id"=>$row->idtbl_supplier, "text"=>$row->suppliername);
+    }   
+    echo json_encode($data);
+}
+function SearchCustomerList($searchTerm){
+    $companyid=$_SESSION['company_id'];
+    $branchid=$_SESSION['branch_id'];
+
+    if(!isset($searchTerm)){
+        $CI = get_instance();
+        $CI->db->where('status', 1);
+        $CI->db->select('idtbl_customer, name');
+        $CI->db->from('tbl_customer');
+        $CI->db->limit(5);
+        $respond=$CI->db->get();
+    }
+    else{            
+        if(!empty($searchTerm)){
+            $CI = get_instance();
+            $CI->db->where('status', 1);
+            $CI->db->select('idtbl_customer, name');
+            $CI->db->from('tbl_customer');
+            $CI->db->like('name', $searchTerm, 'both'); 
+            $respond=$CI->db->get();
+        }
+        else{
+            $CI = get_instance();
+            $CI->db->where('status', 1);
+            $CI->db->select('idtbl_customer, name');
+            $CI->db->from('tbl_customer');
+            $CI->db->limit(5);
+            $respond=$CI->db->get();             
+        }
+    }
+    
+    $data=array();
+    
+    foreach ($respond->result() as $row) {
+        $data[]=array("id"=>$row->idtbl_customer, "text"=>$row->name);
     }   
     echo json_encode($data);
 }
