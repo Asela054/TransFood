@@ -270,18 +270,19 @@ include "include/topnavbar.php";
 
             for (var i = 0, row; row = table.rows[i]; i++) {
                 var rowData = [];
-                for (var j = 0, col; col = row.cells[j]; j++) {
+                for (var j = 0, col; col = row.cells[j]; j++) {                    
                     if(j<10){
-                        rowData.push(col.innerText);
-                        if(col.innerText=='Total Cost'){
-                            rowData.push('');
-                            rowData.push('');
-                            rowData.push('');
-                            rowData.push('');
-                            rowData.push('');
-                            rowData.push('');
-                            rowData.push('');
-                            rowData.push('');
+                        // rowData.push(col.innerText);
+                        if(row.cells.length==2){
+                            if(j==0){
+                                rowData.push({content: col.innerText, colSpan: 9, styles: {halign: 'left', fontStyle: 'bold'}});
+                            }
+                            else if(j==1){
+                                rowData.push({content: col.innerText, styles: {halign: 'right', fontStyle: 'bold'}});
+                            }
+                        }
+                        else{
+                            rowData.push(col.innerText);
                         }
                     }
                 }

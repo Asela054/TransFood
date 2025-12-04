@@ -294,6 +294,23 @@ include "include/topnavbar.php";
 		</div>
 	</div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="viewFinishGood" data-backdrop="static" data-keyboard="false" tabindex="-1"
+	aria-labelledby="viewFinishGoodLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="viewFinishGoodLabel">&nbsp;</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+            	<div id="viewinfo"></div>
+			</div>
+		</div>
+	</div>
+</div>
 <?php include "include/footerscripts.php"; ?>
 <script>
 	$(document).ready(function () {
@@ -376,6 +393,7 @@ include "include/topnavbar.php";
 					"data": null,
 					"render": function (data, type, full) {
 						var button = '';
+						button+='<button class="btn btn-dark btn-sm btnViewFinishGood mr-1" data-toggle="tooltip" data-placement="bottom" title="Stock Add" id="'+full['idtbl_product']+'"><i class="fas fa-file"></i></button>';
 						button+='<button class="btn btn-warning btn-sm btnStockAdd mr-1" data-toggle="tooltip" data-placement="bottom" title="Stock Add" id="'+full['idtbl_product']+'"><i class="fas fa-plus"></i></button>';
                         button += '<a href="<?php echo base_url() ?>Product/Barcode/'+full['productcode']+'" class="btn btn-dark btn-sm mr-1" target="_blank"><i class="fas fa-barcode"></i></a>';
 						if (editcheck == 1) {
@@ -431,6 +449,52 @@ include "include/topnavbar.php";
 			var id = $(this).attr('id');
 			$('#hidestockproductid').val(id);
 			$('#stockmodal').modal('show');
+		});
+		$('#productdataTable tbody').on('click', '.btnViewFinishGood', function () {
+			var id = $(this).attr('id');
+			
+			Swal.fire({
+				title: '',
+				html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
+				allowOutsideClick: false,
+				showConfirmButton: false, // Hide the OK button
+				backdrop: `
+					rgba(255, 255, 255, 0.5) 
+				`,
+				customClass: {
+					popup: 'fullscreen-swal'
+				},
+				didOpen: () => {
+					document.body.style.overflow = 'hidden';
+
+					$.ajax({
+						type: "POST",
+						data: {
+							product_id: id
+						},
+						url: 'Product/getItemCostReport',
+						success: function (result) { //alert(result);
+							// console.log(result);
+							Swal.close();
+							$('#viewinfo').html(result);	
+							$('#viewFinishGood').modal('show');
+						},
+						error: function(error) {
+							// Close the SweetAlert on error
+							Swal.close();
+							
+							// Show an error alert
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: 'Something went wrong. Please try again later.'
+							});
+						}
+					});
+
+					document.body.style.overflow = 'visible';
+				}
+			});
 		});
 	});
 </script>

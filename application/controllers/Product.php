@@ -34,6 +34,10 @@ class Product extends CI_Controller {
 		$this->load->model('Productinfo');
         $result=$this->Productinfo->Checkbarcode();
 	}
+	public function getItemCostReport(){
+		$this->load->model('Productinfo');
+        $result=$this->Productinfo->getItemCostReport();
+	}
 	public function Barcode($barcode){
 		$this->load->library('Fpdf_gen');
 
