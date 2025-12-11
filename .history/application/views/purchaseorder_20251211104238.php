@@ -37,7 +37,7 @@ include "include/topnavbar.php";
                                                 <th>PO No.</th>
                                                 <th>Class</th>
                                                 <th>PO Date</th>
-                                                <th>Total ($)</th>
+                                                <th>Amount</th>
                                                 <th>Confirm Status</th>
                                                 <th>GRN Issue Status</th>
                                                 <th>Notes and Instructions</th>
@@ -149,7 +149,7 @@ include "include/topnavbar.php";
                                 </div>
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">USD Price ($)</label>
-                                    <input type="text" id="usdrate" name="usdrate" class="form-control form-control-sm" value="0">
+                                    <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
                                 </div>
                             </div>
                             <div class="form-group mb-1">
@@ -354,7 +354,7 @@ include "include/topnavbar.php";
                     "className": 'text-right',
                     "data": null,
                     "render": function(data, type, full) {
-                        return addCommas(parseFloat(full['nettotalusd']).toFixed(2));
+                        return addCommas(parseFloat(full['nettotal']).toFixed(2));
                     }
                 },
                 {
@@ -491,42 +491,26 @@ include "include/topnavbar.php";
                             var product = item['materialname'] + ' / ' + item['materialinfocode'];
                             var unit_price = parseFloat(item['unitprice']);
                             var unitprice = addCommas(parseFloat(unit_price).toFixed(2));
-                            var unit_priceusd = parseFloat(item['unitpriceusd']);
-                            var unitpriceusd = addCommas(parseFloat(unit_priceusd).toFixed(2));
                             var unitperctn = parseFloat(item['unitperctn']);
                             var ctn = parseFloat(item['ctn']);
                             var newqty = parseFloat(item['qty']);
 
                             var newtotal = parseFloat(unitprice * newqty);
-                            var newtotalusd = parseFloat(unitpriceusd * newqty);
 
                             var total = parseFloat(newtotal);
                             var showtotal = addCommas(parseFloat(total).toFixed(2));
 
-                            var totalusd = parseFloat(newtotalusd);
-                            var showtotalusd = addCommas(parseFloat(totalusd).toFixed(2));
-
-                            $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + item['comment'] + '</td><td class="d-none">' + item['tbl_material_info_idtbl_material_info'] + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitpriceusd + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right totalusd">' + showtotalusd + '</td></tr>');
+                            $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + item['comment'] + '</td><td class="d-none">' + item['tbl_material_info_idtbl_material_info'] + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitprice + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
                         });
                         var sum = 0;
                         $(".total").each(function () {
                             sum += parseFloat($(this).text());
                         });
 
-                        var sumusd = 0;
-                        $(".totalusd").each(function () {
-                            var valueusd = $(this).text();
-                            var numusd = parseFloat(valueusd.replace(/,/g, ''));
-                            if (!isNaN(numusd)) {
-                                sumusd += numusd;
-                            }
-                        });
-
                         var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-                        $('#divtotal').html('$ ' + sumusd);
+                        $('#divtotal').html('Rs. ' + showsum);
                         $('#hidetotalorder').val(sum);
-                        $('#hidetotalorderusd').val(sumusd);
                         $('#product').focus();
                         
                         $('#staticBackdrop').modal('show');
@@ -598,7 +582,6 @@ include "include/topnavbar.php";
                 var product = $("#product option:selected").text();
                 var unit_price = parseFloat($('#unitprice').val());
                 var unitprice = addCommas(parseFloat(unit_price).toFixed(2));
-                var usdrate = parseFloat($('#usdrate').val());
                 var unitperctn = parseFloat($('#unitperctn').val());
                 var ctn = parseFloat($('#ctn').val());
                 var newqty = parseFloat($('#newqty').val());
@@ -607,9 +590,8 @@ include "include/topnavbar.php";
 
                 var total = parseFloat(newtotal);
                 var showtotal = addCommas(parseFloat(total).toFixed(2));
-                var totalusd = addCommas(parseFloat(usdrate * newqty).toFixed(2));
 
-                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + addCommas(usdrate) + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right totalusd">' + totalusd + '</td></tr>');
+                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitprice + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
 
                 $('#product').val('');
                 $('#unitprice').val('');
@@ -617,7 +599,6 @@ include "include/topnavbar.php";
                 $('#unitperctn').val('0');
                 $('#saleprice').val('');
                 $('#comment').val('');
-                $('#usdrate').val('');
                 $('#newqty').val('0');
 
                 var sum = 0;
@@ -625,20 +606,10 @@ include "include/topnavbar.php";
                     sum += parseFloat($(this).text());
                 });
 
-                var sumusd = 0;
-                $(".totalusd").each(function () {
-                    var valueusd = $(this).text();
-                    var numusd = parseFloat(valueusd.replace(/,/g, ''));
-                    if (!isNaN(numusd)) {
-                        sumusd += numusd;
-                    }
-                });
-
                 var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-                $('#divtotal').html('$ ' + sumusd);
+                $('#divtotal').html('Rs. ' + showsum);
                 $('#hidetotalorder').val(sum);
-                $('#hidetotalorderusd').val(sumusd);
                 $('#product').focus();
             }
         });
@@ -679,13 +650,11 @@ include "include/topnavbar.php";
                 var duedate = $('#duedate').val();
                 var remark = $('#remark').val();
                 var total = $('#hidetotalorder').val();
-                var totalusd = $('#hidetotalorderusd').val();
                 var supplier = $('#supplier').val();
                 var location = $('#location').val();
                 var ordertype = $('#ordertype').val();
                 var recordID = $('#recordID').val();
                 var recordOption = $('#recordOption').val();
-                var usdrate = $('#gcw_valFL0GridDR1').val();
                 // alert(orderdate);
                 $.ajax({
                     type: "POST",
@@ -699,8 +668,6 @@ include "include/topnavbar.php";
                         supplier: supplier,
                         location: location,
                         ordertype: ordertype,
-                        totalusd: totalusd,
-                        usdrate: usdrate,
                         recordID: recordID,
                         recordOption: recordOption
                     },

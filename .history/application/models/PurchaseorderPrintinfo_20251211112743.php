@@ -288,7 +288,7 @@ class PurchaseorderPrintinfo extends CI_Model{
                         '.$items_html.'
                         <tr>
                             <td style="text-align: right;" colspan="7">SUB TOTAL ($)</td>
-                            <td style="text-align: right;">'.number_format($respond->row(0)->subtotalusd, 2).'</td>
+                            <td style="text-align: right;">'.number_format($respond->row(0)->nettotalusd, 2).'</td>
                         </tr>
                         <tr>
                             <td style="text-align: right;" colspan="7">TOTAL ($)</td>

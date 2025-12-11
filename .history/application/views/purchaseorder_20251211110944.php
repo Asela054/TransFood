@@ -506,27 +506,17 @@ include "include/topnavbar.php";
                             var totalusd = parseFloat(newtotalusd);
                             var showtotalusd = addCommas(parseFloat(totalusd).toFixed(2));
 
-                            $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + item['comment'] + '</td><td class="d-none">' + item['tbl_material_info_idtbl_material_info'] + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitpriceusd + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right totalusd">' + showtotalusd + '</td></tr>');
+                            $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + item['comment'] + '</td><td class="d-none">' + item['tbl_material_info_idtbl_material_info'] + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitpriceusd + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
                         });
                         var sum = 0;
                         $(".total").each(function () {
                             sum += parseFloat($(this).text());
                         });
 
-                        var sumusd = 0;
-                        $(".totalusd").each(function () {
-                            var valueusd = $(this).text();
-                            var numusd = parseFloat(valueusd.replace(/,/g, ''));
-                            if (!isNaN(numusd)) {
-                                sumusd += numusd;
-                            }
-                        });
-
                         var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-                        $('#divtotal').html('$ ' + sumusd);
+                        $('#divtotal').html('Rs. ' + showsum);
                         $('#hidetotalorder').val(sum);
-                        $('#hidetotalorderusd').val(sumusd);
                         $('#product').focus();
                         
                         $('#staticBackdrop').modal('show');

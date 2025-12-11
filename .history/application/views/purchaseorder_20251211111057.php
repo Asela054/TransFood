@@ -524,9 +524,8 @@ include "include/topnavbar.php";
 
                         var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-                        $('#divtotal').html('$ ' + sumusd);
+                        $('#divtotal').html('Rs. ' + showsum);
                         $('#hidetotalorder').val(sum);
-                        $('#hidetotalorderusd').val(sumusd);
                         $('#product').focus();
                         
                         $('#staticBackdrop').modal('show');

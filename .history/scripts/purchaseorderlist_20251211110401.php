@@ -37,7 +37,7 @@ $columns = array(
 	array( 'db' => '`u`.`class`', 'dt' => 'class', 'field' => 'class' ),
 	array( 'db' => '`u`.`orderdate`', 'dt' => 'orderdate', 'field' => 'orderdate' ),
 	array( 'db' => '`u`.`nettotal`', 'dt' => 'nettotal', 'field' => 'nettotal' ),
-	array( 'db' => '`u`.`nettotalusd`', 'dt' => 'nettotalusd', 'field' => 'nettotalusd' ),
+	array( 'db' => '`u`.`nettotal`', 'dt' => 'nettotal', 'field' => 'nettotal' ),
 	array( 'db' => '`u`.`confirmstatus`', 'dt' => 'confirmstatus', 'field' => 'confirmstatus' ),
 	array( 'db' => '`u`.`grnconfirm`', 'dt' => 'grnconfirm', 'field' => 'grnconfirm' ),
 	array( 'db' => '`u`.`remark`', 'dt' => 'remark', 'field' => 'remark' ),

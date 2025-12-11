@@ -217,7 +217,7 @@ class Purchaseorderinfo extends CI_Model{
                     'nettotal'=> $total, 
                     'subtotalusd'=> $totalusd, 
                     'nettotalusd'=> $totalusd, 
-                    'usd_rate'=> $usdrate, 
+                                        'nettotalusd'=> $totalusd, 
                     'remark'=> $remark, 
                     'updateuser'=> $userID, 
                     'updatedatetime'=> $updatedatetime,
@@ -340,8 +340,8 @@ class Purchaseorderinfo extends CI_Model{
                             <th>Unit Per Ctn</th>
                             <th>Ctns</th>
                             <th>Qty</th>
-                            <th>Unit Price ($)</th>
-                            <th class="text-right">Total ($)</th>
+                            <th>Unit Price</th>
+                            <th class="text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>';
@@ -352,8 +352,8 @@ class Purchaseorderinfo extends CI_Model{
                             <td>'.$roworderinfo->unitperctn.'</td>
                             <td>'.$roworderinfo->ctn.'</td>
                             <td>'.$roworderinfo->qty.'</td>
-                            <td>'.number_format(($roworderinfo->unitpriceusd), 2).'</td>
-                            <td class="text-right">'.number_format(($roworderinfo->qty*$roworderinfo->unitpriceusd), 2).'</td>
+                            <td>'.number_format(($roworderinfo->unitprice), 2).'</td>
+                            <td class="text-right">'.number_format(($roworderinfo->qty*$roworderinfo->unitprice), 2).'</td>
                         </tr>';
                     }
                     $html.='</tbody>
@@ -361,7 +361,7 @@ class Purchaseorderinfo extends CI_Model{
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-12 text-right"><h3 class="font-weight-bold">$ '.number_format(($respond->row(0)->nettotalusd), 2).'</h3></div>
+            <div class="col-12 text-right"><h3 class="font-weight-bold">Rs. '.number_format(($respond->row(0)->nettotal), 2).'</h3></div>
         </div>
         ';
 

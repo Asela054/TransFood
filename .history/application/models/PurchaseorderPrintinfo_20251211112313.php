@@ -33,7 +33,7 @@ class PurchaseorderPrintinfo extends CI_Model{
     foreach($respond2->result() as $row) {
         $description = $row->materialname . " (" . $row->materialinfocode . ")";
         $total_qty = $row->qty;
-        $total_amount = $row->totalusd;
+        $total_amount = $row->total;
         $subtotal += $total_amount;
         
         $items_html .= '<tr>
@@ -43,7 +43,7 @@ class PurchaseorderPrintinfo extends CI_Model{
             <td style="border: 1px solid #000; text-align: center;">'.$row->unitperctn.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$row->ctn.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$total_qty.'</td>
-            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($row->unitpriceusd, 2).'</td>
+            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($row->unitprice, 2).'</td>
             <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($total_amount, 2).'</td>
         </tr>';
         
@@ -288,11 +288,11 @@ class PurchaseorderPrintinfo extends CI_Model{
                         '.$items_html.'
                         <tr>
                             <td style="text-align: right;" colspan="7">SUB TOTAL ($)</td>
-                            <td style="text-align: right;">'.number_format($respond->row(0)->subtotalusd, 2).'</td>
+                            <td style="text-align: right;">'.number_format($subtotal, 2).'</td>
                         </tr>
                         <tr>
                             <td style="text-align: right;" colspan="7">TOTAL ($)</td>
-                            <td style="border-top: 1px solid #000; text-align: right;">'.number_format($respond->row(0)->nettotalusd, 2).'</td>
+                            <td style="border-top: 1px solid #000; text-align: right;">'.number_format($respond->row(0)->nettotal, 2).'</td>
                         </tr>
                     </table>
                 </td>

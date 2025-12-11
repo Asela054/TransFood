@@ -513,20 +513,19 @@ include "include/topnavbar.php";
                             sum += parseFloat($(this).text());
                         });
 
-                        var sumusd = 0;
-                        $(".totalusd").each(function () {
-                            var valueusd = $(this).text();
-                            var numusd = parseFloat(valueusd.replace(/,/g, ''));
-                            if (!isNaN(numusd)) {
-                                sumusd += numusd;
-                            }
-                        });
+                                                        var sumusd = 0;
+                                $(".totalusd").each(function () {
+                                    var valueusd = $(this).text();
+                                    var numusd = parseFloat(valueusd.replace(/,/g, ''));
+                                    if (!isNaN(numusd)) {
+                                        sumusd += numusd;
+                                    }
+                                });
 
                         var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-                        $('#divtotal').html('$ ' + sumusd);
+                        $('#divtotal').html('Rs. ' + showsum);
                         $('#hidetotalorder').val(sum);
-                        $('#hidetotalorderusd').val(sumusd);
                         $('#product').focus();
                         
                         $('#staticBackdrop').modal('show');

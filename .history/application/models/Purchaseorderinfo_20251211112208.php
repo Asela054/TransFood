@@ -361,7 +361,7 @@ class Purchaseorderinfo extends CI_Model{
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-12 text-right"><h3 class="font-weight-bold">$ '.number_format(($respond->row(0)->nettotalusd), 2).'</h3></div>
+            <div class="col-12 text-right"><h3 class="font-weight-bold">Rs. '.number_format(($respond->row(0)->nettotalusd), 2).'</h3></div>
         </div>
         ';
 

@@ -33,7 +33,7 @@ class PurchaseorderPrintinfo extends CI_Model{
     foreach($respond2->result() as $row) {
         $description = $row->materialname . " (" . $row->materialinfocode . ")";
         $total_qty = $row->qty;
-        $total_amount = $row->totalusd;
+        $total_amount = $row->total;
         $subtotal += $total_amount;
         
         $items_html .= '<tr>
@@ -43,7 +43,7 @@ class PurchaseorderPrintinfo extends CI_Model{
             <td style="border: 1px solid #000; text-align: center;">'.$row->unitperctn.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$row->ctn.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$total_qty.'</td>
-            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($row->unitpriceusd, 2).'</td>
+            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($row->unitprice, 2).'</td>
             <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($total_amount, 2).'</td>
         </tr>';
         
@@ -282,17 +282,17 @@ class PurchaseorderPrintinfo extends CI_Model{
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">UNIT PER CTN</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">CTNS</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">TOTAL QTY</th>
-                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:5px;">PRICE PER UNIT ($)</th>
-                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:5px;">TOTAL AMOUNT ($)</th>
+                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:5px;">PRICE PER UNIT</th>
+                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:5px;">TOTAL AMOUNT</th>
                         </tr>
                         '.$items_html.'
                         <tr>
-                            <td style="text-align: right;" colspan="7">SUB TOTAL ($)</td>
-                            <td style="text-align: right;">'.number_format($respond->row(0)->subtotalusd, 2).'</td>
+                            <td style="text-align: right;" colspan="7">SUB TOTAL</td>
+                            <td style="text-align: right;">'.number_format($subtotal, 2).'</td>
                         </tr>
                         <tr>
-                            <td style="text-align: right;" colspan="7">TOTAL ($)</td>
-                            <td style="border-top: 1px solid #000; text-align: right;">'.number_format($respond->row(0)->nettotalusd, 2).'</td>
+                            <td style="text-align: right;" colspan="7">TOTAL</td>
+                            <td style="border-top: 1px solid #000; text-align: right;">'.number_format($respond->row(0)->nettotal, 2).'</td>
                         </tr>
                     </table>
                 </td>
@@ -320,13 +320,12 @@ class PurchaseorderPrintinfo extends CI_Model{
                             <td style="background-color: #97d197; border: 1px solid #000;">Authorized By</td>
                         </tr>
                         <tr>
-                            <td style="border-bottom: 1px dotted; border-left: none; border-right: none; border-top: none; height: 30px;"><img src="images/Abdullah Sign.png" alt="Signature" style="height: 50px; margin-top: 5px;"></td>
+                            <td style="border-bottom: 1px dotted; border-left: none; border-right: none; border-top: none; height: 30px;">&nbsp;</td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>
-        <img src="images/TFL-Office-Seal.png" alt="Signature" style="height: 150px; margin-top: 50px; float: right;">
         <!--<div style="width: 100%;">
             <div class="row"
                 style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; font-size: 13px; margin-bottom: 10px;">

@@ -33,7 +33,7 @@ class PurchaseorderPrintinfo extends CI_Model{
     foreach($respond2->result() as $row) {
         $description = $row->materialname . " (" . $row->materialinfocode . ")";
         $total_qty = $row->qty;
-        $total_amount = $row->totalusd;
+        $total_amount = $row->total;
         $subtotal += $total_amount;
         
         $items_html .= '<tr>
@@ -288,7 +288,7 @@ class PurchaseorderPrintinfo extends CI_Model{
                         '.$items_html.'
                         <tr>
                             <td style="text-align: right;" colspan="7">SUB TOTAL ($)</td>
-                            <td style="text-align: right;">'.number_format($respond->row(0)->subtotalusd, 2).'</td>
+                            <td style="text-align: right;">'.number_format($subtotalusd, 2).'</td>
                         </tr>
                         <tr>
                             <td style="text-align: right;" colspan="7">TOTAL ($)</td>
