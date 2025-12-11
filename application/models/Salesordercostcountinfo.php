@@ -84,6 +84,131 @@ class Salesordercostcountinfo extends CI_Model{
         }   
         echo json_encode($data);
     }
+    // public function Getcostcountinfo(){
+    //     $companyid=$_SESSION['companyid'];
+    //     $branchid=$_SESSION['branchid'];         
+    //     $customerid=$this->input->post('customerud');
+    //     $salesorderid=$this->input->post('salesorderid');
+    //     $finishgoodid=$this->input->post('finishgoodid');
+    //     $bomid=$this->input->post('bomid');
+    //     $mainarray = array();
+
+    //     $sqlsalesorderqty="SELECT tbl_customer_porder_detail.qty FROM tbl_customer_porder_detail WHERE tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder=? AND tbl_customer_porder_detail.tbl_product_idtbl_product=?";
+    //     $respondsalesorderqty=$this->db->query($sqlsalesorderqty, array($salesorderid, $finishgoodid));
+    //     if($respondsalesorderqty->num_rows()>0){
+    //         $salesorderqty=$respondsalesorderqty->row(0)->qty;
+    //     }
+    //     else{
+    //         $salesorderqty=0;
+    //     }
+
+    //     $sql="SELECT `tbl_product_bom`.`idtbl_product_bom`, `tbl_product_bom`.`tbl_material_info_idtbl_material_info`, `tbl_product_bom`.`qty` , `tbl_product_bom`.`wastage`, `tbl_material_info`.`materialname`, `tbl_material_category`.`categoryname`, `tbl_product`.`productcode`, `tbl_unit`.`unitcode`, `tbl_material_info`.`materialinfocode`
+    //     FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_product_bom`.`tbl_product_idtbl_product` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_bom_info_idtbl_product_bom_info`= ? AND `tbl_product_bom`.`status`=?";
+    //     $respond=$this->db->query($sql, array($bomid, 1));
+
+    //     foreach($respond->result() as $row){
+    //         $object = new stdClass();
+    //         $object->idtbl_product_bom = $row->idtbl_product_bom;
+    //         $object->tbl_material_info_idtbl_material_info = $row->tbl_material_info_idtbl_material_info;
+    //         $object->qty = $row->qty;
+    //         $object->wastage = $row->wastage;
+    //         $object->materialname = $row->materialname;
+    //         $object->categoryname = $row->categoryname;
+    //         $object->productcode = $row->productcode;
+    //         $object->unitcode = $row->unitcode;
+    //         $object->materialinfocode = $row->materialinfocode;
+
+    //         $sqlmaterialavg="SELECT 
+    //             ms.`tbl_material_info_idtbl_material_info`,
+    //             sup.`suppliername`,
+    //             AVG(gd.`costunitprice`) AS average_costunitprice,
+    //             COUNT(*) AS record_count
+    //         FROM `tbl_material_suppliers` ms
+    //         LEFT JOIN `tbl_grn` grn ON ms.`tbl_supplier_idtbl_supplier` = grn.`tbl_supplier_idtbl_supplier`
+    //         LEFT JOIN `tbl_grndetail` gd ON grn.`idtbl_grn` = gd.`tbl_grn_idtbl_grn` AND ms.`tbl_material_info_idtbl_material_info` = gd.`tbl_material_info_idtbl_material_info`
+    //         LEFT JOIN `tbl_supplier` sup ON ms.`tbl_supplier_idtbl_supplier` = sup.`idtbl_supplier`
+    //         WHERE gd.`costunitprice` IS NOT NULL
+    //         AND ms.`tbl_material_info_idtbl_material_info`=?
+    //         GROUP BY ms.`tbl_supplier_idtbl_supplier`
+    //         ORDER BY ms.`tbl_material_info_idtbl_material_info`";
+    //         $respondmaterialavg=$this->db->query($sqlmaterialavg, array($row->tbl_material_info_idtbl_material_info));
+
+    //         $i=0;
+    //         foreach($respondmaterialavg->result() as $rowmaterialavg){
+    //             $salesorderqty = $salesorderqty + ($salesorderqty*($row->wastage/100));
+
+    //             if($i==0){
+    //                 $object->suppliername = $rowmaterialavg->suppliername;
+    //                 $object->average_costunitprice = $rowmaterialavg->average_costunitprice;
+    //                 $object->totalcost = $rowmaterialavg->average_costunitprice*$salesorderqty;
+    //             }
+    //             else{
+    //                 $object = new stdClass();
+    //                 $object->idtbl_product_bom = '';
+    //                 $object->tbl_material_info_idtbl_material_info = '';
+    //                 $object->qty = '';
+    //                 $object->wastage = '';
+    //                 $object->materialname = '';
+    //                 $object->categoryname = '';
+    //                 $object->productcode = '';
+    //                 $object->unitcode = '';
+    //                 $object->materialinfocode = '';
+    //                 $object->suppliername = $rowmaterialavg->suppliername;
+    //                 $object->average_costunitprice = $rowmaterialavg->average_costunitprice;
+    //                 $object->totalcost = $rowmaterialavg->average_costunitprice*$salesorderqty;
+    //             }
+
+    //             array_push($mainarray, $object);
+    //             $i++;
+    //         }
+    //     }
+
+    //     // print_r($mainarray);
+        
+    //     $html='';
+    //     $html.='<table class="table table-bordered table-striped table-sm small" id="table_content">
+    //         <thead>
+    //             <tr>
+    //                 <th>Material Info Code</th>
+    //                 <th>Material Name</th>
+    //                 <th>Category</th>
+    //                 <th>Product Code</th>
+    //                 <th>Quantity per FG</th>
+    //                 <th>Wastage (%)</th>
+    //                 <th>Unit</th>
+    //                 <th>Supplier Name</th>
+    //                 <th class="text-right">Avg. Cost Unit Price</th>
+    //                 <th class="text-right">Total Cost for SO Qty ('.$salesorderqty.')</th>
+    //             </tr>
+    //         </thead>
+    //         <tbody>';  
+    //     $totalcostall=0;
+    //     foreach($mainarray as $data){
+    //         $html.='<tr>
+    //             <td>'.$data->materialinfocode.'</td>
+    //             <td>'.$data->materialname.'</td>
+    //             <td>'.$data->categoryname.'</td>
+    //             <td>'.$data->productcode.'</td>
+    //             <td>'.$data->qty.'</td>
+    //             <td>'.$data->wastage.'</td>
+    //             <td>'.$data->unitcode.'</td>
+    //             <td>'.$data->suppliername.'</td>
+    //             <td class="text-right">'.number_format((float)$data->average_costunitprice, 2, '.', ',').'</td>
+    //             <td class="text-right">'.number_format((float)$data->totalcost, 2, '.', ',').'</td>
+    //         </tr>';
+    //         $totalcostall +=$data->totalcost;
+    //     }  
+    //     $html.='</tbody>
+    //         <tfoot>
+    //             <tr>
+    //                 <th colspan="9" class="text-right">Total Cost</th>
+    //                 <th class="text-right">'.number_format((float)$totalcostall, 2, '.', ',').'</th>
+    //             </tr>
+    //         </tfoot>
+    //     </table>
+    //     ';
+    //     echo $html;
+    // }
     public function Getcostcountinfo(){
         $companyid=$_SESSION['companyid'];
         $branchid=$_SESSION['branchid'];         
@@ -106,6 +231,10 @@ class Salesordercostcountinfo extends CI_Model{
         FROM `tbl_product_bom` LEFT JOIN `tbl_material_info` ON `tbl_material_info`.`idtbl_material_info`=`tbl_product_bom`.`tbl_material_info_idtbl_material_info` LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_product_bom`.`tbl_product_idtbl_product` LEFT JOIN `tbl_material_category` ON `tbl_material_category`.`idtbl_material_category`=`tbl_material_info`.`tbl_material_category_idtbl_material_category` LEFT JOIN `tbl_unit` ON `tbl_unit`.`idtbl_unit`=`tbl_material_info`.`tbl_unit_idtbl_unit` WHERE `tbl_product_bom`.`tbl_product_bom_info_idtbl_product_bom_info`= ? AND `tbl_product_bom`.`status`=?";
         $respond=$this->db->query($sql, array($bomid, 1));
 
+        // Array to store supplier totals
+        $supplierTotals = array();
+        $totalcostall=0;
+
         foreach($respond->result() as $row){
             $object = new stdClass();
             $object->idtbl_product_bom = $row->idtbl_product_bom;
@@ -121,6 +250,7 @@ class Salesordercostcountinfo extends CI_Model{
             $sqlmaterialavg="SELECT 
                 ms.`tbl_material_info_idtbl_material_info`,
                 sup.`suppliername`,
+                sup.`idtbl_supplier`,
                 AVG(gd.`costunitprice`) AS average_costunitprice,
                 COUNT(*) AS record_count
             FROM `tbl_material_suppliers` ms
@@ -135,12 +265,27 @@ class Salesordercostcountinfo extends CI_Model{
 
             $i=0;
             foreach($respondmaterialavg->result() as $rowmaterialavg){
-                $salesorderqty = $salesorderqty + ($salesorderqty*($row->wastage/100));
+                $adjustedSalesQty = $salesorderqty + ($salesorderqty*($row->wastage/100));
+                $totalcost = $rowmaterialavg->average_costunitprice * $adjustedSalesQty;
+                
+                // Initialize supplier in totals array if not exists
+                $supplierId = $rowmaterialavg->idtbl_supplier;
+                $supplierName = $rowmaterialavg->suppliername;
+                
+                if(!isset($supplierTotals[$supplierId])) {
+                    $supplierTotals[$supplierId] = array(
+                        'suppliername' => $supplierName,
+                        'total' => 0
+                    );
+                }
+                
+                // Add to supplier total
+                $supplierTotals[$supplierId]['total'] += $totalcost;
 
                 if($i==0){
-                    $object->suppliername = $rowmaterialavg->suppliername;
+                    $object->suppliername = $supplierName;
                     $object->average_costunitprice = $rowmaterialavg->average_costunitprice;
-                    $object->totalcost = $rowmaterialavg->average_costunitprice*$salesorderqty;
+                    $object->totalcost = $totalcost;
                 }
                 else{
                     $object = new stdClass();
@@ -153,18 +298,17 @@ class Salesordercostcountinfo extends CI_Model{
                     $object->productcode = '';
                     $object->unitcode = '';
                     $object->materialinfocode = '';
-                    $object->suppliername = $rowmaterialavg->suppliername;
+                    $object->suppliername = $supplierName;
                     $object->average_costunitprice = $rowmaterialavg->average_costunitprice;
-                    $object->totalcost = $rowmaterialavg->average_costunitprice*$salesorderqty;
+                    $object->totalcost = $totalcost;
                 }
 
                 array_push($mainarray, $object);
+                $totalcostall += $totalcost;
                 $i++;
             }
         }
 
-        // print_r($mainarray);
-        
         $html='';
         $html.='<table class="table table-bordered table-striped table-sm small" id="table_content">
             <thead>
@@ -178,11 +322,11 @@ class Salesordercostcountinfo extends CI_Model{
                     <th>Unit</th>
                     <th>Supplier Name</th>
                     <th class="text-right">Avg. Cost Unit Price</th>
-                    <th class="text-right">Total Cost for SO Qty ('.$salesorderqty.')</th>
+                    <th class="text-right">Total Cost for SO Qty ('.$adjustedSalesQty.')</th>
                 </tr>
             </thead>
             <tbody>';  
-        $totalcostall=0;
+
         foreach($mainarray as $data){
             $html.='<tr>
                 <td>'.$data->materialinfocode.'</td>
@@ -196,15 +340,26 @@ class Salesordercostcountinfo extends CI_Model{
                 <td class="text-right">'.number_format((float)$data->average_costunitprice, 2, '.', ',').'</td>
                 <td class="text-right">'.number_format((float)$data->totalcost, 2, '.', ',').'</td>
             </tr>';
-            $totalcostall +=$data->totalcost;
         }  
+        
+        // Add supplier-wise totals in footer
         $html.='</tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="9" class="text-right">Total Cost</th>
-                    <th class="text-right">'.number_format((float)$totalcostall, 2, '.', ',').'</th>
-                </tr>
-            </tfoot>
+            <tfoot>';
+        
+        // Add supplier-wise totals
+        foreach($supplierTotals as $supplierId => $supplierData) {
+            $html.='<tr>
+                <th colspan="9" class="text-right">'.$supplierData['suppliername'].' Total</th>
+                <th class="text-right">'.number_format((float)$supplierData['total'], 2, '.', ',').'</th>
+            </tr>';
+        }
+        
+        // Add grand total
+        $html.='<tr>
+                <th colspan="9" class="text-right">Grand Total</th>
+                <th class="text-right">'.number_format((float)$totalcostall, 2, '.', ',').'</th>
+            </tr>
+        </tfoot>
         </table>
         ';
         echo $html;
