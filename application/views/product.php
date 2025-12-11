@@ -393,7 +393,7 @@ include "include/topnavbar.php";
 					"data": null,
 					"render": function (data, type, full) {
 						var button = '';
-						button+='<button class="btn btn-dark btn-sm btnViewFinishGood mr-1" data-toggle="tooltip" data-placement="bottom" title="Stock Add" id="'+full['idtbl_product']+'"><i class="fas fa-file"></i></button>';
+						button+='<button class="btn btn-dark btn-sm btnViewFinishGood mr-1" data-toggle="tooltip" data-placement="bottom" title="Cost Info" id="'+full['idtbl_product']+'"><i class="fas fa-file"></i></button>';
 						button+='<button class="btn btn-warning btn-sm btnStockAdd mr-1" data-toggle="tooltip" data-placement="bottom" title="Stock Add" id="'+full['idtbl_product']+'"><i class="fas fa-plus"></i></button>';
                         button += '<a href="<?php echo base_url() ?>Product/Barcode/'+full['productcode']+'" class="btn btn-dark btn-sm mr-1" target="_blank"><i class="fas fa-barcode"></i></a>';
 						if (editcheck == 1) {
