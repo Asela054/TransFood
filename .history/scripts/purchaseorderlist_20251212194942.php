@@ -33,7 +33,7 @@ $primaryKey = 'idtbl_porder';
 // indexes
 $columns = array(
 	array( 'db' => '`u`.`idtbl_porder`', 'dt' => 'idtbl_porder', 'field' => 'idtbl_porder' ),
-	array( 'db' => '`u`.`currencytype`', 'dt' => 'currencytype', 'field' => 'currencytype' ),
+		array( 'db' => '`u`.`po_no`', 'dt' => 'po_no', 'field' => 'po_no' ),
 	array( 'db' => '`u`.`po_no`', 'dt' => 'po_no', 'field' => 'po_no' ),
 	array( 'db' => '`u`.`class`', 'dt' => 'class', 'field' => 'class' ),
 	array( 'db' => '`u`.`orderdate`', 'dt' => 'orderdate', 'field' => 'orderdate' ),

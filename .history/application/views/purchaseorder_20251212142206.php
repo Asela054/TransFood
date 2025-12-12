@@ -37,7 +37,7 @@ include "include/topnavbar.php";
                                                 <th>PO No.</th>
                                                 <th>Class</th>
                                                 <th>PO Date</th>
-                                                <th>Total</th>
+                                                <th>Total ($)</th>
                                                 <th>Confirm Status</th>
                                                 <th>GRN Issue Status</th>
                                                 <th>Notes and Instructions</th>
@@ -74,9 +74,9 @@ include "include/topnavbar.php";
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Currency Type*</label>
                                     <select class="form-control form-control-sm" name="currencytype" id="currencytype" required>
-                                        <option value="">Select</option>
-                                        <option value="1">LKR</option>
-                                        <option value="2">USD</option>
+                                        <option>Select</option>
+                                        <option value="1">Sri Lankan Rupees</option>
+                                        <option value="2">US Dollars</option>
                                     </select>
                                 </div>
                             </div>
@@ -175,16 +175,14 @@ include "include/topnavbar.php";
                                 <tr>
                                     <th>Product</th>
                                     <th>Comment</th>
-                                    <th class="d-none">Product ID</th>
-                                    <th class="d-none">Unit Price (LKR)</th>
-                                    <th class="d-none">Unit Price (USD)</th>
-                                    <th class="text-center">Unit Price</th>
+                                    <th class="d-none">ProductID</th>
+                                    <th class="d-none">Unitprice</th>
+                                    <th class="text-center">Unit Price ($)</th>
                                     <th class="text-center">Unit Per Ctn</th>
                                     <th class="text-center">Ctn</th>
                                     <th class="text-center">Total Qty</th>
-                                    <th class="d-none">Total (LKR)</th>
-                                    <th class="d-none">Total (USD)</th>
-                                    <th class="text-right">Total</th>
+                                    <th class="d-none">HideTotal</th>
+                                    <th class="text-right">Total ($)</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -193,8 +191,8 @@ include "include/topnavbar.php";
                             <div class="col text-right">
                                 <h1 class="font-weight-600" id="divtotal">Rs. 0.00</h1>
                             </div>
-                            <input type="hidden" id="hidetotalorder" value="0">
-                            <input type="hidden" id="hidetotalorderusd" value="0">
+                            <input type="text" id="hidetotalorder" value="0">
+                            <input type="text" id="hidetotalorderusd" value="0">
                         </div>
                         <hr>
                         <div class="form-group">
@@ -360,15 +358,7 @@ include "include/topnavbar.php";
                     "className": 'text-right',
                     "data": null,
                     "render": function(data, type, full) {
-
-                        let curr = full['currencytype'];
-                        let symbol = curr == 1 ? "Rs. " : "$ ";
-
-                        let total = curr == 1 
-                            ? full['nettotal'] 
-                            : full['nettotalusd'];
-
-                        return symbol + addCommas(parseFloat(total).toFixed(2));
+                        return addCommas(parseFloat(full['nettotalusd']).toFixed(2));
                     }
                 },
                 {
@@ -491,8 +481,7 @@ include "include/topnavbar.php";
                         var obj = JSON.parse(result);
                         
                         $('#recordID').val(obj.recorddata['idtbl_porder']);
-                        $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);    
-                        $('#currencytype').val(obj.recorddata['currencytype']);                     
+                        $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);                       
                         $('#poclass').val(obj.recorddata['class']);                       
                         $('#orderdate').val(obj.recorddata['orderdate']);                       
                         $('#duedate').val(obj.recorddata['duedate']);                       
@@ -602,94 +591,92 @@ include "include/topnavbar.php";
                 }
             });
         });
-        $("#formsubmit").click(function () {
+       $("#formsubmit").click(function () {
 
-        	if (!$("#createorderform")[0].checkValidity()) {
-        		$("#submitBtn").click();
-        		return;
-        	}
+       	if (!$("#createorderform")[0].checkValidity()) {
+       		$("#submitBtn").click();
+       		return;
+       	}
 
-        	let currencyType = $("#currencytype").val(); 
-        	let usdRate = parseFloat($("#gcw_valFL0GridDR1").val());
+       	// ✔ Correct mapping
+       	let currencyType = $("#currencytype").val(); // 1 = LKR , 2 = USD
+       	let currencySign = currencyType == 1 ? "Rs." : "$";
 
-        	let productID = $("#product").val();
-        	let comment = $("#comment").val();
-        	let product = $("#product option:selected").text();
-        	let unitprice = parseFloat($("#unitprice").val()); 
-        	let unitperctn = parseFloat($("#unitperctn").val());
-        	let ctn = parseFloat($("#ctn").val());
-        	let newqty = parseFloat($("#newqty").val());
+       	// Get product values
+       	var productID = $('#product').val();
+       	var comment = $('#comment').val();
+       	var product = $("#product option:selected").text();
 
-        	let unitprice_lkr = 0;
-        	let unitprice_usd = 0;
-        	let total_lkr = 0;
-        	let total_usd = 0;
+       	var unitprice_lkr = parseFloat($('#unitprice').val());
+       	var unitperctn = parseFloat($('#unitperctn').val());
+       	var ctn = parseFloat($('#ctn').val());
+       	var qty = parseFloat($('#newqty').val());
 
-        	if (currencyType == 1) {
-        		unitprice_lkr = unitprice;
-        		unitprice_usd = unitprice / usdRate;
+       	// ✔ Live USD rate from your widget
+       	var usdRate = parseFloat($('#gcw_valFL0GridDR1').val());
 
-        		total_lkr = unitprice_lkr * newqty;
-        		total_usd = total_lkr / usdRate;
+       	if (isNaN(usdRate) || usdRate <= 0) {
+       		alert("USD rate not loaded! Please wait.");
+       		return;
+       	}
 
-        	} else if (currencyType == 2) {
-        		unitprice_usd = unitprice;
-        		unitprice_lkr = unitprice * usdRate;
+       	// ==================== CONVERSIONS ====================
+       	let unitprice_usd = unitprice_lkr / usdRate;
 
-        		total_usd = unitprice_usd * newqty;
-        		total_lkr = total_usd * usdRate;
-        	}
+       	let total_lkr = unitprice_lkr * qty;
+       	let total_usd = unitprice_usd * qty;
 
-        	$("#tableorder > tbody:last").append(`
-            <tr class="pointer">
-                <td>${product}</td>
-                <td>${comment}</td>
-                <td class="d-none">${productID}</td>
+       	// Which one should display in the table?
+       	let displayUnit = currencyType == 1 ? unitprice_lkr : unitprice_usd;
+       	let displayTotal = currencyType == 1 ? total_lkr : total_usd;
 
-                <!-- STORE BOTH LKR + USD HIDDEN -->
-                <td class="d-none unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
-                <td class="d-none unitprice_usd">${unitprice_usd.toFixed(2)}</td>
+       	// ==================== ADD ROW ====================
+       	$('#tableorder > tbody:last').append(`
+        <tr class="pointer">
 
-                <!-- SHOW DISPLAY PRICE -->
-                <td class="text-center">${currencyType == "1" ? unitprice_lkr.toFixed(2) : unitprice_usd.toFixed(2)}</td>
+            <td>${product}</td>
+            <td>${comment}</td>
 
-                <td class="text-center">${unitperctn}</td>
-                <td class="text-center">${ctn}</td>
-                <td class="text-center">${newqty}</td>
+            <!-- Hidden DB values -->
+            <td class=" productid">${productID}</td>
+            <td class=" unit_lkr">${unitprice_lkr}</td>
+            <td class=" unit_usd">${unitprice_usd.toFixed(2)}</td>
 
-                <!-- HIDDEN TOTALS -->
-                <td class="d-none total_lkr">${total_lkr.toFixed(2)}</td>
-                <td class="d-none total_usd">${total_usd.toFixed(2)}</td>
+            <!-- Visible Unit Price -->
+            <td class="text-center">${addCommas(displayUnit.toFixed(2))}</td>
 
-                <!-- DISPLAY TOTAL -->
-                <td class="text-right">${currencyType == "1" ? total_lkr.toFixed(2) : total_usd.toFixed(2)}</td>
-            </tr>
-            `);
+            <td class="text-center">${unitperctn}</td>
+            <td class="text-center">${ctn}</td>
+            <td class="text-center">${qty}</td>
 
-        	$("#product").val('');
-        	$("#unitprice").val('');
-        	$("#ctn").val('0');
-        	$("#unitperctn").val('0');
-        	$("#comment").val('');
-        	$("#newqty").val('0');
+            <!-- Hidden Totals -->
+            <td class=" total_lkr">${total_lkr}</td>
+            <td class=" total_usd">${total_usd}</td>
 
-        	let grand_lkr = 0;
-        	let grand_usd = 0;
+            <!-- Visible Total -->
+            <td class="text-right displaytotal">${addCommas(displayTotal.toFixed(2))}</td>
+        </tr>
+    `);
 
-        	$(".total_lkr").each(function () {
-        		grand_lkr += parseFloat($(this).text());
-        	});
+       	// =================== GRAND TOTAL ===================
+       	var grand_total = 0;
 
-        	$(".total_usd").each(function () {
-        		grand_usd += parseFloat($(this).text());
-        	});
+       	if (currencyType == 1) {
+       		// LKR total
+       		$(".total_lkr").each(function () {
+       			grand_total += parseFloat($(this).text());
+       		});
+       	} else {
+       		// USD total
+       		$(".total_usd").each(function () {
+       			grand_total += parseFloat($(this).text());
+       		});
+       	}
 
-        	$("#hidetotalorder").val(grand_lkr.toFixed(2));
-        	$("#hidetotalorderusd").val(grand_usd.toFixed(2));
+       	$('#divtotal').html(currencySign + " " + addCommas(grand_total.toFixed(2)));
+       	$('#hidetotalorder').val(grand_total);
 
-        	$("#divtotal").html(currencyType == "1" ? "Rs. " + grand_lkr.toFixed(2) : "$ " + grand_usd.toFixed(2));
-
-        });
+       });
 
         $('#tableorder').on('click', 'tr', function () {
             var r = confirm("Are you sure, You want to remove this product ? ");
@@ -732,7 +719,6 @@ include "include/topnavbar.php";
                 var supplier = $('#supplier').val();
                 var location = $('#location').val();
                 var ordertype = $('#ordertype').val();
-                var currencytype = $('#currencytype').val();
                 var recordID = $('#recordID').val();
                 var recordOption = $('#recordOption').val();
                 var usdrate = $('#gcw_valFL0GridDR1').val();
@@ -749,7 +735,6 @@ include "include/topnavbar.php";
                         supplier: supplier,
                         location: location,
                         ordertype: ordertype,
-                        currencytype: currencytype,
                         totalusd: totalusd,
                         usdrate: usdrate,
                         recordID: recordID,

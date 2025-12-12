@@ -33,26 +33,26 @@ class PurchaseorderPrintinfo extends CI_Model{
     $currencyType = $respond->row(0)->currencytype; // 1 = LKR, 2 = USD
     $currencySign = ($currencyType == 1) ? "Rs. " : "$ ";
 
-    $subtotalField = ($currencyType == 1) ? "subtotal" : "subtotalusd";
+    $subtotalField = ($currencyType == 1) ? "subtotallkr" : "subtotalusd";
     $netTotalField = ($currencyType == 1) ? "nettotal" : "nettotalusd";
     $unitPriceField = ($currencyType == 1) ? "unitprice" : "unitpriceusd";
-    $totalField = ($currencyType == 1) ? "total" : "totalusd";
+    $totalField = ($currencyType == 1) ? "totallkr" : "totalusd";
     
     foreach($respond2->result() as $row) {
-
-        $unitPrice = $row->$unitPriceField;
-        $totalAmount = $row->$totalField;
-
+        $description = $row->materialname . " (" . $row->materialinfocode . ")";
+        $total_qty = $row->qty;
+        $total_amount = $row->totalusd;
+        $subtotal += $total_amount;
+        
         $items_html .= '<tr>
             <td style="border: 1px solid #000; text-align: center;">'.$sn.'</td>
             <td style="border: 1px solid #000;">'.$description.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$row->unitname.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$row->unitperctn.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$row->ctn.'</td>
-            <td style="border: 1px solid #000; text-align: center;">'.$row->qty.'</td>
-
-            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.$currencySign.number_format($unitPrice, 2).'</td>
-            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.$currencySign.number_format($totalAmount, 2).'</td>
+            <td style="border: 1px solid #000; text-align: center;">'.$total_qty.'</td>
+            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($row->unitpriceusd, 2).'</td>
+            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($total_amount, 2).'</td>
         </tr>';
         
         $sn++;
@@ -299,8 +299,8 @@ class PurchaseorderPrintinfo extends CI_Model{
                             <td style="text-align: right;">'.number_format($respond->row(0)->$subtotalField, 2).'</td>
                         </tr>
                         <tr>
-                            <td style="text-align: right;" colspan="7">TOTAL ('.$currencySign.')</td>
-                            <td style="border-top: 1px solid #000; text-align: right;">'.number_format($respond->row(0)->$netTotalField, 2).'</td>
+                            <td style="text-align: right;" colspan="7">TOTAL ($)</td>
+                            <td style="border-top: 1px solid #000; text-align: right;">'.number_format($respond->row(0)->nettotalusd, 2).'</td>
                         </tr>
                     </table>
                 </td>

@@ -37,7 +37,7 @@ include "include/topnavbar.php";
                                                 <th>PO No.</th>
                                                 <th>Class</th>
                                                 <th>PO Date</th>
-                                                <th>Total</th>
+                                                <th>Total ($)</th>
                                                 <th>Confirm Status</th>
                                                 <th>GRN Issue Status</th>
                                                 <th>Notes and Instructions</th>
@@ -366,7 +366,7 @@ include "include/topnavbar.php";
 
                         let total = curr == 1 
                             ? full['nettotal'] 
-                            : full['nettotalusd'];
+                            : full['nettotalusd'];          // USD total
 
                         return symbol + addCommas(parseFloat(total).toFixed(2));
                     }

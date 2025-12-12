@@ -322,12 +322,6 @@ class Purchaseorderinfo extends CI_Model{
         ? $respond->row(0)->nettotal 
         : $respond->row(0)->nettotalusd;
 
-        if ($currencyType == 1) {
-            $unitPriceField = 'unitprice';
-        } else {
-            $unitPriceField = 'unitpriceusd';
-        }
-
 
         $this->db->select('tbl_porder_detail.*, tbl_material_info.materialinfocode, tbl_material_info.materialname, tbl_unit.unitname');
         $this->db->from('tbl_porder_detail');
@@ -362,19 +356,14 @@ class Purchaseorderinfo extends CI_Model{
                     </thead>
                     <tbody>';
                     foreach($responddetail->result() as $roworderinfo){
-                        
-                        $unitPrice = $roworderinfo->$unitPriceField;
-                        $total = $roworderinfo->qty * $unitPrice;
-
-                        $html .= '<tr>
+                        $html.='<tr>
                             <td>'.$roworderinfo->materialname.' / '.$roworderinfo->materialinfocode.'</td>
                             <td>'.$roworderinfo->unitname.'</td>
                             <td>'.$roworderinfo->unitperctn.'</td>
                             <td>'.$roworderinfo->ctn.'</td>
                             <td>'.$roworderinfo->qty.'</td>
-
-                            <td>'.$currencySign.number_format($unitPrice, 2).'</td>
-                            <td class="text-right">'.$currencySign.number_format($total, 2).'</td>
+                            <td>'.number_format(($roworderinfo->unitpriceusd), 2).'</td>
+                            <td class="text-right">'.number_format(($roworderinfo->qty*$roworderinfo->unitpriceusd), 2).'</td>
                         </tr>';
                     }
                     $html.='</tbody>

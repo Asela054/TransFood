@@ -37,7 +37,7 @@ include "include/topnavbar.php";
                                                 <th>PO No.</th>
                                                 <th>Class</th>
                                                 <th>PO Date</th>
-                                                <th>Total</th>
+                                                <th>Total ($)</th>
                                                 <th>Confirm Status</th>
                                                 <th>GRN Issue Status</th>
                                                 <th>Notes and Instructions</th>
@@ -360,15 +360,7 @@ include "include/topnavbar.php";
                     "className": 'text-right',
                     "data": null,
                     "render": function(data, type, full) {
-
-                        let curr = full['currencytype'];
-                        let symbol = curr == 1 ? "Rs. " : "$ ";
-
-                        let total = curr == 1 
-                            ? full['nettotal'] 
-                            : full['nettotalusd'];
-
-                        return symbol + addCommas(parseFloat(total).toFixed(2));
+                        return addCommas(parseFloat(full['nettotalusd']).toFixed(2));
                     }
                 },
                 {
@@ -491,8 +483,7 @@ include "include/topnavbar.php";
                         var obj = JSON.parse(result);
                         
                         $('#recordID').val(obj.recorddata['idtbl_porder']);
-                        $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);    
-                        $('#currencytype').val(obj.recorddata['currencytype']);                     
+                        $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);                       
                         $('#poclass').val(obj.recorddata['class']);                       
                         $('#orderdate').val(obj.recorddata['orderdate']);                       
                         $('#duedate').val(obj.recorddata['duedate']);                       
@@ -640,6 +631,7 @@ include "include/topnavbar.php";
         		total_lkr = total_usd * usdRate;
         	}
 
+        	// Append to table
         	$("#tableorder > tbody:last").append(`
             <tr class="pointer">
                 <td>${product}</td>
@@ -666,6 +658,7 @@ include "include/topnavbar.php";
             </tr>
             `);
 
+        	// Reset fields
         	$("#product").val('');
         	$("#unitprice").val('');
         	$("#ctn").val('0');
@@ -673,6 +666,7 @@ include "include/topnavbar.php";
         	$("#comment").val('');
         	$("#newqty").val('0');
 
+        	// --- CALCULATE GRAND TOTALS ---
         	let grand_lkr = 0;
         	let grand_usd = 0;
 
@@ -732,7 +726,6 @@ include "include/topnavbar.php";
                 var supplier = $('#supplier').val();
                 var location = $('#location').val();
                 var ordertype = $('#ordertype').val();
-                var currencytype = $('#currencytype').val();
                 var recordID = $('#recordID').val();
                 var recordOption = $('#recordOption').val();
                 var usdrate = $('#gcw_valFL0GridDR1').val();
@@ -749,7 +742,6 @@ include "include/topnavbar.php";
                         supplier: supplier,
                         location: location,
                         ordertype: ordertype,
-                        currencytype: currencytype,
                         totalusd: totalusd,
                         usdrate: usdrate,
                         recordID: recordID,
