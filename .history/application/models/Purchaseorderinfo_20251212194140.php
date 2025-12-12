@@ -362,7 +362,7 @@ class Purchaseorderinfo extends CI_Model{
                     </thead>
                     <tbody>';
                     foreach($responddetail->result() as $roworderinfo){
-                        
+    
                         $unitPrice = $roworderinfo->$unitPriceField;
                         $total = $roworderinfo->qty * $unitPrice;
 

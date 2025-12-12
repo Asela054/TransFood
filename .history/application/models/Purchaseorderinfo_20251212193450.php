@@ -318,17 +318,6 @@ class Purchaseorderinfo extends CI_Model{
         $currencyType = $respond->row(0)->currencytype;
         $currencySign = ($currencyType == 1) ? 'Rs. ' : '$ ';
 
-        $netTotal = ($currencyType == 1) 
-        ? $respond->row(0)->nettotal 
-        : $respond->row(0)->nettotalusd;
-
-        if ($currencyType == 1) {
-            $unitPriceField = 'unitprice';
-        } else {
-            $unitPriceField = 'unitpriceusd';
-        }
-
-
         $this->db->select('tbl_porder_detail.*, tbl_material_info.materialinfocode, tbl_material_info.materialname, tbl_unit.unitname');
         $this->db->from('tbl_porder_detail');
         $this->db->join('tbl_material_info', 'tbl_material_info.idtbl_material_info = tbl_porder_detail.tbl_material_info_idtbl_material_info', 'left');
@@ -356,25 +345,20 @@ class Purchaseorderinfo extends CI_Model{
                             <th>Unit Per Ctn</th>
                             <th>Ctns</th>
                             <th>Qty</th>
-                            <th>Unit Price</th>
-                            <th class="text-right">Total</th>
+                            <th>Unit Price ($)</th>
+                            <th class="text-right">Total ($)</th>
                         </tr>
                     </thead>
                     <tbody>';
                     foreach($responddetail->result() as $roworderinfo){
-                        
-                        $unitPrice = $roworderinfo->$unitPriceField;
-                        $total = $roworderinfo->qty * $unitPrice;
-
-                        $html .= '<tr>
+                        $html.='<tr>
                             <td>'.$roworderinfo->materialname.' / '.$roworderinfo->materialinfocode.'</td>
                             <td>'.$roworderinfo->unitname.'</td>
                             <td>'.$roworderinfo->unitperctn.'</td>
                             <td>'.$roworderinfo->ctn.'</td>
                             <td>'.$roworderinfo->qty.'</td>
-
-                            <td>'.$currencySign.number_format($unitPrice, 2).'</td>
-                            <td class="text-right">'.$currencySign.number_format($total, 2).'</td>
+                            <td>'.number_format(($roworderinfo->unitpriceusd), 2).'</td>
+                            <td class="text-right">'.number_format(($roworderinfo->qty*$roworderinfo->unitpriceusd), 2).'</td>
                         </tr>';
                     }
                     $html.='</tbody>
@@ -382,7 +366,8 @@ class Purchaseorderinfo extends CI_Model{
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-12 text-right"><h3 class="font-weight-bold">'.$currencySign.number_format($netTotal, 2).'</h3></div>
+            <div class="col-12 text-right"><h3 class="font-weight-bold">'.$currencySign.number_format($netTotal, 2).'
+        </h3></div>
         </div>
         ';
 

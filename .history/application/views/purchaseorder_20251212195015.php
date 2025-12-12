@@ -37,7 +37,7 @@ include "include/topnavbar.php";
                                                 <th>PO No.</th>
                                                 <th>Class</th>
                                                 <th>PO Date</th>
-                                                <th>Total</th>
+                                                <th>Total ($)</th>
                                                 <th>Confirm Status</th>
                                                 <th>GRN Issue Status</th>
                                                 <th>Notes and Instructions</th>
@@ -361,12 +361,12 @@ include "include/topnavbar.php";
                     "data": null,
                     "render": function(data, type, full) {
 
-                        let curr = full['currencytype'];
+                        let curr = full['currencytype'];    // 1 = LKR , 2 = USD
                         let symbol = curr == 1 ? "Rs. " : "$ ";
 
                         let total = curr == 1 
-                            ? full['nettotal'] 
-                            : full['nettotalusd'];
+                            ? full['nettotal']              // LKR total
+                            : full['nettotalusd'];          // USD total
 
                         return symbol + addCommas(parseFloat(total).toFixed(2));
                     }

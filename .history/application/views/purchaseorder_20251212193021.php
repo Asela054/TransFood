@@ -37,7 +37,7 @@ include "include/topnavbar.php";
                                                 <th>PO No.</th>
                                                 <th>Class</th>
                                                 <th>PO Date</th>
-                                                <th>Total</th>
+                                                <th>Total ($)</th>
                                                 <th>Confirm Status</th>
                                                 <th>GRN Issue Status</th>
                                                 <th>Notes and Instructions</th>
@@ -360,15 +360,7 @@ include "include/topnavbar.php";
                     "className": 'text-right',
                     "data": null,
                     "render": function(data, type, full) {
-
-                        let curr = full['currencytype'];
-                        let symbol = curr == 1 ? "Rs. " : "$ ";
-
-                        let total = curr == 1 
-                            ? full['nettotal'] 
-                            : full['nettotalusd'];
-
-                        return symbol + addCommas(parseFloat(total).toFixed(2));
+                        return addCommas(parseFloat(full['nettotalusd']).toFixed(2));
                     }
                 },
                 {
@@ -492,7 +484,7 @@ include "include/topnavbar.php";
                         
                         $('#recordID').val(obj.recorddata['idtbl_porder']);
                         $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);    
-                        $('#currencytype').val(obj.recorddata['currencytype']);                     
+                                                $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);                     
                         $('#poclass').val(obj.recorddata['class']);                       
                         $('#orderdate').val(obj.recorddata['orderdate']);                       
                         $('#duedate').val(obj.recorddata['duedate']);                       

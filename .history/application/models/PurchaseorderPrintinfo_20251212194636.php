@@ -33,10 +33,10 @@ class PurchaseorderPrintinfo extends CI_Model{
     $currencyType = $respond->row(0)->currencytype; // 1 = LKR, 2 = USD
     $currencySign = ($currencyType == 1) ? "Rs. " : "$ ";
 
-    $subtotalField = ($currencyType == 1) ? "subtotal" : "subtotalusd";
+    $subtotalField = ($currencyType == 1) ? "subtotallkr" : "subtotalusd";
     $netTotalField = ($currencyType == 1) ? "nettotal" : "nettotalusd";
     $unitPriceField = ($currencyType == 1) ? "unitprice" : "unitpriceusd";
-    $totalField = ($currencyType == 1) ? "total" : "totalusd";
+    $totalField = ($currencyType == 1) ? "totallkr" : "totalusd";
     
     foreach($respond2->result() as $row) {
 

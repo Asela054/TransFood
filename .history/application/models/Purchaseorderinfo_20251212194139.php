@@ -323,10 +323,10 @@ class Purchaseorderinfo extends CI_Model{
         : $respond->row(0)->nettotalusd;
 
         if ($currencyType == 1) {
-            $unitPriceField = 'unitprice';
-        } else {
-            $unitPriceField = 'unitpriceusd';
-        }
+    $unitPriceField = 'unitprice';
+} else {
+    $unitPriceField = 'unitpriceusd';
+}
 
 
         $this->db->select('tbl_porder_detail.*, tbl_material_info.materialinfocode, tbl_material_info.materialname, tbl_unit.unitname');
@@ -362,7 +362,7 @@ class Purchaseorderinfo extends CI_Model{
                     </thead>
                     <tbody>';
                     foreach($responddetail->result() as $roworderinfo){
-                        
+    
                         $unitPrice = $roworderinfo->$unitPriceField;
                         $total = $roworderinfo->qty * $unitPrice;
 

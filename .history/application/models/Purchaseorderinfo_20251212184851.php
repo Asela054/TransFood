@@ -59,7 +59,6 @@ class Purchaseorderinfo extends CI_Model{
         $supplier=$this->input->post('supplier');
         $location=$this->input->post('location');
         $ordertype=$this->input->post('ordertype');
-        $currencytype=$this->input->post('currencytype');
         $totalusd=$this->input->post('totalusd');
         $usdrate=$this->input->post('usdrate');
 
@@ -81,7 +80,6 @@ class Purchaseorderinfo extends CI_Model{
             }
 
             $data = array(
-                'currencytype'=> $currencytype, 
                 'po_no'=> $i, 
                 'class'=> $poclass, 
                 'orderdate'=> $orderdate, 
@@ -121,8 +119,8 @@ class Purchaseorderinfo extends CI_Model{
                 $unitperctn=$rowtabledata['col_7'];
                 $ctn=$rowtabledata['col_8'];
                 $qty=$rowtabledata['col_9'];
-                $nettotal=$rowtabledata['col_10'];
-                $totalusd=str_replace(',', '', $rowtabledata['col_11']);
+                $nettotal=$rowtabledata['col_9'];
+                $totalusd=str_replace(',', '', $rowtabledata['col_10']);
 
                 $dataone = array(
                     'unitperctn'=> $unitperctn, 
@@ -238,11 +236,11 @@ class Purchaseorderinfo extends CI_Model{
                     $materialID=$rowtabledata['col_3'];
                     $unit=$rowtabledata['col_4'];
                     $salepriceusd=str_replace(',', '', $rowtabledata['col_5']);
-                    $unitperctn=$rowtabledata['col_7'];
-                    $ctn=$rowtabledata['col_8'];
-                    $qty=$rowtabledata['col_9'];
-                    $nettotal=$rowtabledata['col_10'];
-                    $totalusd=str_replace(',', '', $rowtabledata['col_11']);
+                    $unitperctn=$rowtabledata['col_6'];
+                    $ctn=$rowtabledata['col_7'];
+                    $qty=$rowtabledata['col_8'];
+                    $nettotal=$rowtabledata['col_9'];
+                    $totalusd=str_replace(',', '', $rowtabledata['col_10']);
                     
 
                     $dataone = array(
@@ -315,20 +313,6 @@ class Purchaseorderinfo extends CI_Model{
         $sql="SELECT `u`.*, `ua`.`suppliername`, `ua`.`primarycontactno`, `ua`.`secondarycontactno`, `ua`.`address` AS supplieraddress, `ua`.`email`, `ub`.`location`, `ub`.`phone`, `ub`.`address`, `ub`.`phone2`, `ub`.`email` AS `locemail` FROM `tbl_porder` AS `u` LEFT JOIN `tbl_supplier` AS `ua` ON (`ua`.`idtbl_supplier` = `u`.`tbl_supplier_idtbl_supplier`) LEFT JOIN `tbl_location` AS `ub` ON (`ub`.`idtbl_location` = `u`.`tbl_location_idtbl_location`) WHERE `u`.`status`=? AND `u`.`idtbl_porder`=?";
         $respond=$this->db->query($sql, array(1, $recordID));
 
-        $currencyType = $respond->row(0)->currencytype;
-        $currencySign = ($currencyType == 1) ? 'Rs. ' : '$ ';
-
-        $netTotal = ($currencyType == 1) 
-        ? $respond->row(0)->nettotal 
-        : $respond->row(0)->nettotalusd;
-
-        if ($currencyType == 1) {
-            $unitPriceField = 'unitprice';
-        } else {
-            $unitPriceField = 'unitpriceusd';
-        }
-
-
         $this->db->select('tbl_porder_detail.*, tbl_material_info.materialinfocode, tbl_material_info.materialname, tbl_unit.unitname');
         $this->db->from('tbl_porder_detail');
         $this->db->join('tbl_material_info', 'tbl_material_info.idtbl_material_info = tbl_porder_detail.tbl_material_info_idtbl_material_info', 'left');
@@ -356,25 +340,20 @@ class Purchaseorderinfo extends CI_Model{
                             <th>Unit Per Ctn</th>
                             <th>Ctns</th>
                             <th>Qty</th>
-                            <th>Unit Price</th>
-                            <th class="text-right">Total</th>
+                            <th>Unit Price ($)</th>
+                            <th class="text-right">Total ($)</th>
                         </tr>
                     </thead>
                     <tbody>';
                     foreach($responddetail->result() as $roworderinfo){
-                        
-                        $unitPrice = $roworderinfo->$unitPriceField;
-                        $total = $roworderinfo->qty * $unitPrice;
-
-                        $html .= '<tr>
+                        $html.='<tr>
                             <td>'.$roworderinfo->materialname.' / '.$roworderinfo->materialinfocode.'</td>
                             <td>'.$roworderinfo->unitname.'</td>
                             <td>'.$roworderinfo->unitperctn.'</td>
                             <td>'.$roworderinfo->ctn.'</td>
                             <td>'.$roworderinfo->qty.'</td>
-
-                            <td>'.$currencySign.number_format($unitPrice, 2).'</td>
-                            <td class="text-right">'.$currencySign.number_format($total, 2).'</td>
+                            <td>'.number_format(($roworderinfo->unitpriceusd), 2).'</td>
+                            <td class="text-right">'.number_format(($roworderinfo->qty*$roworderinfo->unitpriceusd), 2).'</td>
                         </tr>';
                     }
                     $html.='</tbody>
@@ -382,7 +361,7 @@ class Purchaseorderinfo extends CI_Model{
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-12 text-right"><h3 class="font-weight-bold">'.$currencySign.number_format($netTotal, 2).'</h3></div>
+            <div class="col-12 text-right"><h3 class="font-weight-bold">$ '.number_format(($respond->row(0)->nettotalusd), 2).'</h3></div>
         </div>
         ';
 
@@ -461,7 +440,7 @@ class Purchaseorderinfo extends CI_Model{
     public function Purchaseorderedit(){
         $recordID=$this->input->post('recordID');
 
-        $this->db->select('`tbl_porder`.`idtbl_porder`, `tbl_porder`.`currencytype`, `tbl_porder`.`class`, `tbl_porder`.`orderdate`, `tbl_porder`.`duedate`, `tbl_porder`.`subtotal`, `tbl_porder`.`discount`, `tbl_porder`.`discountamount`, `tbl_porder`.`nettotal`, `tbl_porder`.`subtotalusd`, `tbl_porder`.`discountusd`, `tbl_porder`.`discountamountusd`, `tbl_porder`.`nettotalusd`, `tbl_porder`.`tbl_location_idtbl_location`, `tbl_porder`.`tbl_order_type_idtbl_order_type`, `tbl_supplier`.`idtbl_supplier`, `tbl_supplier`.`suppliername`');
+        $this->db->select('`tbl_porder`.`idtbl_porder`, `tbl_porder`.`class`, `tbl_porder`.`orderdate`, `tbl_porder`.`duedate`, `tbl_porder`.`subtotal`, `tbl_porder`.`discount`, `tbl_porder`.`discountamount`, `tbl_porder`.`nettotal`, `tbl_porder`.`subtotalusd`, `tbl_porder`.`discountusd`, `tbl_porder`.`discountamountusd`, `tbl_porder`.`nettotalusd`, `tbl_porder`.`tbl_location_idtbl_location`, `tbl_porder`.`tbl_order_type_idtbl_order_type`, `tbl_supplier`.`idtbl_supplier`, `tbl_supplier`.`suppliername`');
         $this->db->from('tbl_porder');
         $this->db->join('tbl_supplier', 'tbl_supplier.idtbl_supplier = tbl_porder.tbl_supplier_idtbl_supplier', 'left');
         $this->db->where('tbl_porder.idtbl_porder', $recordID);

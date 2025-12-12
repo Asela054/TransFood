@@ -323,9 +323,9 @@ class Purchaseorderinfo extends CI_Model{
         : $respond->row(0)->nettotalusd;
 
         if ($currencyType == 1) {
-            $unitPriceField = 'unitprice';
+            $unitPriceField = $respond->row(0)->nettotal;
         } else {
-            $unitPriceField = 'unitpriceusd';
+            $unitPriceField = $respond->row(0)->nettotal;
         }
 
 
@@ -362,7 +362,7 @@ class Purchaseorderinfo extends CI_Model{
                     </thead>
                     <tbody>';
                     foreach($responddetail->result() as $roworderinfo){
-                        
+    
                         $unitPrice = $roworderinfo->$unitPriceField;
                         $total = $roworderinfo->qty * $unitPrice;
 

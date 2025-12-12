@@ -37,7 +37,7 @@ include "include/topnavbar.php";
                                                 <th>PO No.</th>
                                                 <th>Class</th>
                                                 <th>PO Date</th>
-                                                <th>Total</th>
+                                                <th>Total ($)</th>
                                                 <th>Confirm Status</th>
                                                 <th>GRN Issue Status</th>
                                                 <th>Notes and Instructions</th>
@@ -70,16 +70,6 @@ include "include/topnavbar.php";
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
                         <form id="createorderform" autocomplete="off">
-                            <div class="form-row mb-1">
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Currency Type*</label>
-                                    <select class="form-control form-control-sm" name="currencytype" id="currencytype" required>
-                                        <option value="">Select</option>
-                                        <option value="1">LKR</option>
-                                        <option value="2">USD</option>
-                                    </select>
-                                </div>
-                            </div>
                             <div class="form-row mb-1">
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Purchase Order Type*</label>
@@ -123,13 +113,13 @@ include "include/topnavbar.php";
                                 </div>
                             </div>
                             <div class="form-row mb-1">
-                                <div class="col">
+                                <div class="col-12">
                                     <label class="small font-weight-bold text-dark">Material*</label>
                                     <select class="form-control form-control-sm" name="product" id="product" required>
                                         <option value="">Select</option>
                                     </select>
                                 </div>
-                                <div class="col">
+                                                                <div class="col">
                                     <label class="small font-weight-bold text-dark">Unit*</label>
                                     <select class="form-control form-control-sm" name="unit" id="unit" required readonly>
                                         <option value="">Select</option>
@@ -141,19 +131,25 @@ include "include/topnavbar.php";
                                     <label class="small font-weight-bold text-dark">Unit Per Ctn*</label>
                                     <input type="text" id="unitperctn" name="unitperctn" class="form-control form-control-sm" value="0" required>
                                 </div>
+                            </div>
+                            <div class="form-row mb-1">
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Ctn*</label>
                                     <input type="text" id="ctn" name="ctn" class="form-control form-control-sm" required>
                                 </div>
-                            </div>
-                            <div class="form-row mb-1">
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Total Qty*</label>
                                     <input type="text" id="newqty" name="newqty" class="form-control form-control-sm" required>
                                 </div>
+                            </div>
+                            <div class="form-row mb-1">
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Unit Price</label>
                                     <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
+                                </div>
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">USD Price ($)</label>
+                                    <input type="text" id="usdrate" name="usdrate" class="form-control form-control-sm" value="0">
                                 </div>
                             </div>
                             <div class="form-group mb-1">
@@ -175,16 +171,14 @@ include "include/topnavbar.php";
                                 <tr>
                                     <th>Product</th>
                                     <th>Comment</th>
-                                    <th class="d-none">Product ID</th>
-                                    <th class="d-none">Unit Price (LKR)</th>
-                                    <th class="d-none">Unit Price (USD)</th>
-                                    <th class="text-center">Unit Price</th>
+                                    <th class="d-none">ProductID</th>
+                                    <th class="d-none">Unitprice</th>
+                                    <th class="text-center">Unit Price ($)</th>
                                     <th class="text-center">Unit Per Ctn</th>
                                     <th class="text-center">Ctn</th>
                                     <th class="text-center">Total Qty</th>
-                                    <th class="d-none">Total (LKR)</th>
-                                    <th class="d-none">Total (USD)</th>
-                                    <th class="text-right">Total</th>
+                                    <th class="d-none">HideTotal</th>
+                                    <th class="text-right">Total ($)</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -360,15 +354,7 @@ include "include/topnavbar.php";
                     "className": 'text-right',
                     "data": null,
                     "render": function(data, type, full) {
-
-                        let curr = full['currencytype'];
-                        let symbol = curr == 1 ? "Rs. " : "$ ";
-
-                        let total = curr == 1 
-                            ? full['nettotal'] 
-                            : full['nettotalusd'];
-
-                        return symbol + addCommas(parseFloat(total).toFixed(2));
+                        return addCommas(parseFloat(full['nettotalusd']).toFixed(2));
                     }
                 },
                 {
@@ -491,8 +477,7 @@ include "include/topnavbar.php";
                         var obj = JSON.parse(result);
                         
                         $('#recordID').val(obj.recorddata['idtbl_porder']);
-                        $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);    
-                        $('#currencytype').val(obj.recorddata['currencytype']);                     
+                        $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);                       
                         $('#poclass').val(obj.recorddata['class']);                       
                         $('#orderdate').val(obj.recorddata['orderdate']);                       
                         $('#duedate').val(obj.recorddata['duedate']);                       
@@ -603,94 +588,60 @@ include "include/topnavbar.php";
             });
         });
         $("#formsubmit").click(function () {
+            if (!$("#createorderform")[0].checkValidity()) {
+                // If the form is invalid, submit it. The form won't actually submit;
+                // this will just cause the browser to display the native HTML5 error messages.
+                $("#submitBtn").click();
+            } else {
+                var productID = $('#product').val();
+                var comment = $('#comment').val();
+                var product = $("#product option:selected").text();
+                var unit_price = parseFloat($('#unitprice').val());
+                var unitprice = addCommas(parseFloat(unit_price).toFixed(2));
+                var usdrate = parseFloat($('#usdrate').val());
+                var unitperctn = parseFloat($('#unitperctn').val());
+                var ctn = parseFloat($('#ctn').val());
+                var newqty = parseFloat($('#newqty').val());
 
-        	if (!$("#createorderform")[0].checkValidity()) {
-        		$("#submitBtn").click();
-        		return;
-        	}
+                var newtotal = parseFloat(unitprice * newqty);
 
-        	let currencyType = $("#currencytype").val(); 
-        	let usdRate = parseFloat($("#gcw_valFL0GridDR1").val());
+                var total = parseFloat(newtotal);
+                var showtotal = addCommas(parseFloat(total).toFixed(2));
+                var totalusd = addCommas(parseFloat(usdrate * newqty).toFixed(2));
 
-        	let productID = $("#product").val();
-        	let comment = $("#comment").val();
-        	let product = $("#product option:selected").text();
-        	let unitprice = parseFloat($("#unitprice").val()); 
-        	let unitperctn = parseFloat($("#unitperctn").val());
-        	let ctn = parseFloat($("#ctn").val());
-        	let newqty = parseFloat($("#newqty").val());
+                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + addCommas(usdrate) + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right totalusd">' + totalusd + '</td></tr>');
 
-        	let unitprice_lkr = 0;
-        	let unitprice_usd = 0;
-        	let total_lkr = 0;
-        	let total_usd = 0;
+                $('#product').val('');
+                $('#unitprice').val('');
+                $('#ctn').val('0');
+                $('#unitperctn').val('0');
+                $('#saleprice').val('');
+                $('#comment').val('');
+                $('#usdrate').val('');
+                $('#newqty').val('0');
 
-        	if (currencyType == 1) {
-        		unitprice_lkr = unitprice;
-        		unitprice_usd = unitprice / usdRate;
+                var sum = 0;
+                $(".total").each(function () {
+                    sum += parseFloat($(this).text());
+                });
 
-        		total_lkr = unitprice_lkr * newqty;
-        		total_usd = total_lkr / usdRate;
+                var sumusd = 0;
+                $(".totalusd").each(function () {
+                    var valueusd = $(this).text();
+                    var numusd = parseFloat(valueusd.replace(/,/g, ''));
+                    if (!isNaN(numusd)) {
+                        sumusd += numusd;
+                    }
+                });
 
-        	} else if (currencyType == 2) {
-        		unitprice_usd = unitprice;
-        		unitprice_lkr = unitprice * usdRate;
+                var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-        		total_usd = unitprice_usd * newqty;
-        		total_lkr = total_usd * usdRate;
-        	}
-
-        	$("#tableorder > tbody:last").append(`
-            <tr class="pointer">
-                <td>${product}</td>
-                <td>${comment}</td>
-                <td class="d-none">${productID}</td>
-
-                <!-- STORE BOTH LKR + USD HIDDEN -->
-                <td class="d-none unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
-                <td class="d-none unitprice_usd">${unitprice_usd.toFixed(2)}</td>
-
-                <!-- SHOW DISPLAY PRICE -->
-                <td class="text-center">${currencyType == "1" ? unitprice_lkr.toFixed(2) : unitprice_usd.toFixed(2)}</td>
-
-                <td class="text-center">${unitperctn}</td>
-                <td class="text-center">${ctn}</td>
-                <td class="text-center">${newqty}</td>
-
-                <!-- HIDDEN TOTALS -->
-                <td class="d-none total_lkr">${total_lkr.toFixed(2)}</td>
-                <td class="d-none total_usd">${total_usd.toFixed(2)}</td>
-
-                <!-- DISPLAY TOTAL -->
-                <td class="text-right">${currencyType == "1" ? total_lkr.toFixed(2) : total_usd.toFixed(2)}</td>
-            </tr>
-            `);
-
-        	$("#product").val('');
-        	$("#unitprice").val('');
-        	$("#ctn").val('0');
-        	$("#unitperctn").val('0');
-        	$("#comment").val('');
-        	$("#newqty").val('0');
-
-        	let grand_lkr = 0;
-        	let grand_usd = 0;
-
-        	$(".total_lkr").each(function () {
-        		grand_lkr += parseFloat($(this).text());
-        	});
-
-        	$(".total_usd").each(function () {
-        		grand_usd += parseFloat($(this).text());
-        	});
-
-        	$("#hidetotalorder").val(grand_lkr.toFixed(2));
-        	$("#hidetotalorderusd").val(grand_usd.toFixed(2));
-
-        	$("#divtotal").html(currencyType == "1" ? "Rs. " + grand_lkr.toFixed(2) : "$ " + grand_usd.toFixed(2));
-
+                $('#divtotal').html('$ ' + sumusd);
+                $('#hidetotalorder').val(sum);
+                $('#hidetotalorderusd').val(sumusd);
+                $('#product').focus();
+            }
         });
-
         $('#tableorder').on('click', 'tr', function () {
             var r = confirm("Are you sure, You want to remove this product ? ");
             if (r == true) {
@@ -732,7 +683,6 @@ include "include/topnavbar.php";
                 var supplier = $('#supplier').val();
                 var location = $('#location').val();
                 var ordertype = $('#ordertype').val();
-                var currencytype = $('#currencytype').val();
                 var recordID = $('#recordID').val();
                 var recordOption = $('#recordOption').val();
                 var usdrate = $('#gcw_valFL0GridDR1').val();
@@ -749,7 +699,6 @@ include "include/topnavbar.php";
                         supplier: supplier,
                         location: location,
                         ordertype: ordertype,
-                        currencytype: currencytype,
                         totalusd: totalusd,
                         usdrate: usdrate,
                         recordID: recordID,
