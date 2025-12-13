@@ -202,8 +202,8 @@ include "include/topnavbar.php";
                             <div class="col text-right">
                                 <h1 class="font-weight-600" id="divtotal">Rs. 0.00</h1>
                             </div>
-                            <input type="hidden" id="hidetotalorder" value="0">
-                            <input type="hidden" id="hidetotalorderusd" value="0">
+                            <input type="text" id="hidetotalorder" value="0">
+                            <input type="text" id="hidetotalorderusd" value="0">
                         </div>
                         <hr>
                         <div class="form-row">
@@ -321,42 +321,45 @@ include "include/topnavbar.php";
         });
 
         let baseTotalLKR = 0;
-        let baseTotalUSD = 0;
+let baseTotalUSD = 0;
 
-        $("#totaldiscount").on("focus", function () {
-        	baseTotalLKR = parseFloat($("#hidetotalorder").val()) || 0;
-        	baseTotalUSD = parseFloat($("#hidetotalorderusd").val()) || 0;
-        });
+$("#totaldiscount").on("focus", function () {
+    baseTotalLKR = parseFloat($("#hidetotalorder").val()) || 0;
+    baseTotalUSD = parseFloat($("#hidetotalorderusd").val()) || 0;
+});
 
-        $("#totaldiscount").on("input", function () {
+$("#totaldiscount").on("input", function () {
 
-        	let discount = parseFloat($(this).val()) || 0;
-        	let currencyType = $("#currencytype").val();
-        	let usdRate = parseFloat($("#gcw_valFL0GridDR1").val()) || 1;
+    let discount = parseFloat($(this).val()) || 0;
+    let currencyType = $("#currencytype").val();
+    let usdRate = parseFloat($("#gcw_valFL0GridDR1").val()) || 1;
 
-        	let newTotalLKR = 0;
-        	let newTotalUSD = 0;
+    let newTotalLKR = 0;
+    let newTotalUSD = 0;
 
-        	if (currencyType == "1") {
-        		newTotalLKR = baseTotalLKR - discount;
-        		if (newTotalLKR < 0) newTotalLKR = 0;
+    if (currencyType == "1") {
+        // Discount entered in LKR
+        newTotalLKR = baseTotalLKR - discount;
+        if (newTotalLKR < 0) newTotalLKR = 0;
 
-        		newTotalUSD = newTotalLKR / usdRate;
+        newTotalUSD = newTotalLKR / usdRate;
 
-        		$("#divtotal").text("Rs. " + newTotalLKR.toFixed(2));
+        $("#divtotal").text("Rs. " + newTotalLKR.toFixed(2));
 
-        	} else if (currencyType == "2") {
-        		newTotalUSD = baseTotalUSD - discount;
-        		if (newTotalUSD < 0) newTotalUSD = 0;
+    } else if (currencyType == "2") {
+        // Discount entered in USD
+        newTotalUSD = baseTotalUSD - discount;
+        if (newTotalUSD < 0) newTotalUSD = 0;
 
-        		newTotalLKR = newTotalUSD * usdRate;
+        newTotalLKR = newTotalUSD * usdRate;
 
-        		$("#divtotal").text("$ " + newTotalUSD.toFixed(2));
-        	}
+        $("#divtotal").text("$ " + newTotalUSD.toFixed(2));
+    }
 
-        	$("#hidetotalorder").val(newTotalLKR.toFixed(2));
-        	$("#hidetotalorderusd").val(newTotalUSD.toFixed(2));
-        });
+    // Update hidden totals
+    $("#hidetotalorder").val(newTotalLKR.toFixed(2));
+    $("#hidetotalorderusd").val(newTotalUSD.toFixed(2));
+});
 
 
         $('#dataTable').DataTable({
@@ -547,115 +550,80 @@ include "include/topnavbar.php";
                 } 
             });
         });
-        $('#dataTable tbody').on('click', '.btnEdit', async function () {
+        $('#dataTable tbody').on('click', '.btnEdit', async function() {
+            var r = await Otherconfirmation("You want to Edit this ? ");
+            if (r == true) {
+                var id = $(this).attr('id');
+                $.ajax({
+                    type: "POST",
+                    data: {
+                        recordID: id
+                    },
+                    url: '<?php echo base_url() ?>Purchaseorder/Purchaseorderedit',
+                    success: function(result) { //alert(result);
+                        // console.log(result);
+                        
+                        var obj = JSON.parse(result);
+                        
+                        $('#recordID').val(obj.recorddata['idtbl_porder']);
+                        $('#ordertype').val(obj.recorddata['tbl_order_type_idtbl_order_type']);    
+                        $('#currencytype').val(obj.recorddata['currencytype']);                     
+                        $('#poclass').val(obj.recorddata['class']);                       
+                        $('#orderdate').val(obj.recorddata['orderdate']);                       
+                        $('#duedate').val(obj.recorddata['duedate']);                       
+                        $('#location').val(obj.recorddata['tbl_location_idtbl_location']);     
+                        var newOptionSupp = new Option(obj.recorddata['suppliername'], obj.recorddata['idtbl_supplier'], true, true);
+                        $('#supplier').append(newOptionSupp).trigger('change');            
 
-            var r = await Otherconfirmation("You want to Edit this ?");
-            if (!r) return;
+                        $('#recordOption').val('2');
+                        $('#btncreateorder').html('<i class="far fa-save"></i>&nbsp;Update Order');
+                        $.each(obj.recorddetaildata, function(i, item) {
+                            var product = item['materialname'] + ' / ' + item['materialinfocode'];
+                            var unit_price = parseFloat(item['unitprice']);
+                            var unitprice = addCommas(parseFloat(unit_price).toFixed(2));
+                            var unit_priceusd = parseFloat(item['unitpriceusd']);
+                            var unitpriceusd = addCommas(parseFloat(unit_priceusd).toFixed(2));
+                            var unitperctn = parseFloat(item['unitperctn']);
+                            var ctn = parseFloat(item['ctn']);
+                            var newqty = parseFloat(item['qty']);
 
-            var id = $(this).attr('id');
+                            var newtotal = parseFloat(unitprice * newqty);
+                            var newtotalusd = parseFloat(unitpriceusd * newqty);
 
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url() ?>Purchaseorder/Purchaseorderedit",
-                data: {
-                    recordID: id
-                },
-                success: function (result) {
+                            var total = parseFloat(newtotal);
+                            var showtotal = addCommas(parseFloat(total).toFixed(2));
 
-                    var obj = JSON.parse(result);
+                            var totalusd = parseFloat(newtotalusd);
+                            var showtotalusd = addCommas(parseFloat(totalusd).toFixed(2));
 
-                    $('#recordID').val(obj.recorddata.idtbl_porder);
-                    $('#ordertype').val(obj.recorddata.tbl_order_type_idtbl_order_type);
-                    $('#currencytype').val(obj.recorddata.currencytype);
-                    $('#poclass').val(obj.recorddata.class);
-                    $('#orderdate').val(obj.recorddata.orderdate);
-                    $('#duedate').val(obj.recorddata.duedate);
-                    $('#location').val(obj.recorddata.tbl_location_idtbl_location);
+                            $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + item['comment'] + '</td><td class="d-none">' + item['tbl_material_info_idtbl_material_info'] + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitpriceusd + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right totalusd">' + showtotalusd + '</td></tr>');
+                        });
+                        var sum = 0;
+                        $(".total").each(function () {
+                            sum += parseFloat($(this).text());
+                        });
 
-                    var newOptionSupp = new Option(
-                        obj.recorddata.suppliername,
-                        obj.recorddata.idtbl_supplier,
-                        true,
-                        true
-                    );
-                    $('#supplier').append(newOptionSupp).trigger('change');
+                        var sumusd = 0;
+                        $(".totalusd").each(function () {
+                            var valueusd = $(this).text();
+                            var numusd = parseFloat(valueusd.replace(/,/g, ''));
+                            if (!isNaN(numusd)) {
+                                sumusd += numusd;
+                            }
+                        });
 
-                    $('#recordOption').val('2');
-                    $('#btncreateorder').html('<i class="far fa-save"></i>&nbsp;Update Order');
+                        var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-                    $('#tableorder tbody').empty();
-
-                    $.each(obj.recorddetaildata, function (i, item) {
-
-                        let unitprice_lkr = parseFloat(item.unitprice) || 0;
-                        let unitprice_usd = parseFloat(item.unitpriceusd) || 0;
-                        let discount_lkr = parseFloat(item.discount) || 0;
-                        let discount_usd = parseFloat(item.discountusd) || 0;
-
-                        let unitperctn = parseFloat(item.unitperctn) || 0;
-                        let ctn = parseFloat(item.ctn) || 0;
-                        let qty = parseFloat(item.qty) || 0;
-
-                        let total_lkr = (unitprice_lkr - discount_lkr) * qty;
-                        let total_usd = (unitprice_usd - discount_usd) * qty;
-
-                        let product = item.materialname + ' / ' + item.materialinfocode;
-
-                        $('#tableorder > tbody:last').append(`
-                            <tr class="pointer">
-                                <td>${product}</td>
-                                <td>${item.comment}</td>
-                                <td class="d-none">${item.tbl_material_info_idtbl_material_info}</td>
-
-                                <td class="d-none unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
-                                <td class="d-none discount_lkr">${discount_lkr.toFixed(2)}</td>
-                                <td class="d-none unitprice_usd">${unitprice_usd.toFixed(2)}</td>
-                                <td class="d-none discount_usd">${discount_usd.toFixed(2)}</td>
-
-                                <td class="text-center">
-                                    ${obj.recorddata.currencytype == "1"
-                                        ? unitprice_lkr.toFixed(2)
-                                        : unitprice_usd.toFixed(2)}
-                                </td>
-
-                                <td class="text-center">
-                                    ${obj.recorddata.currencytype == "1"
-                                        ? discount_lkr.toFixed(2)
-                                        : discount_usd.toFixed(2)}
-                                </td>
-
-                                <td class="text-center">${unitperctn}</td>
-                                <td class="text-center">${ctn}</td>
-                                <td class="text-center">${qty}</td>
-
-                                <td class="d-none total_lkr">${total_lkr.toFixed(2)}</td>
-                                <td class="d-none total_usd">${total_usd.toFixed(2)}</td>
-
-                                <td class="text-right">
-                                    ${obj.recorddata.currencytype == "1"
-                                        ? total_lkr.toFixed(2)
-                                        : total_usd.toFixed(2)}
-                                </td>
-                            </tr>
-                        `);
-                    });
-
-                    if (obj.recorddata.currencytype == "1") {
-                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
-                        $('#divtotal').html('Rs. ' + parseFloat(obj.recorddata.nettotal).toFixed(2));
-                    } else {
-                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamountusd).toFixed(2));
-                        $('#divtotal').html('$ ' + parseFloat(obj.recorddata.nettotalusd).toFixed(2));
+                        $('#divtotal').html('$ ' + sumusd);
+                        $('#hidetotalorder').val(sum);
+                        $('#hidetotalorderusd').val(sumusd);
+                        $('#product').focus();
+                        
+                        $('#staticBackdrop').modal('show');
                     }
-
-                    $('#hidetotalorder').val(parseFloat(obj.recorddata.nettotal).toFixed(2));
-                    $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotalusd).toFixed(2));
-
-                    $('#staticBackdrop').modal('show');
-                }
-            });
+                });
+            }
         });
-
         $('#supplier').change(function () {
             let supplierID = $(this).val()
 

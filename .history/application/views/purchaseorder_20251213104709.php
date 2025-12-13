@@ -564,6 +564,9 @@ include "include/topnavbar.php";
 
                     var obj = JSON.parse(result);
 
+                    /* ===============================
+                    HEADER DATA
+                    =============================== */
                     $('#recordID').val(obj.recorddata.idtbl_porder);
                     $('#ordertype').val(obj.recorddata.tbl_order_type_idtbl_order_type);
                     $('#currencytype').val(obj.recorddata.currencytype);
@@ -583,8 +586,14 @@ include "include/topnavbar.php";
                     $('#recordOption').val('2');
                     $('#btncreateorder').html('<i class="far fa-save"></i>&nbsp;Update Order');
 
+                    /* ===============================
+                    CLEAR TABLE
+                    =============================== */
                     $('#tableorder tbody').empty();
 
+                    /* ===============================
+                    DETAIL ROWS
+                    =============================== */
                     $.each(obj.recorddetaildata, function (i, item) {
 
                         let unitprice_lkr = parseFloat(item.unitprice) || 0;
@@ -605,12 +614,12 @@ include "include/topnavbar.php";
                             <tr class="pointer">
                                 <td>${product}</td>
                                 <td>${item.comment}</td>
-                                <td class="d-none">${item.tbl_material_info_idtbl_material_info}</td>
+                                <td>${item.tbl_material_info_idtbl_material_info}</td>
 
-                                <td class="d-none unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
-                                <td class="d-none discount_lkr">${discount_lkr.toFixed(2)}</td>
-                                <td class="d-none unitprice_usd">${unitprice_usd.toFixed(2)}</td>
-                                <td class="d-none discount_usd">${discount_usd.toFixed(2)}</td>
+                                <td class="unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
+                                <td class="discount_lkr">${discount_lkr.toFixed(2)}</td>
+                                <td class="unitprice_usd">${unitprice_usd.toFixed(2)}</td>
+                                <td class="discount_usd">${discount_usd.toFixed(2)}</td>
 
                                 <td class="text-center">
                                     ${obj.recorddata.currencytype == "1"
@@ -628,8 +637,8 @@ include "include/topnavbar.php";
                                 <td class="text-center">${ctn}</td>
                                 <td class="text-center">${qty}</td>
 
-                                <td class="d-none total_lkr">${total_lkr.toFixed(2)}</td>
-                                <td class="d-none total_usd">${total_usd.toFixed(2)}</td>
+                                <td class="total_lkr">${total_lkr.toFixed(2)}</td>
+                                <td class="total_usd">${total_usd.toFixed(2)}</td>
 
                                 <td class="text-right">
                                     ${obj.recorddata.currencytype == "1"
@@ -640,6 +649,9 @@ include "include/topnavbar.php";
                         `);
                     });
 
+                    /* ===============================
+                    HEADER DISCOUNTS & TOTALS
+                    =============================== */
                     if (obj.recorddata.currencytype == "1") {
                         $('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
                         $('#divtotal').html('Rs. ' + parseFloat(obj.recorddata.nettotal).toFixed(2));

@@ -56,7 +56,6 @@ class Purchaseorderinfo extends CI_Model{
         $duedate=$this->input->post('duedate');
         $total=$this->input->post('total');
         $remark=$this->input->post('remark');
-        $totaldiscount=$this->input->post('totaldiscount');
         $supplier=$this->input->post('supplier');
         $location=$this->input->post('location');
         $ordertype=$this->input->post('ordertype');
@@ -89,7 +88,7 @@ class Purchaseorderinfo extends CI_Model{
                 'duedate'=> $duedate, 
                 'subtotal'=> $total, 
                 'discount'=> '0', 
-                'discountamount'=> $totaldiscount,
+                'discountamount'=> '0', 
                 'nettotal'=> $total, 
                 'subtotalusd'=> $totalusd, 
                 'discountusd'=> '0', 

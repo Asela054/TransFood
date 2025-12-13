@@ -56,7 +56,6 @@ class Purchaseorderinfo extends CI_Model{
         $duedate=$this->input->post('duedate');
         $total=$this->input->post('total');
         $remark=$this->input->post('remark');
-        $totaldiscount=$this->input->post('totaldiscount');
         $supplier=$this->input->post('supplier');
         $location=$this->input->post('location');
         $ordertype=$this->input->post('ordertype');
@@ -89,7 +88,7 @@ class Purchaseorderinfo extends CI_Model{
                 'duedate'=> $duedate, 
                 'subtotal'=> $total, 
                 'discount'=> '0', 
-                'discountamount'=> $totaldiscount,
+                'discountamount'=> '0', 
                 'nettotal'=> $total, 
                 'subtotalusd'=> $totalusd, 
                 'discountusd'=> '0', 
@@ -137,7 +136,7 @@ class Purchaseorderinfo extends CI_Model{
                     'total'=> $nettotal,
                     'unitpriceusd'=> $salepriceusd, 
                     'discountusd'=> '0', 
-                    'discountamountusd'=> $discountusd, 
+                    'discountamountusd'=> '0', 
                     'totalusd'=> $totalusd,  
                     'comment'=> $comment, 
                     'status'=> '1', 
@@ -219,7 +218,6 @@ class Purchaseorderinfo extends CI_Model{
                     'orderdate'=> $orderdate, 
                     'duedate'=> $duedate, 
                     'subtotal'=> $total, 
-                    'discountamount'=> $totaldiscount,
                     'nettotal'=> $total, 
                     'subtotalusd'=> $totalusd, 
                     'nettotalusd'=> $totalusd, 
@@ -241,14 +239,12 @@ class Purchaseorderinfo extends CI_Model{
                     $comment=$rowtabledata['col_2'];
                     $materialID=$rowtabledata['col_3'];
                     $unit=$rowtabledata['col_4'];
-                    $discountlkr=$rowtabledata['col_5'];
-                    $salepriceusd=str_replace(',', '', $rowtabledata['col_6']);
-                    $discountusd=$rowtabledata['col_7'];
-                    $unitperctn=$rowtabledata['col_10'];
-                    $ctn=$rowtabledata['col_11'];
-                    $qty=$rowtabledata['col_12'];
-                    $nettotal=$rowtabledata['col_13'];
-                    $totalusd=str_replace(',', '', $rowtabledata['col_14']);
+                    $salepriceusd=str_replace(',', '', $rowtabledata['col_5']);
+                    $unitperctn=$rowtabledata['col_7'];
+                    $ctn=$rowtabledata['col_8'];
+                    $qty=$rowtabledata['col_9'];
+                    $nettotal=$rowtabledata['col_10'];
+                    $totalusd=str_replace(',', '', $rowtabledata['col_11']);
                     
 
                     $dataone = array(
@@ -257,11 +253,11 @@ class Purchaseorderinfo extends CI_Model{
                         'qty'=> $qty, 
                         'unitprice'=> $unit, 
                         'discount'=> '0', 
-                        'discountamount'=> $discountlkr, 
+                        'discountamount'=> '0', 
                         'total'=> $nettotal, 
                         'unitpriceusd'=> $salepriceusd, 
                         'discountusd'=> '0', 
-                        'discountamountusd'=> $discountusd, 
+                        'discountamountusd'=> '0', 
                         'totalusd'=> $totalusd,
                         'comment'=> $comment, 
                         'status'=> '1', 
