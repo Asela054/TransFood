@@ -605,12 +605,12 @@ include "include/topnavbar.php";
                             <tr class="pointer">
                                 <td>${product}</td>
                                 <td>${item.comment}</td>
-                                <td class="d-none">${item.tbl_material_info_idtbl_material_info}</td>
+                                <td class="">${item.tbl_material_info_idtbl_material_info}</td>
 
-                                <td class="d-none unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
-                                <td class="d-none discount_lkr">${discount_lkr.toFixed(2)}</td>
-                                <td class="d-none unitprice_usd">${unitprice_usd.toFixed(2)}</td>
-                                <td class="d-none discount_usd">${discount_usd.toFixed(2)}</td>
+                                <td class="unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
+                                <td class="discount_lkr">${discount_lkr.toFixed(2)}</td>
+                                <td class="unitprice_usd">${unitprice_usd.toFixed(2)}</td>
+                                <td class="discount_usd">${discount_usd.toFixed(2)}</td>
 
                                 <td class="text-center">
                                     ${obj.recorddata.currencytype == "1"
@@ -628,8 +628,8 @@ include "include/topnavbar.php";
                                 <td class="text-center">${ctn}</td>
                                 <td class="text-center">${qty}</td>
 
-                                <td class="d-none total_lkr">${total_lkr.toFixed(2)}</td>
-                                <td class="d-none total_usd">${total_usd.toFixed(2)}</td>
+                                <td class="total_lkr">${total_lkr.toFixed(2)}</td>
+                                <td class="total_usd">${total_usd.toFixed(2)}</td>
 
                                 <td class="text-right">
                                     ${obj.recorddata.currencytype == "1"

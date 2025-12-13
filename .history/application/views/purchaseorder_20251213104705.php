@@ -547,114 +547,126 @@ include "include/topnavbar.php";
                 } 
             });
         });
-        $('#dataTable tbody').on('click', '.btnEdit', async function () {
+$('#dataTable tbody').on('click', '.btnEdit', async function () {
 
-            var r = await Otherconfirmation("You want to Edit this ?");
-            if (!r) return;
+	var r = await Otherconfirmation("You want to Edit this ?");
+	if (!r) return;
 
-            var id = $(this).attr('id');
+	var id = $(this).attr('id');
 
-            $.ajax({
-                type: "POST",
-                url: "<?php echo base_url() ?>Purchaseorder/Purchaseorderedit",
-                data: {
-                    recordID: id
-                },
-                success: function (result) {
+	$.ajax({
+		type: "POST",
+		url: "<?php echo base_url() ?>Purchaseorder/Purchaseorderedit",
+		data: {
+			recordID: id
+		},
+		success: function (result) {
 
-                    var obj = JSON.parse(result);
+			var obj = JSON.parse(result);
 
-                    $('#recordID').val(obj.recorddata.idtbl_porder);
-                    $('#ordertype').val(obj.recorddata.tbl_order_type_idtbl_order_type);
-                    $('#currencytype').val(obj.recorddata.currencytype);
-                    $('#poclass').val(obj.recorddata.class);
-                    $('#orderdate').val(obj.recorddata.orderdate);
-                    $('#duedate').val(obj.recorddata.duedate);
-                    $('#location').val(obj.recorddata.tbl_location_idtbl_location);
+			/* ===============================
+			   HEADER DATA
+			=============================== */
+			$('#recordID').val(obj.recorddata.idtbl_porder);
+			$('#ordertype').val(obj.recorddata.tbl_order_type_idtbl_order_type);
+			$('#currencytype').val(obj.recorddata.currencytype);
+			$('#poclass').val(obj.recorddata.class);
+			$('#orderdate').val(obj.recorddata.orderdate);
+			$('#duedate').val(obj.recorddata.duedate);
+			$('#location').val(obj.recorddata.tbl_location_idtbl_location);
 
-                    var newOptionSupp = new Option(
-                        obj.recorddata.suppliername,
-                        obj.recorddata.idtbl_supplier,
-                        true,
-                        true
-                    );
-                    $('#supplier').append(newOptionSupp).trigger('change');
+			var newOptionSupp = new Option(
+				obj.recorddata.suppliername,
+				obj.recorddata.idtbl_supplier,
+				true,
+				true
+			);
+			$('#supplier').append(newOptionSupp).trigger('change');
 
-                    $('#recordOption').val('2');
-                    $('#btncreateorder').html('<i class="far fa-save"></i>&nbsp;Update Order');
+			$('#recordOption').val('2');
+			$('#btncreateorder').html('<i class="far fa-save"></i>&nbsp;Update Order');
 
-                    $('#tableorder tbody').empty();
+			/* ===============================
+			   CLEAR TABLE
+			=============================== */
+			$('#tableorder tbody').empty();
 
-                    $.each(obj.recorddetaildata, function (i, item) {
+			/* ===============================
+			   DETAIL ROWS
+			=============================== */
+			$.each(obj.recorddetaildata, function (i, item) {
 
-                        let unitprice_lkr = parseFloat(item.unitprice) || 0;
-                        let unitprice_usd = parseFloat(item.unitpriceusd) || 0;
-                        let discount_lkr = parseFloat(item.discount) || 0;
-                        let discount_usd = parseFloat(item.discountusd) || 0;
+				let unitprice_lkr = parseFloat(item.unitprice) || 0;
+				let unitprice_usd = parseFloat(item.unitpriceusd) || 0;
+				let discount_lkr = parseFloat(item.discount) || 0;
+				let discount_usd = parseFloat(item.discountusd) || 0;
 
-                        let unitperctn = parseFloat(item.unitperctn) || 0;
-                        let ctn = parseFloat(item.ctn) || 0;
-                        let qty = parseFloat(item.qty) || 0;
+				let unitperctn = parseFloat(item.unitperctn) || 0;
+				let ctn = parseFloat(item.ctn) || 0;
+				let qty = parseFloat(item.qty) || 0;
 
-                        let total_lkr = (unitprice_lkr - discount_lkr) * qty;
-                        let total_usd = (unitprice_usd - discount_usd) * qty;
+				let total_lkr = (unitprice_lkr - discount_lkr) * qty;
+				let total_usd = (unitprice_usd - discount_usd) * qty;
 
-                        let product = item.materialname + ' / ' + item.materialinfocode;
+				let product = item.materialname + ' / ' + item.materialinfocode;
 
-                        $('#tableorder > tbody:last').append(`
-                            <tr class="pointer">
-                                <td>${product}</td>
-                                <td>${item.comment}</td>
-                                <td class="d-none">${item.tbl_material_info_idtbl_material_info}</td>
+				$('#tableorder > tbody:last').append(`
+                    <tr class="pointer">
+                        <td>${product}</td>
+                        <td>${item.comment}</td>
+                        <td>${item.tbl_material_info_idtbl_material_info}</td>
 
-                                <td class="d-none unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
-                                <td class="d-none discount_lkr">${discount_lkr.toFixed(2)}</td>
-                                <td class="d-none unitprice_usd">${unitprice_usd.toFixed(2)}</td>
-                                <td class="d-none discount_usd">${discount_usd.toFixed(2)}</td>
+                        <td class="unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
+                        <td class="discount_lkr">${discount_lkr.toFixed(2)}</td>
+                        <td class="unitprice_usd">${unitprice_usd.toFixed(2)}</td>
+                        <td class="discount_usd">${discount_usd.toFixed(2)}</td>
 
-                                <td class="text-center">
-                                    ${obj.recorddata.currencytype == "1"
-                                        ? unitprice_lkr.toFixed(2)
-                                        : unitprice_usd.toFixed(2)}
-                                </td>
+                        <td class="text-center">
+                            ${obj.recorddata.currencytype == "1"
+                                ? unitprice_lkr.toFixed(2)
+                                : unitprice_usd.toFixed(2)}
+                        </td>
 
-                                <td class="text-center">
-                                    ${obj.recorddata.currencytype == "1"
-                                        ? discount_lkr.toFixed(2)
-                                        : discount_usd.toFixed(2)}
-                                </td>
+                        <td class="text-center">
+                            ${obj.recorddata.currencytype == "1"
+                                ? discount_lkr.toFixed(2)
+                                : discount_usd.toFixed(2)}
+                        </td>
 
-                                <td class="text-center">${unitperctn}</td>
-                                <td class="text-center">${ctn}</td>
-                                <td class="text-center">${qty}</td>
+                        <td class="text-center">${unitperctn}</td>
+                        <td class="text-center">${ctn}</td>
+                        <td class="text-center">${qty}</td>
 
-                                <td class="d-none total_lkr">${total_lkr.toFixed(2)}</td>
-                                <td class="d-none total_usd">${total_usd.toFixed(2)}</td>
+                        <td class="total_lkr">${total_lkr.toFixed(2)}</td>
+                        <td class="total_usd">${total_usd.toFixed(2)}</td>
 
-                                <td class="text-right">
-                                    ${obj.recorddata.currencytype == "1"
-                                        ? total_lkr.toFixed(2)
-                                        : total_usd.toFixed(2)}
-                                </td>
-                            </tr>
-                        `);
-                    });
+                        <td class="text-right">
+                            ${obj.recorddata.currencytype == "1"
+                                ? total_lkr.toFixed(2)
+                                : total_usd.toFixed(2)}
+                        </td>
+                    </tr>
+                `);
+			});
 
-                    if (obj.recorddata.currencytype == "1") {
-                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
-                        $('#divtotal').html('Rs. ' + parseFloat(obj.recorddata.nettotal).toFixed(2));
-                    } else {
-                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamountusd).toFixed(2));
-                        $('#divtotal').html('$ ' + parseFloat(obj.recorddata.nettotalusd).toFixed(2));
-                    }
+			/* ===============================
+			   HEADER DISCOUNTS & TOTALS
+			=============================== */
+			if (obj.recorddata.currencytype == "1") {
+				$('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
+				$('#divtotal').html('Rs. ' + parseFloat(obj.recorddata.nettotal).toFixed(2));
+			} else {
+				$('#totaldiscount').val(parseFloat(obj.recorddata.discountamountusd).toFixed(2));
+				$('#divtotal').html('$ ' + parseFloat(obj.recorddata.nettotalusd).toFixed(2));
+			}
 
-                    $('#hidetotalorder').val(parseFloat(obj.recorddata.nettotal).toFixed(2));
-                    $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotalusd).toFixed(2));
+			$('#hidetotalorder').val(parseFloat(obj.recorddata.nettotal).toFixed(2));
+			$('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotalusd).toFixed(2));
 
-                    $('#staticBackdrop').modal('show');
-                }
-            });
-        });
+			$('#staticBackdrop').modal('show');
+		}
+	});
+});
 
         $('#supplier').change(function () {
             let supplierID = $(this).val()

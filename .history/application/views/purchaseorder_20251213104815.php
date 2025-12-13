@@ -628,8 +628,8 @@ include "include/topnavbar.php";
                                 <td class="text-center">${ctn}</td>
                                 <td class="text-center">${qty}</td>
 
-                                <td class="d-none total_lkr">${total_lkr.toFixed(2)}</td>
-                                <td class="d-none total_usd">${total_usd.toFixed(2)}</td>
+                                <td class="total_lkr">${total_lkr.toFixed(2)}</td>
+                                <td class="total_usd">${total_usd.toFixed(2)}</td>
 
                                 <td class="text-right">
                                     ${obj.recorddata.currencytype == "1"
