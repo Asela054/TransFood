@@ -39,7 +39,7 @@ class PurchaseorderPrintinfo extends CI_Model{
     $totalField = ($currencyType == 1) ? "total" : "totalusd";
     
     foreach($respond2->result() as $row) {
-
+        $description = $row->materialname.' - '.$row->materialinfocode;
         $unitPrice = $row->$unitPriceField;
         $totalAmount = $row->$totalField;
 
