@@ -22,7 +22,7 @@ class Goodreceiveinfo extends CI_Model{
         return $respond=$this->db->get();
     }
     public function Getporder(){
-        $this->db->select('`idtbl_porder`, `po_no`');
+        $this->db->select('`idtbl_porder`, ``');
         $this->db->from('tbl_porder');
         $this->db->where('status', 1);
         $this->db->where('confirmstatus', 1);

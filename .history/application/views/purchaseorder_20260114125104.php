@@ -654,8 +654,8 @@ include "include/topnavbar.php";
 
                     $('#hidetotalorder').val(parseFloat(obj.recorddata.nettotal).toFixed(2));
                     $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotalusd).toFixed(2));
-
-                    $('.modal-title').text('Update Purchase Order');
+                    
+$('#modalTitle').text('Update Purchase Order');
                     $('#staticBackdrop').modal('show');
                 }
             });

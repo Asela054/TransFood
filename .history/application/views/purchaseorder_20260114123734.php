@@ -426,9 +426,6 @@ include "include/topnavbar.php";
                     "data": "class"
                 },
                 {
-                    "data": "suppliername"
-                },
-                {
                     "data": "orderdate"
                 },
                 {
@@ -655,7 +652,6 @@ include "include/topnavbar.php";
                     $('#hidetotalorder').val(parseFloat(obj.recorddata.nettotal).toFixed(2));
                     $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotalusd).toFixed(2));
 
-                    $('.modal-title').text('Update Purchase Order');
                     $('#staticBackdrop').modal('show');
                 }
             });

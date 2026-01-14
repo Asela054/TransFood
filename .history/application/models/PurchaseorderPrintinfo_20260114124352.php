@@ -288,7 +288,7 @@ class PurchaseorderPrintinfo extends CI_Model{
                     <table style="border-collapse: collapse; width: 100%;">
                         <tr>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">SN#</th>
-                            <th style="background-color: #97d197; border: 1px solid #000; text-align: left;">DESCRIPTION</th>
+                            <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">DESCRIPTION</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">UNIT</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">UNIT PER CTN</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">CTNS</th>
