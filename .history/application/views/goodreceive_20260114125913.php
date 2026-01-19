@@ -90,7 +90,7 @@ include "include/topnavbar.php";
                                     <select class="form-control form-control-sm" name="porder" id="porder">
                                         <option value="">Select</option>
                                         <?php foreach($porderlist->result() as $rowporderlist){ ?>
-                                        <option value="<?php echo $rowporderlist->idtbl_porder ?>"><?php echo 'TRFL/PO-'.$rowporderlist->po_no ?></option>
+                                        <option value="<?php echo $rowporderlist->idtbl_porder ?>"><?php echo 'TRFL/PO-'.$rowporderlist->idtbl_porder ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>

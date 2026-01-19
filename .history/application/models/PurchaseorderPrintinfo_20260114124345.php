@@ -39,13 +39,13 @@ class PurchaseorderPrintinfo extends CI_Model{
     $totalField = ($currencyType == 1) ? "total" : "totalusd";
     
     foreach($respond2->result() as $row) {
-        $description = $row->materialname.' - '.$row->materialinfocode;
+
         $unitPrice = $row->$unitPriceField;
         $totalAmount = $row->$totalField;
 
         $items_html .= '<tr>
             <td style="border: 1px solid #000; text-align: center;">'.$sn.'</td>
-            <td style="border: 1px solid #000;">'.$row->materialname.'</td>
+            <td style="border: 1px solid #000;">'.$materialname.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$row->unitname.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$row->unitperctn.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$row->ctn.'</td>
@@ -288,7 +288,7 @@ class PurchaseorderPrintinfo extends CI_Model{
                     <table style="border-collapse: collapse; width: 100%;">
                         <tr>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">SN#</th>
-                            <th style="background-color: #97d197; border: 1px solid #000; text-align: left;">DESCRIPTION</th>
+                            <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">DESCRIPTION</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">UNIT</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">UNIT PER CTN</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">CTNS</th>
