@@ -11,6 +11,7 @@ class Customerporder extends CI_Controller {
 		$result['customerlist']=$this->Customerporderinfo->Getcustomerlist();
 		$result['prodcutlist']=$this->Customerporderinfo->Productlist();
 		$result['ordertypelist']=$this->Customerporderinfo->Getordertype();
+		$result['currencylist']=Getcurrencylist();
 		$this->load->view('customerporder', $result);
 	}
     public function Customerporderinsertupdate(){
