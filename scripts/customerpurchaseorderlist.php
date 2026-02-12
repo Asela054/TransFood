@@ -35,8 +35,18 @@ $columns = array(
 	array( 'db' => '`u`.`idtbl_customer_porder`', 'dt' => 'idtbl_customer_porder', 'field' => 'idtbl_customer_porder' ),
 	array( 'db' => '`u`.`sod_no`', 'dt' => 'sod_no', 'field' => 'sod_no' ),
 	array( 'db' => '`u`.`orderdate`', 'dt' => 'orderdate', 'field' => 'orderdate' ),
+	// Logic for Currency Column
+    array( 
+        'db' => '`u`.`currencytype`', 
+        'dt' => 'currency_display', 
+        'field' => 'currencytype',
+        'formatter' => function( $d, $row ) {
+            if($d == 1) return 'LKR';
+            if($d == 2) return 'USD';
+            return 'N/A';
+        }
+    ),
 	array( 'db' => '`u`.`nettotal`', 'dt' => 'nettotal', 'field' => 'nettotal' ),
-	array( 'db' => '`u`.`nettotalusd`', 'dt' => 'nettotalusd', 'field' => 'nettotalusd' ),
 	array( 'db' => '`u`.`confirmstatus`', 'dt' => 'confirmstatus', 'field' => 'confirmstatus' ),
 	array( 'db' => '`u`.`transproductionstatus`', 'dt' => 'transproductionstatus', 'field' => 'transproductionstatus' ),
 	array( 'db' => '`u`.`remark`', 'dt' => 'remark', 'field' => 'remark' ),
