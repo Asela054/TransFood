@@ -91,3 +91,10 @@ function SearchCustomerList($searchTerm){
     }   
     echo json_encode($data);
 }
+function Getcurrencylist(){
+    $array = array(
+        array("id" => "1", "text" => "LKR", "code" => "Rs."),
+        array("id" => "2", "text" => "USD", "code" => "$")
+    );
+    return $array; 
+}

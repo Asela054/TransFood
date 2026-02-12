@@ -37,7 +37,7 @@ include "include/topnavbar.php";
                                                 <th>Date</th>
                                                 <th>Sales Order No.</th>
                                                 <th>Customer</th>
-                                                <th>Total ($)</th>
+                                                <th>Currency Type</th>
                                                 <th>Total</th>
                                                 <th>Confirm Status</th>
                                                 <th class="text-right">Actions</th>
@@ -143,14 +143,25 @@ include "include/topnavbar.php";
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
                         <form id="createorderform" autocomplete="off">
-                            <div class="form-group mb-1">
-                                <label class="small font-weight-bold text-dark">Sales Order Type*</label>
-                                <select class="form-control form-control-sm" name="ordertype" id="ordertype" required>
-                                    <option value="">Select</option>
-                                    <?php foreach($ordertypelist->result() as $rowordertypelist){ ?>
-                                    <option value="<?php echo $rowordertypelist->idtbl_order_type ?>"><?php echo $rowordertypelist->type ?></option>
-                                    <?php } ?>
-                                </select>
+                            <div class="form-row mb-1">
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">Currency Type*</label>
+                                    <select class="form-control form-control-sm" name="currencytype" id="currencytype" required>
+                                        <option value="">Select</option>
+                                        <?php foreach($currencylist as $rowcurrencylist){ ?>
+                                        <option value="<?php echo $rowcurrencylist['id'] ?>" data-currencycode="<?php echo $rowcurrencylist['code'] ?>"><?php echo $rowcurrencylist['text'] ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label class="small font-weight-bold text-dark">Sales Order Type*</label>
+                                    <select class="form-control form-control-sm" name="ordertype" id="ordertype" required>
+                                        <option value="">Select</option>
+                                        <?php foreach($ordertypelist->result() as $rowordertypelist){ ?>
+                                        <option value="<?php echo $rowordertypelist->idtbl_order_type ?>"><?php echo $rowordertypelist->type ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
                             </div>
                             <div class="form-row mb-1">
                                 <div class="col">
@@ -192,38 +203,35 @@ include "include/topnavbar.php";
                             <div class="form-row mb-1">
 								<div class="col">
 									<label class="small font-weight-bold text-dark">Profit Margin*</label>
-									<div class="input-group mb-3">
-										<input type="number" class="form-control form-control-sm col-8"
-											name="profitmargin" id="profitmargin" value="20">
-										<input type="text" value="%" class="form-control form-control-sm col-4"
-											readonly>
+									<div class="input-group input-group-sm">
+										<input type="number" class="form-control form-control-sm " name="profitmargin" id="profitmargin" value="20">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" id="basic-addon2">%</span>
+                                        </div>
 									</div>
 								</div>
-								<div class="col">
-									<label class="small font-weight-bold text-dark">Qty*</label>
-									<input type="text" id="newqty" name="newqty" class="form-control form-control-sm"
-										required>
+                                <div class="col">
+									<label class="small font-weight-bold text-dark">Conversion Rate</label>
+									<input type="text" id="convertrate" name="convertrate" class="form-control form-control-sm">
 								</div>
 							</div>
                             <div class="form-row mb-1">
+                                <div class="col">
+									<label class="small font-weight-bold text-dark">Qty*</label>
+									<input type="text" id="newqty" name="newqty" class="form-control form-control-sm" required>
+								</div>
 								<div class="col">
 									<label class="small font-weight-bold text-dark">Unit Price</label>
-									<input type="text" id="suggestprice" name="suggestprice"
-										class="form-control form-control-sm">
-								</div>
-                                <div class="col">
-									<label class="small font-weight-bold text-dark">USD Price ($)</label>
-									<input type="text" id="usdrate" name="usdrate"
-										class="form-control form-control-sm">
+									<input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm">
 								</div>
 							</div>
-                            <div class="form-row mb-1">
+                            <!-- <div class="form-row mb-1">
                             	<div class="col">
-                            		<!-- <label class="small font-weight-bold text-dark">Suggest Price</label>
+                            		<label class="small font-weight-bold text-dark">Suggest Price</label>
                             		<input type="text" id="suggestprice" name="suggestprice"
-                            			class="form-control form-control-sm"> -->
+                            			class="form-control form-control-sm">
                             	</div>
-                            </div>
+                            </div> -->
                             <div class="form-group mb-1">
                                 <label class="small font-weight-bold text-dark">Comment</label>
                                 <textarea name="comment" id="comment" class="form-control form-control-sm"></textarea>
@@ -243,22 +251,19 @@ include "include/topnavbar.php";
                                 <tr>
                                     <th>Product</th>
                                     <th>Comment</th>
-                                    <th class="d-none">ProductID</th>
+                                    <th class="">ProductID</th>
                                     <th class="text-center">Qty</th>
-                                    <th class="text-right">Unit Price ($)</th>
-                                    <th class="text-right d-none">Unit Price</th>
-                                    <th class="text-right">Total ($)</th>
-                                    <th class="text-right d-none">Total</th>
+                                    <th class="text-right">Unit Price</th>
+                                    <th class="text-right">Total</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
                         </table>
                         <div class="row">
                             <div class="col text-right">
-                                <h1 class="font-weight-600" id="divtotal">$ 0.00</h1>
+                                <h1 class="font-weight-600" id="divtotal">0.00</h1>
                             </div>
                             <input type="hidden" id="hidetotalorder" value="0">
-                            <input type="hidden" id="hidetotalorderusd" value="0">
                         </div>
                         <hr>
                         <div class="form-group">
@@ -266,10 +271,7 @@ include "include/topnavbar.php";
                             <textarea name="remark" id="remark" class="form-control form-control-sm"></textarea>
                         </div>
                         <div class="form-group mt-2">
-                            <button type="button" id="btncreateorder"
-                                class="btn btn-outline-primary btn-sm fa-pull-right"><i
-                                    class="fas fa-save"></i>&nbsp;Create Sales
-                                Order</button>
+                            <button type="button" id="btncreateorder" class="btn btn-outline-primary btn-sm fa-pull-right"><i class="fas fa-save"></i>&nbsp;Create Sales Order</button>
                         </div>
                         <br><br>
                         <div id='gcw_mainFL0GridDR' class='gcw_mainFL0GridDR'></div>
@@ -611,12 +613,7 @@ include "include/topnavbar.php";
                     "data": "name"
                 },
                 {
-                    "targets": -1,
-                    "className": 'text-right',
-                    "data": null,
-                    "render": function(data, type, full) {
-                        return addCommas(parseFloat(full['nettotalusd']).toFixed(2));
-                    }
+                    "data": "currency_display"
                 },
                 {
                     "targets": -1,
@@ -706,6 +703,8 @@ include "include/topnavbar.php";
         					$('#duedate').val(obj.duedate);
         					$('#customer').val(obj.name);
         					$('#ordertype').val(obj.type);
+        					$('#convertrate').val(obj.conversion_rate);
+        					$('#currencytype').val(obj.currencytype);
 
         					// Clear the existing table rows
         					$('#tableorder > tbody').empty();
@@ -717,40 +716,17 @@ include "include/topnavbar.php";
         							var productID = item.productID;
         							var comment = item.comment;
         							var product = item.productcode;
-        							var suggestprice = item.suggestprice;
-                                    var usdrate = parseFloat(item.unitpriceusd);
-        							var newqty = parseFloat(item.qty);
+        							var suggestprice = parseFloat(item.suggestprice).toFixed(2);
+        							var newqty = item.qty;
+        							var netsaleprice = parseFloat(item.netsaleprice).toFixed(2);
 
-                                    var total = addCommas(parseFloat(suggestprice * newqty).toFixed(2));
-                                    var totalusd = addCommas(parseFloat(usdrate * newqty).toFixed(2));
-
-                                    $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="text-center">' + newqty + '</td><td class="text-right">' + addCommas(usdrate) + '</td><td class="text-right d-none">' + addCommas(suggestprice) + '</td><td class="text-right totalusd">' + totalusd + '</td><td class="text-right total d-none">' + total + '</td></tr>');
+                                    $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="">' + productID + '</td><td class="text-center">' + newqty + '</td><td class="text-right ">' + addCommas(suggestprice) + '</td><td class="text-right total ">' + addCommas(netsaleprice) + '</td></tr>');
         						});
-                                var sum = 0;
-                                $(".total").each(function () {
-                                    var value = $(this).text();
-                                    var num = parseFloat(value.replace(/,/g, ''));
-                                    if (!isNaN(num)) {
-                                        sum += num;
-                                    }
-                                });
-
-                                var sumusd = 0;
-                                $(".totalusd").each(function () {
-                                    var valueusd = $(this).text();
-                                    var numusd = parseFloat(valueusd.replace(/,/g, ''));
-                                    if (!isNaN(numusd)) {
-                                        sumusd += numusd;
-                                    }
-                                });
-
-                                var showsum = addCommas(parseFloat(sumusd).toFixed(2));
 
                                 $('#staticBackdrop').modal('show');
 
-                                $('#divtotal').html('$ ' + showsum);
-                                $('#hidetotalorder').val(sum);
-                                $('#hidetotalorderusd').val(sumusd);
+                                $('#divtotal').html(obj.currencycode + ' ' + addCommas(parseFloat(obj.nettotal).toFixed(2)));
+                                $('#hidetotalorder').val(obj.nettotal);
                                 $('#product').focus();
         					} else {
         						console.error('Error: obj.items is undefined or not an array.');
@@ -903,22 +879,21 @@ include "include/topnavbar.php";
                 var productID = $('#product').val();
                 var comment = $('#comment').val();
                 var product = $("#product option:selected").text();
-                var suggestprice = parseFloat($('#suggestprice').val());
-                var usdrate = parseFloat($('#usdrate').val());
+                var unitprice = parseFloat($('#unitprice').val());
+                var convertrate = parseFloat($('#convertrate').val());
                 var newqty = parseFloat($('#newqty').val());
+                var currencycode = $('#currencytype option:selected').data('currencycode');
 
-                var total = addCommas(parseFloat(suggestprice * newqty).toFixed(2));
-                var totalusd = addCommas(parseFloat(usdrate * newqty).toFixed(2));
+                var total = addCommas(parseFloat(unitprice * newqty).toFixed(2));
 
-                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="d-none">' + productID + '</td><td class="text-center">' + newqty + '</td><td class="text-right">' + addCommas(usdrate) + '</td><td class="text-right d-none">' + addCommas(suggestprice) + '</td><td class="text-right totalusd">' + totalusd + '</td><td class="text-right total d-none">' + total + '</td></tr>');
+                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td class="">' + productID + '</td><td class="text-center">' + newqty + '</td><td class="text-right">' + addCommas(unitprice) + '</td><td class="text-right total">' + total + '</td></tr>');
 
                 $('#unitprice').val('');
                 $('#saleprice').val('');
                 $('#product').val('').trigger('change');
                 $('#comment').val('');
                 $('#profitmargin').val('20');
-                $('#suggestprice').val('');
-                $('#usdrate').val('');
+                $('#unitprice').val('');
                 $('#newqty').val('0');
 
                 var sum = 0;
@@ -930,20 +905,10 @@ include "include/topnavbar.php";
                     }
                 });
 
-                var sumusd = 0;
-                $(".totalusd").each(function () {
-                    var valueusd = $(this).text();
-                    var numusd = parseFloat(valueusd.replace(/,/g, ''));
-                    if (!isNaN(numusd)) {
-                        sumusd += numusd;
-                    }
-                });
+                var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-                var showsum = addCommas(parseFloat(sumusd).toFixed(2));
-
-                $('#divtotal').html('$ ' + showsum);
+                $('#divtotal').html(currencycode + showsum);
                 $('#hidetotalorder').val(sum);
-                $('#hidetotalorderusd').val(sumusd);
                 $('#product').focus();
             }
         });
@@ -1038,20 +1003,18 @@ include "include/topnavbar.php";
                 });
                 // console.log(jsonObj);
 
+                var currencytype = $('#currencytype').val();
+                var ordertype = $('#ordertype').val();
                 var orderdate = $('#orderdate').val();
                 var duedate = $('#duedate').val();
                 var remark = $('#remark').val();
                 var total = $('#hidetotalorder').val();
-                var totalusd = $('#hidetotalorderusd').val();
                 var customer = $('#customer').val();
                 var profitmargin = $('#profitmargin').val();
-                var ordertype = $('#ordertype').val();
-                var wastage = $('#wastage').val();
-                var othercost = $('#othercost').val();
 
                 var recordID = $('#recordID').val();
                 var recordOption = $('#recordOption').val();
-                var usdrate = $('#gcw_valFL0GridDR1').val();
+                var convertrate = $('#convertrate').val();
                 // alert(usdrate);
                 Swal.fire({
                     title: '',
@@ -1070,17 +1033,15 @@ include "include/topnavbar.php";
                             type: "POST",
                             data: {
                                 tableData: jsonObj,
+                                currencytype: currencytype,
+                                ordertype: ordertype,
                                 orderdate: orderdate,
                                 duedate: duedate,
-                                total: total,
                                 remark: remark,
+                                total: total,
                                 customer: customer,
                                 profitmargin: profitmargin,
-                                ordertype: ordertype,
-                                wastage: wastage,
-                                othercost: othercost,
-                                totalusd: totalusd,
-                                usdrate: usdrate,
+                                convertrate: convertrate,
                                 recordID: recordID,
                                 recordOption: recordOption
                             },

@@ -117,15 +117,15 @@ class Customerporderinfo extends CI_Model{
         $branchid=$_SESSION['branchid'];
 
         $tableData=$this->input->post('tableData');
+        $currencytype=$this->input->post('currencytype');
+        $ordertype=$this->input->post('ordertype');
         $orderdate=$this->input->post('orderdate');
         $duedate=$this->input->post('duedate');
-        $total=$this->input->post('total');
         $remark=$this->input->post('remark');
+        $total=$this->input->post('total');
         $customer=$this->input->post('customer');
-        $ordertype=$this->input->post('ordertype');
         $profitmargin=$this->input->post('profitmargin');
-        $totalusd=$this->input->post('totalusd');
-        $usdrate=$this->input->post('usdrate');
+        $convertrate=$this->input->post('convertrate');
 
         if(!empty($this->input->post('recordID'))){$recordID=$this->input->post('recordID');}
         $recordOption=$this->input->post('recordOption');
@@ -139,6 +139,7 @@ class Customerporderinfo extends CI_Model{
             $respondnextno=$this->db->query($sqlnextno, array($companyid));
 
             $data = array(
+                'currencytype'=> $currencytype,
                 'sod_no'=> $respondnextno->row(0)->next_sod_no, 
                 'orderdate'=> $orderdate, 
                 'duedate'=> $duedate, 
@@ -146,10 +147,7 @@ class Customerporderinfo extends CI_Model{
                 'discount'=> '0', 
                 'discountamount'=> '0', 
                 'nettotal'=> $total, 
-                'subtotalusd'=> $totalusd, 
-                'discountamountusd'=> '0', 
-                'nettotalusd'=> $totalusd, 
-                'usd_rate'=> $usdrate, 
+                'conversion_rate'=> $convertrate, 
                 'confirmstatus'=> '0', 
                 'transproductionstatus'=> '0', 
                 'remark'=> $remark, 
@@ -171,20 +169,16 @@ class Customerporderinfo extends CI_Model{
                 $comment=$rowtabledata['col_2'];
                 $productID=$rowtabledata['col_3'];
                 $qty=$rowtabledata['col_4'];
-                $salepriceusd=str_replace(',', '', $rowtabledata['col_5']);
-                $saleprice = str_replace(',', '', $rowtabledata['col_6']);
-                $totalusd=str_replace(',', '', $rowtabledata['col_7']);
-                $total=str_replace(',', '', $rowtabledata['col_8']);
+                $saleprice = str_replace(',', '', $rowtabledata['col_5']);
+                $total=str_replace(',', '', $rowtabledata['col_6']);
 
                 $dataone = array(
                     'qty'=> $qty,
+                    'unitprice'=> $saleprice,  
                     'suggestprice'=> $saleprice,  
                     'discount'=> '0', 
                     'discountamount'=> '0', 
                     'netsaleprice'=> $total,  
-                    'unitpriceusd'=> $salepriceusd,  
-                    'discountamountusd'=> '0',  
-                    'netsalepriceusd'=> $totalusd,  
                     'comment'=> $comment, 
                     'profitmargin'=> $profitmargin, 
                     'status'=> '1', 
@@ -263,15 +257,13 @@ class Customerporderinfo extends CI_Model{
                 $this->db->trans_begin();
 
                 $data = array(
+                    'currencytype'=> $currencytype,
                     'orderdate'=> $orderdate, 
                     'duedate'=> $duedate, 
                     'subtotal'=> $total, 
                     'discount'=> '0', 
                     'discountamount'=> '0', 
                     'nettotal'=> $total, 
-                    'subtotalusd'=> $totalusd, 
-                    'discountamountusd'=> '0', 
-                    'nettotalusd'=> $totalusd, 
                     'confirmstatus'=> '0', 
                     'transproductionstatus'=> '0', 
                     'remark'=> $remark, 
@@ -293,10 +285,8 @@ class Customerporderinfo extends CI_Model{
                     $comment=$rowtabledata['col_2'];
                     $productID=$rowtabledata['col_3'];
                     $qty=$rowtabledata['col_4'];
-                    $salepriceusd=str_replace(',', '', $rowtabledata['col_5']);
-                    $saleprice = str_replace(',', '', $rowtabledata['col_6']);
-                    $totalusd=str_replace(',', '', $rowtabledata['col_7']);
-                    $total=str_replace(',', '', $rowtabledata['col_8']);
+                    $saleprice = str_replace(',', '', $rowtabledata['col_5']);
+                    $total=str_replace(',', '', $rowtabledata['col_6']);
 
                     $dataone = array(
                         'qty'=> $qty,
@@ -304,9 +294,6 @@ class Customerporderinfo extends CI_Model{
                         'discount'=> '0', 
                         'discountamount'=> '0', 
                         'netsaleprice'=> $total,  
-                        'unitpriceusd'=> $salepriceusd,  
-                        'discountamountusd'=> '0',  
-                        'netsalepriceusd'=> $totalusd,  
                         'comment'=> $comment, 
                         'profitmargin'=> $profitmargin, 
                         'status'=> '1', 
@@ -493,6 +480,10 @@ class Customerporderinfo extends CI_Model{
 
         $responddetail=$this->db->get();
 
+        $currencylist = Getcurrencylist();
+        $key = array_search($respond->row(0)->currencytype, array_column($currencylist, 'id'));
+        $currencycode = $currencylist[$key]['code'];
+
         $html='';
         $html.='
         <div class="row">
@@ -501,22 +492,22 @@ class Customerporderinfo extends CI_Model{
         <div class="row">
             <div class="col-12">
                 <hr>
-                <table class="table table-striped table-bordered table-sm">
+                <table class="table table-striped table-bordered table-sm small">
                     <thead>
                         <tr>
                             <th>Product Name</th>
-                            <th>Price</th>
-                            <th>Qty</th>
-                            <th>Total</th>
+                            <th class="text-right">Price</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>';
                     foreach($responddetail->result() as $roworderinfo){
                         $html.='<tr>
                             <td>'.$roworderinfo->prodcutname.'-'.$roworderinfo->productcode.'</td>
-                            <td>'.$roworderinfo->suggestprice.'</td>
-                            <td>'.$roworderinfo->qty.'</td>
-                            <td class="text-right">'.number_format(($roworderinfo->qty*$roworderinfo->suggestprice), 2).'</td>
+                            <td class="text-right">'.$currencycode.$roworderinfo->suggestprice.'</td>
+                            <td class="text-center">'.$roworderinfo->qty.'</td>
+                            <td class="text-right">'.$currencycode.number_format(($roworderinfo->qty*$roworderinfo->suggestprice), 2).'</td>
                         </tr>';
                     }
                     $html.='</tbody>
@@ -524,7 +515,9 @@ class Customerporderinfo extends CI_Model{
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-12 text-right"><h3 class="font-weight-normal">Rs. '.number_format(($respond->row(0)->nettotal), 2).'</h3></div>
+            <div class="col-12 text-right"><h6 class="font-weight-normal">Subtotal '.$currencycode.number_format(($respond->row(0)->subtotal), 2).'</h6></div>
+            <div class="col-12 text-right"><h6 class="font-weight-normal">Discount '.$currencycode.number_format(($respond->row(0)->discountamount), 2).'</h6></div>
+            <div class="col-12 text-right"><h3>Nettotal '.$currencycode.number_format(($respond->row(0)->nettotal), 2).'</h3></div>
         </div>
         ';
 
@@ -906,14 +899,23 @@ class Customerporderinfo extends CI_Model{
         $this->db->where('tbl_customer_porder.status', 1);
     
         $respond = $this->db->get();
+
+        $currencylist = Getcurrencylist();
+        $key = array_search($respond->row(0)->currencytype, array_column($currencylist, 'id'));
+        $currencycode = $currencylist[$key]['code'];
     
         $obj = new stdClass();
         $obj->id = $respond->row(0)->idtbl_customer_porder;
         $obj->orderdate = $respond->row(0)->orderdate;
-        $obj->usd_rate = $respond->row(0)->usd_rate;
         $obj->duedate = $respond->row(0)->duedate;
+        $obj->conversion_rate = $respond->row(0)->conversion_rate;
         $obj->name = $respond->row(0)->idtbl_customer;
         $obj->type = $respond->row(0)->idtbl_order_type;
+        $obj->currencytype = $respond->row(0)->currencytype;
+        $obj->currencycode = $currencycode;
+        $obj->subtotal = $respond->row(0)->subtotal;
+        $obj->discountamount = $respond->row(0)->discountamount;
+        $obj->nettotal = $respond->row(0)->nettotal;
     
         $items = array();
         foreach ($respond->result() as $row) {
@@ -922,8 +924,8 @@ class Customerporderinfo extends CI_Model{
             $item->comment = $row->comment;
             $item->productID = $row->idtbl_product;
             $item->suggestprice = $row->suggestprice;
-            $item->unitpriceusd = $row->unitpriceusd;
             $item->qty = $row->qty;
+            $item->netsaleprice = $row->netsaleprice;
             $items[] = $item;
         }
         $obj->items = $items;
