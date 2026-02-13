@@ -106,42 +106,23 @@ include "include/topnavbar.php";
 						return Number(parseFloat(data).toFixed(5));
 					}
 				},
-				{
-					"data": null,
-					"className": 'text-right',
-					"render": function (data, type, full) {
-
-						let currency = '';
-						if (full['currencytype'] == 1) {
-							currency = 'Rs. ';
-						} else if (full['currencytype'] == 2) {
-							currency = '$ ';
-						}
-
-						let unitprice = parseFloat(full['unitprice']) || 0;
-
-						return currency + addCommas(unitprice.toFixed(2));
-					}
-				},
-				{
-					"data": null,
-					"className": 'text-right',
-					"render": function (data, type, full) {
-
-						let currency = '';
-						if (full['currencytype'] == 1) {
-							currency = 'Rs. ';
-						} else if (full['currencytype'] == 2) {
-							currency = '$ ';
-						}
-
-						let qty = parseFloat(full['qty']) || 0;
-						let unitprice = parseFloat(full['unitprice']) || 0;
-						let amount = qty * unitprice;
-
-						return currency + addCommas(amount.toFixed(2));
-					}
-				}
+    			{
+    				"data": null,
+    				"className": 'text-right',
+    				"render": function (data, type, full) {
+    					return addCommas(parseFloat(full['unitprice']).toFixed(2));
+    				}
+    			},
+    			{
+    				"data": null,
+    				"className": 'text-right',
+    				"render": function (data, type, full) {
+    					let qty = parseFloat(full['qty']);
+    					let unitprice = parseFloat(full['unitprice']);
+    					let amount = qty * unitprice;
+    					return addCommas(parseFloat(amount).toFixed(2));
+    				}
+    			}
     		],
     		dom: "<'row'<'col-sm-4'B><'col-sm-3'l><'col-sm-5'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
     		responsive: true,

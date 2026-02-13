@@ -657,8 +657,8 @@ class Goodreceiveinfo extends CI_Model{
                     $branchid = $row->tbl_company_branch_idtbl_company_branch;
 
                     $stockData = array(
-                        'currencytype' => $currencytype,
-                        'conversion_rate' => $conversion_rate,
+                        'currencytype' => $batchno,
+                        'batchno' => $batchno,
                         'batchno' => $batchno,
                         'qty' => $qty,
                         'unitprice' => $unitprice,

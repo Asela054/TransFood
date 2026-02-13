@@ -647,8 +647,6 @@ class Goodreceiveinfo extends CI_Model{
             if ($respond->num_rows() > 0) {
                 foreach ($respond->result() as $row) {
                     $batchno = $row->batchno;
-                    $currencytype = $row->currencytype;
-                    $conversion_rate = $row->conversion_rate;
                     $location = $row->tbl_location_idtbl_location;
                     $qty = $row->qty;
                     $unitprice = $row->unitprice;
@@ -657,8 +655,6 @@ class Goodreceiveinfo extends CI_Model{
                     $branchid = $row->tbl_company_branch_idtbl_company_branch;
 
                     $stockData = array(
-                        'currencytype' => $currencytype,
-                        'conversion_rate' => $conversion_rate,
                         'batchno' => $batchno,
                         'qty' => $qty,
                         'unitprice' => $unitprice,

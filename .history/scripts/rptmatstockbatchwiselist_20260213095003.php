@@ -36,7 +36,7 @@ $columns = array(
     array('db' => '`main`.`total_qty`', 'dt' => 'total_qty', 'field' => 'total_qty'),
     array('db' => '`main`.`materialname`', 'dt' => 'materialname', 'field' => 'materialname'),
     array('db' => '`main`.`materialinfocode`', 'dt' => 'materialinfocode', 'field' => 'materialinfocode'),
-    array('db' => '`main`.`currencytype`', 'dt' => 'currencytype', 'field' => 'currencytype'),
+        array('db' => '`main`.`materialinfocode`', 'dt' => 'materialinfocode', 'field' => 'materialinfocode'),
     array('db' => '`main`.`avgunitprice`', 'dt' => 'avgunitprice', 'field' => 'avgunitprice')
 );
 
