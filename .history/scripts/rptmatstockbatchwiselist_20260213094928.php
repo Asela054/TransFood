@@ -36,7 +36,6 @@ $columns = array(
     array('db' => '`main`.`total_qty`', 'dt' => 'total_qty', 'field' => 'total_qty'),
     array('db' => '`main`.`materialname`', 'dt' => 'materialname', 'field' => 'materialname'),
     array('db' => '`main`.`materialinfocode`', 'dt' => 'materialinfocode', 'field' => 'materialinfocode'),
-    array('db' => '`main`.`currencytype`', 'dt' => 'currencytype', 'field' => 'currencytype'),
     array('db' => '`main`.`avgunitprice`', 'dt' => 'avgunitprice', 'field' => 'avgunitprice')
 );
 
@@ -54,7 +53,7 @@ require('ssp.customized.class.php' );
 $companyid=$_SESSION['companyid'];
 $branchid=$_SESSION['branchid'];
 
-$joinQuery = "FROM (SELECT u.idtbl_stock AS idtbl_stock, u.currencytype AS currencytype, SUM(u.qty) AS total_qty,ua.materialinfocode AS materialinfocode,ua.materialname AS materialname,u.status AS status, AVG(u.unitprice) AS avgunitprice FROM tbl_stock AS u JOIN tbl_material_info AS ua ON (ua.idtbl_material_info = u.tbl_material_info_idtbl_material_info) WHERE u.status IN (1, 2) AND u.qty > 0  AND `u`.`tbl_company_idtbl_company`='$companyid' AND `u`.`tbl_company_branch_idtbl_company_branch`='$branchid' GROUP BY ua.materialinfocode) AS main";
+$joinQuery = "FROM (SELECT u.idtbl_stock AS idtbl_stock, u.idtbl_stock AS idtbl_stock, u.idtbl_stock AS idtbl_stock, SUM(u.qty) AS total_qty,ua.materialinfocode AS materialinfocode,ua.materialname AS materialname,u.status AS status, AVG(u.unitprice) AS avgunitprice FROM tbl_stock AS u JOIN tbl_material_info AS ua ON (ua.idtbl_material_info = u.tbl_material_info_idtbl_material_info) WHERE u.status IN (1, 2) AND u.qty > 0  AND `u`.`tbl_company_idtbl_company`='$companyid' AND `u`.`tbl_company_branch_idtbl_company_branch`='$branchid' GROUP BY ua.materialinfocode) AS main";
 
 echo json_encode(
     SSP::simple($_POST, $sql_details, $table, $primaryKey, $columns, $joinQuery)

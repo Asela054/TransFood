@@ -24,7 +24,7 @@ include "include/topnavbar.php";
                             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                                 <h1 class="page-header-title">
                                     <div class="page-header-icon"><i class="fas fa-cart-arrow-down"></i></div>
-                                    <span>Material Stock Batch Wise Info</span>
+                                    <span>Material Stock Info</span>
                                 </h1>
                             </div>
                         </div>
@@ -52,10 +52,9 @@ include "include/topnavbar.php";
                                         <thead class="table-warning">
                                             <tr>
                                                 <th>#</th>
-                                                <th>BATCH NO.</th>
                                                 <th>MATERIAL</th>
                                                 <th>QUANTITY</th>
-                                                <th>UNIT PRICE</th>
+                                                <th>AVG UNIT PRICE</th>
                                                 <th>AMOUNT</th>
                                             </tr>
                                         </thead>
@@ -85,7 +84,7 @@ include "include/topnavbar.php";
     		"processing": true,
     		"serverSide": true,
     		ajax: {
-    			url: "scripts/rptmatstocklist.php",
+    			url: "scripts/rptmatstockbatchwiselist.php",
     			type: "POST",
     		},
     		"order": [
@@ -95,125 +94,124 @@ include "include/topnavbar.php";
     				"data": "idtbl_stock"
     			},
     			{
-    				"data": "batchno"
-    			},
-    			{
     				"data": "materialname"
     			},
-				{
-					"data": "qty",
+                {
+					"data": "total_qty",
 					"render": function (data, type, row, meta) {
 						return Number(parseFloat(data).toFixed(5));
 					}
 				},
-				{
-					"data": null,
-					"className": 'text-right',
-					"render": function (data, type, full) {
+    			{
+    "data": null,
+    "className": 'text-right',
+    "render": function (data, type, full) {
 
-						let currency = '';
-						if (full['currencytype'] == 1) {
-							currency = 'Rs. ';
-						} else if (full['currencytype'] == 2) {
-							currency = '$ ';
-						}
+        let currency = '';
+        if (full['currencytype'] == 1) {
+            currency = 'Rs. ';
+        } else if (full['currencytype'] == 2) {
+            currency = '$ ';
+        }
 
-						let unitprice = parseFloat(full['unitprice']) || 0;
+        return currency + addCommas(parseFloat(full['avgunitprice']).toFixed(2));
+    }
+},
+{
+    "data": null,
+    "className": 'text-right',
+    "render": function (data, type, full) {
 
-						return currency + addCommas(unitprice.toFixed(2));
-					}
-				},
-				{
-					"data": null,
-					"className": 'text-right',
-					"render": function (data, type, full) {
+        let currency = '';
+        if (full['currencytype'] == 1) {
+            currency = 'Rs. ';
+        } else if (full['currencytype'] == 2) {
+            currency = '$ ';
+        }
 
-						let currency = '';
-						if (full['currencytype'] == 1) {
-							currency = 'Rs. ';
-						} else if (full['currencytype'] == 2) {
-							currency = '$ ';
-						}
+        let qty = parseFloat(full['total_qty']) || 0;
+        let unitprice = parseFloat(full['avgunitprice']) || 0;
+        let amount = qty * unitprice;
 
-						let qty = parseFloat(full['qty']) || 0;
-						let unitprice = parseFloat(full['unitprice']) || 0;
-						let amount = qty * unitprice;
+        return currency + addCommas(parseFloat(amount).toFixed(2));
+    }
+},
 
-						return currency + addCommas(amount.toFixed(2));
-					}
-				}
     		],
-    		dom: "<'row'<'col-sm-4'B><'col-sm-3'l><'col-sm-5'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+    		dom: "<'row'<'col-sm-4'B><'col-sm-3'l><'col-sm-5'f>>" +
+    			"<'row'<'col-sm-12'tr>>" +
+    			"<'row'<'col-sm-5'i><'col-sm-7'p>>",
     		responsive: true,
     		lengthMenu: [
     			[10, 25, 50, -1],
     			[10, 25, 50, 'All'],
     		],
-    		buttons: [{
-    				extend: 'csv',
-    				className: 'btn btn-success btn-sm',
-    				filename: 'Material Stock Report' + today,
-    				text: '<i class="fas fa-file-csv mr-2"></i> CSV',
-    				footer: true,
-    				title: 'Unistar International',
-    				messageTop: 'Stock Report'
-    			},
-    			{
-    				extend: 'excel',
-    				className: 'btn btn-info btn-sm',
-    				filename: 'Material Stock Report' + today,
-    				text: '<i class="fas fa-file-excel mr-2"></i> EXCEL',
-    				footer: true,
-    				title: 'Unistar International',
-    				messageTop: 'Material Stock Report'
-    			},
-    			{
-    				extend: 'pdf',
-    				className: 'btn btn-danger btn-sm',
-    				filename: 'Material Stock Report' + today,
-    				text: '<i class="fas fa-file-pdf mr-2"></i> PDF',
-    				footer: true,
-    				title: 'Unistar International',
-    				messageTop: {
-    					text: 'Material Stock Report',
-    					fontSize: 20,
-    					bold: true,
-    					alignment: 'center'
-    				},
-    				customize: function (doc) {
-    					doc.styles.title = {
-    						bold: 60,
-    						color: '#2F5233',
-    						fontSize: '30',
-    						alignment: 'center',
-    					}
-    				}
-    			},
-    			{
-    				extend: 'print',
-    				className: 'btn btn-primary btn-sm',
-    				filename: 'Material Stock Report' + today,
-    				text: '<i class="fas fa-print mr-2"></i> PRINT',
-    				footer: true,
-    				title: 'Unistar International',
-    				messageTop: 'Material Stock Report',
-    				customize: function (doc) {
-    					doc.styles.title = {
-    						color: 'black',
-    						fontSize: '30',
-    						alignment: 'center',
-    					}
-    				}
-    			}
-    		],
+            buttons: [
+                {
+                    extend: 'csv',
+                    className: 'btn btn-success btn-sm',
+                    filename: 'Material Stock Report' + today,
+                    text: '<i class="fas fa-file-csv mr-2"></i> CSV',
+                    footer: true,
+                    title: 'Unistar International',
+                    messageTop: 'Stock Report'
+                },
+                {
+                    extend: 'excel',
+                    className: 'btn btn-info btn-sm',
+                    filename: 'Material Stock Report' + today,
+                    text: '<i class="fas fa-file-excel mr-2"></i> EXCEL',
+                    footer: true,
+                    title: 'Unistar International',
+                    messageTop: 'Material Stock Report'
+                },
+                {
+                    extend: 'pdf',
+                    className: 'btn btn-danger btn-sm',
+                    filename: 'Material Stock Report' + today,
+                    text: '<i class="fas fa-file-pdf mr-2"></i> PDF',
+                    footer: true,
+                    title: 'Unistar International',
+                    messageTop: {
+                        text: 'Material Stock Report',
+                        fontSize: 20,
+                        bold: true,
+                        alignment: 'center'
+                    },
+                    customize: function (doc) {
+                        doc.styles.title = {
+                            bold: 60,
+                            color: '#2F5233',
+                            fontSize: '30',
+                            alignment: 'center',
+                        }
+                    }
+                },
+                {
+                    extend: 'print',
+                    className: 'btn btn-primary btn-sm',
+                    filename: 'Material Stock Report' + today,
+                    text: '<i class="fas fa-print mr-2"></i> PRINT',
+                    footer: true,
+                    title: 'Unistar International',
+                    messageTop: 'Material Stock Report',
+                    customize: function (doc) {
+                        doc.styles.title = {
+                            color: 'black',
+                            fontSize: '30',
+                            alignment: 'center',
+                        }
+                    }
+                }
+            ],
     		drawCallback: function (settings) {
     			$('[data-toggle="tooltip"]').tooltip();
     		}
     	});
 
-        $('#hide').on('change', function () {
+    	$('#hide').on('change', function () {
             const hideColumns = $(this).is(':checked');
-            table.columns([4, 5]).visible(!hideColumns);
+            table.columns([3, 4]).visible(!hideColumns);
         });
     });
 

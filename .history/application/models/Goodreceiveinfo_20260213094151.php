@@ -637,7 +637,7 @@ class Goodreceiveinfo extends CI_Model{
             $this->db->where('idtbl_porder', $porderID);
             $this->db->update('tbl_porder', $dataporder);
 
-            $this->db->select('tbl_grn.batchno, tbl_grn.currencytype, tbl_grn.conversion_rate, tbl_grn.tbl_company_idtbl_company, tbl_grn.tbl_company_branch_idtbl_company_branch, tbl_grn.tbl_location_idtbl_location, tbl_grndetail.qty, tbl_grndetail.unitprice, tbl_grndetail.tbl_material_info_idtbl_material_info');
+            $this->db->select('tbl_grn.batchno, tbl_grn.batchno, tbl_grn.batchno, tbl_grn.tbl_company_idtbl_company, tbl_grn.tbl_company_branch_idtbl_company_branch, tbl_grn.tbl_location_idtbl_location, tbl_grndetail.qty, tbl_grndetail.unitprice, tbl_grndetail.tbl_material_info_idtbl_material_info');
             $this->db->from('tbl_grn');
             $this->db->join('tbl_grndetail', 'tbl_grn.idtbl_grn = tbl_grndetail.tbl_grn_idtbl_grn', 'left');
             $this->db->where('tbl_grn.status', 1);
@@ -647,8 +647,6 @@ class Goodreceiveinfo extends CI_Model{
             if ($respond->num_rows() > 0) {
                 foreach ($respond->result() as $row) {
                     $batchno = $row->batchno;
-                    $currencytype = $row->currencytype;
-                    $conversion_rate = $row->conversion_rate;
                     $location = $row->tbl_location_idtbl_location;
                     $qty = $row->qty;
                     $unitprice = $row->unitprice;
@@ -657,8 +655,6 @@ class Goodreceiveinfo extends CI_Model{
                     $branchid = $row->tbl_company_branch_idtbl_company_branch;
 
                     $stockData = array(
-                        'currencytype' => $currencytype,
-                        'conversion_rate' => $conversion_rate,
                         'batchno' => $batchno,
                         'qty' => $qty,
                         'unitprice' => $unitprice,
