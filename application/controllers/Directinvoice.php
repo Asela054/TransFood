@@ -10,6 +10,7 @@ class Directinvoice extends CI_Controller {
 		$result['menuaccess']=$this->Commeninfo->Getmenuprivilege();  
         $result['location']=$this->Directinvoiceinfo->locationlist();      
         $result['bank']=$this->Directinvoiceinfo->banklist();      
+        $result['currencylist']=Getcurrencylist();      
 		$this->load->view('directinvoice', $result);
 	}
     public function Invoiceinsertupdate(){

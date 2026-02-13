@@ -52,25 +52,31 @@ include "include/topnavbar.php";
 							<div class="row">
 								<div class="col-12 col-md-4">
 									<div class="row">
-										<div class="col-12 col-md-12">
+										<div class="col">
 											<div class="form-group mb-1">
 												<input id="saletype" name="saletype" type="hidden">
 											</div>
 										</div>
 									</div>
-									<div class="row">
-										<div class="col-12 col-md-12">
-											<div class="form-group mb-1">
-												<input type="hidden" name="orderid" class="form-control form-control-sm"
-													id="orderid" required>
-												<label class="small font-weight-bold text-dark">Customer :</label>
-												<input type="text" name="customer" class="form-control form-control-sm"
-													id="customer" readonly>
-											</div>
+									<div class="form-row">
+										<div class="col">
+											<input type="hidden" name="orderid" class="form-control form-control-sm" id="orderid" required>
+											<label class="small font-weight-bold text-dark">Customer</label>
+											<input type="text" name="customer" class="form-control form-control-sm" id="customer" readonly>
+										</div>
+										<div class="col">
+											<label class="small font-weight-bold text-dark">Currency Type*</label>
+											<select class="form-control form-control-sm" name="currencytype" id="currencytype" required>
+												<option value="">Select</option>
+												<?php foreach($currencylist as $rowcurrencylist){ ?>
+												<option value="<?php echo $rowcurrencylist['id'] ?>" data-currencycode="<?php echo $rowcurrencylist['code'] ?>"><?php echo $rowcurrencylist['text'] ?></option>
+												<?php } ?>
+											</select>
+											<input type="hidden" name="hidecurrencytype" id="hidecurrencytype">
 										</div>
 									</div>
-									<div class="row">
-										<div class="col-12 col-md-12">
+									<div class="row d-none">
+										<div class="col">
 											<div class="form-group mb-1">
 												<label class="small font-weight-bold text-dark">Bank* :</label>
 												<select class="form-control form-control-sm" name="bank"
@@ -84,129 +90,110 @@ include "include/topnavbar.php";
 											</div>
 										</div>
 									</div>
-									<div class="row">
-										<div class="col-12 col-md-12">
+									<div class="form-row">
+										<div class="col">
+											<label class="small font-weight-bold text-dark">Conversion Rate*</label>
+											<input type="text" id="convertrate" name="convertrate" class="form-control form-control-sm">
+										</div>
+										<div class="col">
+											<label class="small font-weight-bold text-dark">Location*</label>
+											<select class="form-control form-control-sm" name="location" id="location" required>
+												<option value="">Select</option>
+												<?php foreach($location->result() as $rowlocationlist){ ?>
+												<option value="<?php echo $rowlocationlist->idtbl_location ?>">
+													<?php echo $rowlocationlist->location ?></option>
+												<?php } ?>
+											</select>
+										</div>
+									</div>
+									<div class="form-row">
+										<div class="col">
+											<label class="small font-weight-bold text-dark">Product*</label><br>
+											<select class="form-control form-control-sm" style="width: 100%;"
+												name="productlist" id="productlist" required>
+											</select>
+											<small id="" class="form-text text-danger">Issuing an invoice removes listed products from this order</small>
+										</div>
+										<div class="col">
+											<label class="small font-weight-bold">Batch No.*</label><br>
+											<select class="form-control form-control-sm" style="width: 100%;" name="batchlist[]" id="batchlist" required multiple>
+											</select>
+										</div>
+									</div>
+									<div class="form-row">
+										<div class="col">
+											<label class="small font-weight-bold text-dark">Sale Price</label>
+											<input type="text" name="saleprice" class="form-control form-control-sm" id="saleprice">
+											<input type="hidden" name="productname" class="form-control form-control-sm" id="productname">
+											<input type="hidden" name="productid" class="form-control form-control-sm" id="productid">
+											<input type="hidden" class="form-control form-control-sm" name="hiddenbatchid" id="hiddenbatchid" required>
+										</div>
+										<div class="col">
 											<div class="form-group mb-1">
-												<label class="small font-weight-bold text-dark">Location* :</label>
-												<select class="form-control form-control-sm" name="location"
-													id="location" required>
-													<option value="">Select</option>
-													<?php foreach($location->result() as $rowlocationlist){ ?>
-													<option value="<?php echo $rowlocationlist->idtbl_location ?>">
-														<?php echo $rowlocationlist->location ?></option>
-													<?php } ?>
-												</select>
+											<label class="small font-weight-bold text-dark">Order QTY</label>
+											<input type="number" name="orderqty" class="form-control form-control-sm" id="orderqty" readonly>
 											</div>
 										</div>
 									</div>
-									<form>
-										<div class="row">
-											<div class="col-12 col-md-6">
-												<label class="small font-weight-bold text-dark">Product*</label><br>
-												<select class="form-control form-control-sm" style="width: 100%;"
-													name="productlist" id="productlist" required>
-												</select>
-												<small id="" class="form-text text-danger">Issuing an invoice removes listed products from this order</small>
-											</div>
-											<div class="col-12 col-md-6">
-												<div class="form-group mb-1">
-												<label class="small font-weight-bold">Batch No.*</label><br>
-											<select class="form-control form-control-sm" style="width: 100%;" name="batchlist[]"
-												id="batchlist" required multiple>
-
-											</select>
-												</div>
-											</div>
+									<div class="form-row">
+										<div class="col">
+											<label class="small font-weight-bold text-dark">QTY</label>
+											<input type="number" name="qty"  id="qty" class="form-control form-control-sm">
 										</div>
-										<div class="row">
-											<div class="col-12 col-md-6">
-												<div class="form-group mb-1">
-												<label class="small font-weight-bold text-dark">Sale Price :</label>
-													<input type="text" name="saleprice"
-														class="form-control form-control-sm" id="saleprice">
-													<input type="hidden" name="productname"
-														class="form-control form-control-sm" id="productname">
-													<input type="hidden" name="productid"
-														class="form-control form-control-sm" id="productid">
-														<input type="hidden" class="form-control form-control-sm"
-													name="hiddenbatchid" id="hiddenbatchid" required>
-												</div>
-											</div>
-											<div class="col-12 col-md-6">
-												<div class="form-group mb-1">
-												<label class="small font-weight-bold text-dark">Order QTY :</label>
-													<input type="number" name="orderqty" class="form-control form-control-sm" id="orderqty" readonly>
-												</div>
-											</div>
+										<div class="col">
+											<label class="small font-weight-bold text-dark">Sale Discount</label>
+											<input type="number" name="salediscount" class="form-control form-control-sm" id="salediscount" value="0">
 										</div>
-										<div class="row">
-										<div class="col-12 col-md-6">
-												<div class="form-group mb-1">
-												<label class="small font-weight-bold text-dark">QTY :</label>
-													<input type="number" name="qty"  id="qty" class="form-control form-control-sm">
-												</div>
-											</div>
-											<div class="col-12 col-md-6">
-												<div class="form-group mb-1">
-													<label class="small font-weight-bold text-dark">Sale Discount
-														:</label>
-													<input type="number" name="salediscount" class="form-control form-control-sm" id="salediscount" value="0">
-												</div>
-											</div>
-										</div>
-										<div class="form-group mt-2">
-											<button type="button" name="BtnAdd" id="BtnAdd"
-												class="btn btn-primary btn-m  fa-pull-right"><i
-													class="fas fa-plus"></i>&nbsp;Add</button>
-										</div>
-										<button type="reset" name="hiddenreset" id="hiddenreset"
-											style="display:none;"></button>
-									</form>
-									<br><br><br>
+									</div>
+									<div class="form-group mt-2">
+										<button type="button" name="BtnAdd" id="BtnAdd" class="btn btn-primary btn-sm fa-pull-right px-4"><i class="fas fa-plus"></i>&nbsp;Add</button>
+									</div>
+									<button type="reset" name="hiddenreset" id="hiddenreset" style="display:none;"></button>
 								</div>
 
 								<div class="col-12 col-md-8">
-									<div class="row">
-										<div class="col-12 col-md-12">
-											<div class="table scrollbar" id="style-2">
-												<table class="table table-bordered table-striped  nowrap display"
-													id="tblinvoice">
-													<thead>
-														<th>Product Name</th>
-														<th>Batch Number</th>
-														<th>Qty</th>
-														<th>Sale Price</th>
-														<th>Discount</th>
-														<th>Net Amount</th>
-													</thead>
-													<tbody>
-
-													</tbody>
-													<tfoot>
-														<tr>
-															<th class="text-right" colspan="6"><label
-																	id="labeltotal"></label><br>
-																<input type="hidden" id="hiddenfulltotal"
-																	name="hiddenfulltotal">
-																<input type="hidden" id="hiddenfulldistotal"
-																	name="hiddenfulldistotal">
-																<input type="hidden" id="hiddenfullnettotal"
-																	name="hiddenfullnettotal">
-																<label id="labeldistotal"></label><br>
-																<label id="labelnettotal"></label><br>
-																<label id="htmlbillamount"></label></th>
-
-														</tr>
-													</tfoot>
-												</table>
-											</div>
+									<div class="table scrollbar" id="style-2">
+										<table class="table table-bordered table-striped table-sm small nowrap display"
+											id="tblinvoice">
+											<thead>
+												<th>Product Name</th>
+												<th>Batch Number</th>
+												<th class="text-center">Qty</th>
+												<th class="text-right">Sale Price</th>
+												<th class="text-right">Discount</th>
+												<th class="text-right">Net Amount</th>
+											</thead>
+											<tbody></tbody>
+											<!-- <tfoot>
+												<tr>
+													<th class="text-right" colspan="6">
+														<label id="labeltotal"></label><br>
+														
+														<label id="labeldistotal"></label><br>
+														<label id="labelnettotal"></label><br>
+														<label id="htmlbillamount"></label>
+													</th>
+												</tr>
+											</tfoot> -->
+										</table>
+										<div class="row">
+											<div class="col-9 text-right"><h6 class="font-weight-normal">Gross total</h6></div>
+											<div class="col-3 text-right"><h6 class="font-weight-normal" id="labeltotal"></h6></div>
 										</div>
+										<div class="row">
+											<div class="col-9 text-right"><h6 class="font-weight-normal">Discount total</h6></div>
+											<div class="col-3 text-right"><h6 class="font-weight-normal" id="labeldistotal"></h6></div>
+										</div>
+										<div class="row">
+											<div class="col-9 text-right"><h3 class="font-weight-normal">Net total</h3></div>
+											<div class="col-3 text-right"><h3 class="font-weight-normal" id="labelnettotal"></h3></div>
+										</div>
+										<input type="hidden" id="hiddenfulltotal" name="hiddenfulltotal">
+										<input type="hidden" id="hiddenfulldistotal" name="hiddenfulldistotal">
+										<input type="hidden" id="hiddenfullnettotal" name="hiddenfullnettotal">
 									</div>
-									<br><br>
 									<div class="form-group mt-2">
-										<button type="button" name="Btnsubmit" id="Btnsubmit"
-											class="btn btn-primary btn-m  fa-pull-right"><i
-												class="far fa-save"></i>&nbsp;Save</button>
+										<button type="button" name="Btnsubmit" id="Btnsubmit" class="btn btn-primary btn-sm fa-pull-right px-4"><i class="far fa-save"></i>&nbsp;Save</button>
 									</div>
 								</div>
 							</div>
@@ -232,6 +219,7 @@ include "include/topnavbar.php";
 		var statuscheck = '<?php echo $statuscheck; ?>';
 		var deletecheck = '<?php echo $deletecheck; ?>';
 		var companyID = '<?php echo $_SESSION['companyid'] ?>';
+		var currencycode = '';
 
 		$("#batchlist").select2();
 		$("#batchlist").on("select2:select", function (evt) {
@@ -343,19 +331,32 @@ include "include/topnavbar.php";
 						$('#productlist').empty().append(html1);
 						$('#customer').val(obj[0].name);
 						$('#orderid').val(obj[0].idtbl_customer_porder);
+						$('#currencytype').val(obj[0].currencytype);
+						currencycode = $('#currencytype option:selected').data('currencycode');
+						$('#currencytype').prop('disabled', true);
+						$('#hidecurrencytype').val(obj[0].currencytype);
+						$('#convertrate').val(obj[0].conversion_rate);
 						// $('#saletypemodel').modal('show');
 						$("#billingsection").show();
 					} else {
 						// Handle the case when there are no records in tbl_invoice
 						// Display an error message or handle this situation as needed
-						alert('The products in this order have already been invoiced..');
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: 'The products in this order have already been invoiced..'
+						});
 						$("#billingsection").hide(); // Hide the billing section
 					}
 				},
 				error: function (xhr, status, error) {
 					// Handle any errors that occur during the AJAX request
 					console.error(error);
-					alert('Error occurred while fetching data.');
+					Swal.fire({
+						icon: 'error',
+						title: 'Error',
+						text: 'Error occurred while fetching data.'
+					});
 				}
 			});
 		});
@@ -523,7 +524,11 @@ include "include/topnavbar.php";
 
     				if (count == '1') {
     					/*if the quantity is greater than the stock*/
-    					alert('Warning !! The Quantity you Entered is not Available in stock !!');
+						Swal.fire({
+							icon: 'warning',
+							title: 'Warning',
+							text: 'Warning !! The Quantity you Entered is not Available in stock !!'
+						});
     					$('#BtnAdd').prop('disabled', true);
     				} else {
     					$('#BtnAdd').prop('disabled', false);
@@ -533,8 +538,8 @@ include "include/topnavbar.php";
     		});
     	});
 
-		    	// stock quntity check with user enterd quntity      
-				var count
+		// stock quntity check with user enterd quntity      
+		var count
     	$(document).on("keyup", "#qty2", function (event) {
     		event.preventDefault();
     		var productid = $('#productlist2').val();
@@ -554,7 +559,11 @@ include "include/topnavbar.php";
 
     				if (count == '1') {
     					/*if the quantity is greater than the stock*/
-    					alert('Warning !! The Quantity you Entered is not Available in stock !!');
+						Swal.fire({
+							icon: 'warning',
+							title: 'Warning',
+							text: 'Warning !! The Quantity you Entered is not Available in stock !!'
+						});
     					$('#BtnAdd2').prop('disabled', true);
     				} else {
     					$('#BtnAdd2').prop('disabled', false);
@@ -575,52 +584,59 @@ include "include/topnavbar.php";
     		var discountpresentage = parseFloat($('#salediscount').val());
     		var qty = parseFloat($('#qty').val());
     		var total = sale * qty;
-    		var total = parseFloat(total);
+    		var total = parseFloat(total).toFixed(2);
 
     		var discountamount = parseFloat((total * discountpresentage) / 100);
     		var totalwithdis = parseFloat(total - discountamount);
     		var showtotal = parseFloat(totalwithdis).toFixed(2);
 
-    		$('#tblinvoice> tbody:last').append('<tr><td class="text-center">' + product + '</td><td class="text-left">' + batchlist + '</td><td class="text-center">' + qty + '</td><td class="text-right">' +
-    			sale + '</td><td class=" distotal text-center">' + discountamount + '</td><td class=" total text-right">' + total + '</td><td class="nettotal d-none">' +
-    			totalwithdis + '</td><td class=" d-none">' + unitprice + '</td><td class="d-none ">' + productID + '</td></tr>');
-
+    		$('#tblinvoice> tbody:last').append('<tr><td>' + product + '</td><td>' + batchlist + '</td><td class="text-center">' + qty + '</td><td class="text-right">' + addCommas(sale) + '</td><td class=" distotal text-right">' + addCommas(discountamount) + '</td><td class=" total text-right">' + addCommas(total) + '</td><td class="nettotal d-none">' + totalwithdis + '</td><td class="d-none">' + unitprice + '</td><td class="d-none ">' + productID + '</td></tr>');
 
     		var sum = 0;
-    		$(".total").each(function () {
-    			sum += parseFloat($(this).text());
-    		});
+			$(".total").each(function () {
+				var value = $(this).text();
+				var num = parseFloat(value.replace(/,/g, ''));
+				if (!isNaN(num)) {
+					sum += num;
+				}
+			});
 
     		var showsum = parseFloat(sum).toFixed(2);
 
     		var dissum = 0;
-    		$(".distotal").each(function () {
-    			dissum += parseFloat($(this).text());
-    		});
+			$(".distotal").each(function () {
+				var value = $(this).text();
+				var num = parseFloat(value.replace(/,/g, ''));
+				if (!isNaN(num)) {
+					dissum += num;
+				}
+			});
 
     		var showdissum = parseFloat(dissum).toFixed(2);
 
     		var netsum = 0;
-    		$(".nettotal").each(function () {
-    			netsum += parseFloat($(this).text());
-    		});
+			$(".nettotal").each(function () {
+				var value = $(this).text();
+				var num = parseFloat(value.replace(/,/g, ''));
+				if (!isNaN(num)) {
+					netsum += num;
+				}
+			});
 
     		var shownetsum = parseFloat(netsum).toFixed(2);
 
-    		$('#labeltotal').html('Gross Amount: ' + showsum);
-    		$('#labeldistotal').html('Discount: ' + showdissum);
-    		$('#labelnettotal').html('Net Total:' + shownetsum);
-    		$('#htmlbillamount').html('Rs. ' + shownetsum);
+    		$('#labeltotal').html(currencycode + addCommas(showsum));
+    		$('#labeldistotal').html(currencycode + addCommas(showdissum));
+    		$('#labelnettotal').html(currencycode + addCommas(shownetsum));
+    		// $('#htmlbillamount').html('Rs. ' + shownetsum);
     		$('#hiddenfulltotal').val(sum);
     		$('#hiddenfulldistotal').val(dissum);
     		$('#hiddenfullnettotal').val(netsum);
     		$('#hiddenreset').click();
-
-
     	});
 
-				// add products and other details to the bill
-			$(document).on("click", "#BtnAdd2", function () {
+		// add products and other details to the bill
+		$(document).on("click", "#BtnAdd2", function () {
     		var productID = $('#productlist2').val();
     		var product = $('#productname2').val();
     		var productcode = $('#productcode').val();
@@ -698,33 +714,65 @@ include "include/topnavbar.php";
     		var location = $('#location').val();
 			var bank = $('#bank').val();
     		var orderid = $('#orderid').val();
+    		var currencytype = $('#hidecurrencytype').val();
+    		var convertrate = $('#convertrate').val();
 
-    		$.ajax({
-    			type: "POST",
-    			data: {
-    				tableData: jsonObj,
-    				total: total,
-    				distotal: distotal,
-    				nettotal: nettotal,
-    				location: location,
-    				bank: bank,
-    				orderid: orderid,
-    			},
-    			url: "<?php echo base_url() ?>Directinvoice/Invoiceinsertupdate",
-    			success: function (result) {
-    				// console.log(result);
-    				var objfirst = JSON.parse(result);
-    					alert("Record Added Successfully");
-    					window.location.reload(true);
-
-    			}
-    		});
-
-
+			Swal.fire({
+				title: '',
+				html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
+				allowOutsideClick: false,
+				showConfirmButton: false, // Hide the OK button
+				backdrop: `
+					rgba(255, 255, 255, 0.5) 
+				`,
+				customClass: {
+					popup: 'fullscreen-swal'
+				},
+				didOpen: () => {
+					document.body.style.overflow = 'hidden';
+					$.ajax({
+						type: "POST",
+						data: {
+							tableData: jsonObj,
+							total: total,
+							distotal: distotal,
+							nettotal: nettotal,
+							location: location,
+							bank: bank,
+							orderid: orderid,
+							currencytype: currencytype,
+							convertrate: convertrate
+						},
+						url: '<?php echo base_url() ?>Directinvoice/Invoiceinsertupdate',
+						success: function (result) { //alert(result);
+							// console.log(result);
+							var obj = JSON.parse(result);
+							if(obj.status==1){
+								actionreload(obj.action);
+							}
+							else{
+								action(obj.action);
+							}
+						},
+						error: function(error) {
+							// Close the SweetAlert on error
+							Swal.close();
+							document.body.style.overflow = 'auto';
+							
+							// Show an error alert
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: 'Something went wrong. Please try again later.'
+							});
+						}
+					});
+				}
+			});
     	});
 
-		    	// bill data submit for process data
-				$(document).on("click", "#Btnsubmit2", function () {
+		// bill data submit for process data
+		$(document).on("click", "#Btnsubmit2", function () {
 
 			// get table data into array
 			var tbody = $('#tblinvoice2 tbody');
@@ -762,19 +810,35 @@ include "include/topnavbar.php";
 				success: function (result) {
 					// console.log(result);
 					var objfirst = JSON.parse(result);
-						alert("Record Added Successfully");
+						Swal.fire({
+							icon: 'success',
+							title: 'Success',
+							text: 'Record Added Successfully'
+						});
 						window.location.reload(true);
 
 				}
 			});
 
 
-			});
+		});
 
     });
 
 	function deactive_confirm() {
         return confirm("Are you sure you want to lock this?");
+    }
+
+	function addCommas(nStr) {
+        nStr += '';
+        x = nStr.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
     }
 
 </script>
