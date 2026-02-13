@@ -658,7 +658,7 @@ class Goodreceiveinfo extends CI_Model{
 
                     $stockData = array(
                         'currencytype' => $currencytype,
-                        'conversion_rate' => $conversion_rate,
+                        'conversion_rate' => $batchno,
                         'batchno' => $batchno,
                         'qty' => $qty,
                         'unitprice' => $unitprice,

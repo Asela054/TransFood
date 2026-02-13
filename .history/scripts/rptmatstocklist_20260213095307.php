@@ -39,7 +39,7 @@ $columns = array(
 	array('db' => '`ua`.`materialname`', 'dt' => 'materialname', 'field' => 'materialname'),
     array( 'db' => '`ua`.`materialinfocode`', 'dt' => 'materialinfocode', 'field' => 'materialinfocode' ),
 	array( 'db' => '`u`.`unitprice`', 'dt' => 'unitprice', 'field' => 'unitprice' ),
-	array( 'db' => '`u`.`currencytype`', 'dt' => 'currencytype', 'field' => 'currencytype' ),
+	array( 'db' => '`u`.`unitprice`', 'dt' => 'unitprice', 'field' => 'unitprice' ),
     array( 'db' => '`u`.`status`', 'dt' => 'status', 'field' => 'status' ),
 );
 
