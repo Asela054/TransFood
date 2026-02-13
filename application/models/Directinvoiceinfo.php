@@ -24,14 +24,16 @@ class Directinvoiceinfo extends CI_Model{
         $branchid=$_SESSION['branchid'];
     
         $tableData = $this->input->post('tableData');
-        $total = $this->input->post('total');
-        $distotal = $this->input->post('distotal');
-        $nettotal = $this->input->post('nettotal');
+        $total = str_replace(',', '', $this->input->post('total'));
+        $distotal = str_replace(',', '', $this->input->post('distotal'));
+        $nettotal = str_replace(',', '', $this->input->post('nettotal'));
         $location = $this->input->post('location');
         $bank = $this->input->post('bank');
         $batchlist = $this->input->post('batchlist');
         $orderid = $this->input->post('orderid');
         $hiddenbatchid = $this->input->post('hiddenbatchid');
+        $currencytype = $this->input->post('currencytype');
+        $convertrate = $this->input->post('convertrate');
     
         $insertdatetime = date('Y-m-d H:i:s');
         $invdate = date('Y-m-d H:i:s');
@@ -46,6 +48,7 @@ class Directinvoiceinfo extends CI_Model{
         }
     
         $data = array(
+            'currencytype'=> $currencytype,
             'invno'=> $i,
             'invdate' => $invdate,
             'grosstotal' => $total,
@@ -53,6 +56,7 @@ class Directinvoiceinfo extends CI_Model{
             'nettotal' => $nettotal,
             'invtype' => '1',
             'paycomplete' => '0',
+            'conversion_rate' => $convertrate,
             'status' => '1',
             'insertdatetime' => $insertdatetime,
             'tbl_user_idtbl_user' => $userID,
@@ -76,8 +80,8 @@ class Directinvoiceinfo extends CI_Model{
             $dataone = array(
                 'batchno' => $rowtabledata['col_2'],
                 'qty' => $rowtabledata['col_3'],
-                'saleprice' => $rowtabledata['col_4'],
-                'total' => $rowtabledata['col_6'],
+                'saleprice' => str_replace(',', '', $rowtabledata['col_4']),
+                'total' => str_replace(',', '', $rowtabledata['col_6']),
                 'status' => '1',
                 'insertdatetime' => $insertdatetime,
                 'tbl_invoice_idtbl_invoice' => $invoiceID,
@@ -112,111 +116,110 @@ class Directinvoiceinfo extends CI_Model{
                         $availableqty = 0;
                     }
     
-                $data2 = array(
-                    'qty' => $availableqty,
-                    'updateuser' => $userID,
-                    'updatedatetime' => $insertdatetime,
-                );
-    
-                $this->db->where('tbl_product_idtbl_product', $rowtabledata['col_9']);
-                $this->db->where('tbl_location_idtbl_location', $location);
-                $this->db->where('fgbatchno', $batchno);
-                $this->db->set($data2);
-                $this->db->update('tbl_product_stock');
-                if ($orderqty == 0) {
-                    break; 
+                    $data2 = array(
+                        'qty' => $availableqty,
+                        'updateuser' => $userID,
+                        'updatedatetime' => $insertdatetime,
+                    );
+        
+                    $this->db->where('tbl_product_idtbl_product', $rowtabledata['col_9']);
+                    $this->db->where('tbl_location_idtbl_location', $location);
+                    $this->db->where('fgbatchno', $batchno);
+                    $this->db->set($data2);
+                    $this->db->update('tbl_product_stock');
+                    if ($orderqty == 0) {
+                        break; 
+                    }
+                } else {
+                    break;
                 }
-            } else {
-                break;
             }
+        
+            $data = array(
+                'paydate' => $invdate,
+                'nettotal' => $nettotal,
+                'balance' => '0',
+                'status' => '1',
+                'insertdatetime' => $insertdatetime,
+                'tbl_user_idtbl_user' => $userID,
+                'tbl_location_idtbl_location' => $location,
+                'tbl_company_idtbl_company'=> $companyid,
+                'tbl_company_branch_idtbl_company_branch'=> $branchid
+            );
+        
+            $this->db->insert('tbl_invoice_payment', $data);
+    
+            $invoicepayID = $this->db->insert_id();
+    
+            $dataone = array(
+                'method' => '1',
+                'amount' => '0',
+                'bank' => '0',
+                'branch' => '0',
+                'chequeno' => '0',
+                'chequedate' => '0',
+                'status' => '1',
+                'insertdatetime' => $insertdatetime,
+                'tbl_user_idtbl_user' => $userID,
+                'tbl_invoice_payment_idtbl_invoice_payment' => $invoicepayID,
+            );
+        
+            $this->db->insert('tbl_invoice_payment_detail', $dataone);
+    
+            $datatwo = array(
+                'tbl_invoice_payment_idtbl_invoice_payment' => $invoicepayID,
+                'tbl_invoice_idtbl_invoice' => $invoiceID,
+            );
+    
+            $this->db->insert('tbl_invoice_payment_has_tbl_invoice', $datatwo);
         }
-        
-                $data = array(
-                    'paydate' => $invdate,
-                    'nettotal' => $nettotal,
-                    'balance' => '0',
-                    'status' => '1',
-                    'insertdatetime' => $insertdatetime,
-                    'tbl_user_idtbl_user' => $userID,
-                    'tbl_location_idtbl_location' => $location,
-                    'tbl_company_idtbl_company'=> $companyid,
-                    'tbl_company_branch_idtbl_company_branch'=> $branchid
-                );
-        
-                $this->db->insert('tbl_invoice_payment', $data);
-        
-                $invoicepayID = $this->db->insert_id();
-        
-                $dataone = array(
-                    'method' => '1',
-                    'amount' => '0',
-                    'bank' => '0',
-                    'branch' => '0',
-                    'chequeno' => '0',
-                    'chequedate' => '0',
-                    'status' => '1',
-                    'insertdatetime' => $insertdatetime,
-                    'tbl_user_idtbl_user' => $userID,
-                    'tbl_invoice_payment_idtbl_invoice_payment' => $invoicepayID,
-                );
-        
-                $this->db->insert('tbl_invoice_payment_detail', $dataone);
-        
-                $datatwo = array(
-                    'tbl_invoice_payment_idtbl_invoice_payment' => $invoicepayID,
-                    'tbl_invoice_idtbl_invoice' => $invoiceID,
-                );
-        
-                $this->db->insert('tbl_invoice_payment_has_tbl_invoice', $datatwo);
-            }
-        
-            if ($this->db->trans_status() === FALSE) {
-                $this->db->trans_rollback();
-        
-                $actionObj = new stdClass();
-                $actionObj->icon = 'fas fa-exclamation-triangle';
-                $actionObj->title = '';
-                $actionObj->message = 'Record Error';
-                $actionObj->url = '';
-                $actionObj->target = '_blank';
-                $actionObj->type = 'danger';
-        
-                $actionJSON = json_encode($actionObj);
-        
-                $obj = new stdClass();
-                $obj->status = 0;
-                $obj->action = $actionJSON;
-        
-                echo json_encode($obj);
-            } else {
-                $this->db->trans_commit();
-        
-                $actionObj = new stdClass();
-                $actionObj->icon = 'fas fa-save';
-                $actionObj->title = '';
-                $actionObj->message = 'Record Added Successfully';
-                $actionObj->url = '';
-                $actionObj->target = '_blank';
-                $actionObj->type = 'success';
-        
-                $actionJSON = json_encode($actionObj);
-        
-                $obj = new stdClass();
-                $obj->status = 1;
-                $obj->action = $actionJSON;
-        
-                echo json_encode($obj);
-            }
+
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === TRUE) {
+            $this->db->trans_commit();
+    
+            $actionObj = new stdClass();
+            $actionObj->icon = 'fas fa-save';
+            $actionObj->title = '';
+            $actionObj->message = 'Record Added Successfully';
+            $actionObj->url = '';
+            $actionObj->target = '_blank';
+            $actionObj->type = 'success';
+    
+            $actionJSON = json_encode($actionObj);
+    
+            $obj = new stdClass();
+            $obj->status = 1;
+            $obj->action = $actionJSON;
+    
+            echo json_encode($obj);
+        } else {
+            $this->db->trans_rollback();
+    
+            $actionObj = new stdClass();
+            $actionObj->icon = 'fas fa-exclamation-triangle';
+            $actionObj->title = '';
+            $actionObj->message = 'Record Error';
+            $actionObj->url = '';
+            $actionObj->target = '_blank';
+            $actionObj->type = 'danger';
+    
+            $actionJSON = json_encode($actionObj);
+    
+            $obj = new stdClass();
+            $obj->status = 0;
+            $obj->action = $actionJSON;
+    
+            echo json_encode($obj);
+        }
     }
 
     public function Getorderdetails(){
  
         $recordID=$this->input->post('recordID');
 
-        $sql="SELECT `tbl_customer_porder`.`idtbl_customer_porder`, `tbl_customer`.`name`, `tbl_product`.`idtbl_product`,`tbl_product`.`productcode`, `tbl_product`.`prodcutname`
-        FROM `tbl_customer_porder` LEFT JOIN `tbl_customer` ON `tbl_customer`.`idtbl_customer`=`tbl_customer_porder`.`tbl_customer_idtbl_customer`
-        LEFT JOIN `tbl_customer_porder_detail` ON `tbl_customer_porder`.`idtbl_customer_porder`=`tbl_customer_porder_detail`.`tbl_customer_porder_idtbl_customer_porder` 
-        LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_customer_porder_detail`.`tbl_product_idtbl_product`
+        $sql="SELECT `tbl_customer_porder`.`idtbl_customer_porder`, `tbl_customer`.`name`, `tbl_product`.`idtbl_product`,`tbl_product`.`productcode`, `tbl_product`.`prodcutname`, `tbl_customer_porder`.`conversion_rate`, `tbl_customer_porder`.`currencytype` FROM `tbl_customer_porder` LEFT JOIN `tbl_customer` ON `tbl_customer`.`idtbl_customer`=`tbl_customer_porder`.`tbl_customer_idtbl_customer`  LEFT JOIN `tbl_customer_porder_detail` ON `tbl_customer_porder`.`idtbl_customer_porder`=`tbl_customer_porder_detail`.`tbl_customer_porder_idtbl_customer_porder` LEFT JOIN `tbl_product` ON `tbl_product`.`idtbl_product`=`tbl_customer_porder_detail`.`tbl_product_idtbl_product`
         WHERE `tbl_customer_porder`.`idtbl_customer_porder`=? AND `tbl_customer_porder`.`status` =? AND `tbl_product`.`idtbl_product` NOT IN (SELECT `tbl_product_idtbl_product` FROM `tbl_invoice_detail` LEFT JOIN `tbl_invoice` ON `tbl_invoice`.`idtbl_invoice`=`tbl_invoice_detail`.`tbl_invoice_idtbl_invoice` WHERE `tbl_invoice_detail`.`status`=? AND `tbl_invoice`.`tbl_customer_porder_idtbl_customer_porder`=?)";
         $respond=$this->db->query($sql, array($recordID, 1, 1, $recordID));
 
@@ -242,22 +245,22 @@ class Directinvoiceinfo extends CI_Model{
 
     public function Getproductdetails(){
 
-    $recordID=$this->input->post('recordID');
+        $recordID=$this->input->post('recordID');
 
-     $this->db->select('tbl_product.*');
-     $this->db->from('tbl_product');
-     $this->db->where('tbl_product.idtbl_product', $recordID);
-     $this->db->where('tbl_product.status', 1);
-     $respond=$this->db->get();
+        $this->db->select('tbl_product.*');
+        $this->db->from('tbl_product');
+        $this->db->where('tbl_product.idtbl_product', $recordID);
+        $this->db->where('tbl_product.status', 1);
+        $respond=$this->db->get();
 
-     $zero=000;
-     
-     $obj=new stdClass();
-     $obj->id=$respond->row(0)->idtbl_product;
-     $obj->code=$respond->row(0)->prodcutname.'-'.$respond->row(0)->productcode;
-     $obj->saleprice=$respond->row(0)->retailprice;
+        $zero=000;
+        
+        $obj=new stdClass();
+        $obj->id=$respond->row(0)->idtbl_product;
+        $obj->code=$respond->row(0)->prodcutname.'-'.$respond->row(0)->productcode;
+        $obj->saleprice=$respond->row(0)->retailprice;
 
-     echo json_encode($obj); 
+        echo json_encode($obj); 
     }
 
     public function Getproductdetailsnoninvoice(){
@@ -282,134 +285,132 @@ class Directinvoiceinfo extends CI_Model{
          $obj->saleprice=$respond->row(0)->retailprice;
     
          echo json_encode($obj); 
-        }
+    }
 
     public function Getorderqty(){
 
         $recordID=$this->input->post('recordID');
         $orderid=$this->input->post('orderid');
     
-         $this->db->select('tbl_customer_porder_detail.qty,tbl_customer_porder_detail.suggestprice,tbl_customer_porder_detail.unitpriceusd');
-         $this->db->from('tbl_customer_porder_detail');
-         $this->db->join('tbl_customer_porder', 'tbl_customer_porder.idtbl_customer_porder = tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder', 'left');
-         $this->db->join('tbl_product', 'tbl_product.idtbl_product = tbl_customer_porder_detail.tbl_product_idtbl_product', 'left');
-         $this->db->where('tbl_product.idtbl_product', $recordID);
-         $this->db->where('tbl_customer_porder.idtbl_customer_porder', $orderid);
-         $this->db->where('tbl_product.status', 1);
-         $respond=$this->db->get();
+        $this->db->select('tbl_customer_porder_detail.qty,tbl_customer_porder_detail.suggestprice');
+        $this->db->from('tbl_customer_porder_detail');
+        $this->db->join('tbl_customer_porder', 'tbl_customer_porder.idtbl_customer_porder = tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder', 'left');
+        $this->db->join('tbl_product', 'tbl_product.idtbl_product = tbl_customer_porder_detail.tbl_product_idtbl_product', 'left');
+        $this->db->where('tbl_product.idtbl_product', $recordID);
+        $this->db->where('tbl_customer_porder.idtbl_customer_porder', $orderid);
+        $this->db->where('tbl_product.status', 1);
+        $respond=$this->db->get();
+        $zero=000;
+        
+        $obj=new stdClass();
+        $obj->orderqty=$respond->row(0)->qty;
+        $obj->saleprice=$respond->row(0)->suggestprice;
     
-         $zero=000;
-         
-         $obj=new stdClass();
-         $obj->orderqty=$respond->row(0)->qty;
-         $obj->saleprice=$respond->row(0)->suggestprice;
-         $obj->unitpriceusd=$respond->row(0)->unitpriceusd;
+        echo json_encode($obj); 
+    }
+
+    public function Getbatchlist(){
+        $productId = $this->input->post('productId');
+        $fromlocation = $this->input->post('fromlocation');
+        $companyid=$_SESSION['companyid'];
+        $branchid=$_SESSION['branchid'];
     
-         echo json_encode($obj); 
+        $sql="SELECT `idtbl_product_stock`, `fgbatchno`, `qty` FROM `tbl_product_stock`  WHERE `tbl_product_stock`.`tbl_product_idtbl_product`=? AND `tbl_product_stock`.`status`=? AND `tbl_product_stock`.`tbl_location_idtbl_location`=? AND `tbl_product_stock`.`tbl_company_idtbl_company`= ? AND `tbl_product_stock`.`tbl_company_branch_idtbl_company_branch`=? AND `tbl_product_stock`.`qty` > 0";
+        $respond=$this->db->query($sql, array($productId, 1, $fromlocation, $companyid, $branchid));
+    
+        echo json_encode($respond->result());
+    }
+
+
+    public function Getorderqtynoninvoice(){
+
+        $recordID=$this->input->post('recordID');
+        $orderid=$this->input->post('orderid');
+    
+        $this->db->select('tbl_customer_porder_detail.qty');
+        $this->db->from('tbl_customer_porder_detail');
+        $this->db->where('tbl_customer_porder_detail.tbl_product_idtbl_product', $recordID);
+        $this->db->where('tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder', $orderid);
+        $this->db->where('tbl_customer_porder_detail.status', 1);
+        $respond=$this->db->get();
+
+        $zero=000;
+        
+        $obj=new stdClass();
+        $obj->orderqty=$respond->row(0)->qty;
+
+        echo json_encode($obj); 
+    }
+
+    public function Getproductavalaibleqty() {
+        $product = $this->input->post('product');
+        $inserted_qty = $this->input->post('qty');
+        $location = $this->input->post('location');
+    
+        $this->db->select_sum('qty');
+        $this->db->from('tbl_product_stock');
+        $this->db->where('tbl_product_idtbl_product', $product);
+        $this->db->where('tbl_location_idtbl_location', $location);
+        $this->db->where('status', 1);
+        $respond = $this->db->get();
+    
+        $availableqty = 0; // Set default available quantity to 0
+    
+        if ($respond->num_rows() > 0) {
+            $result = $respond->row();
+            $availableqty = $result->qty;
+        }
+    
+        $obj = new stdClass();
+        if ($inserted_qty > $availableqty) {
+            $qtyresult = 1;
+        } else {
+            $qtyresult = 0;
+        }
+        $obj->checkqty = $qtyresult;
+        echo json_encode($obj);
+    }
+
+    public function Completestatusupdate($x, $y){
+        $this->db->trans_begin();
+
+        $userID=$_SESSION['userid'];
+        $recordID=$x;
+        $type=$y;
+        $updatedatetime=date('Y-m-d H:i:s');
+
+        if($type==1){
+            $data = array(
+                'completestatus' => '1',
+                'updateuser'=> $userID, 
+                'updatedatetime'=> $updatedatetime
+            );
+
+            $this->db->where('idtbl_customer_porder', $recordID);
+            $this->db->set($data);
+            $this->db->update('tbl_customer_porder');
+
+            $this->db->trans_complete();
+
+            if ($this->db->trans_status() === TRUE) {
+                $this->db->trans_commit();
+                
+                $actionObj=new stdClass();
+                $actionObj->icon='fas fa-check';
+                $actionObj->title='';
+                $actionObj->message='Record Lock Successfully';
+                $actionObj->url='';
+                $actionObj->target='_blank';
+                $actionObj->type='success';
+
+                $actionJSON=json_encode($actionObj);
+                
+                $this->session->set_flashdata('msg', $actionJSON);
+                redirect('Directinvoice');                
+            } 
         }
 
-        public function Getbatchlist(){
-            $productId = $this->input->post('productId');
-            $fromlocation = $this->input->post('fromlocation');
-            $companyid=$_SESSION['companyid'];
-            $branchid=$_SESSION['branchid'];
-        
-            $sql="SELECT `idtbl_product_stock`, `fgbatchno`, `qty` FROM `tbl_product_stock`  WHERE `tbl_product_stock`.`tbl_product_idtbl_product`=? AND `tbl_product_stock`.`status`=? AND `tbl_product_stock`.`tbl_location_idtbl_location`=? AND `tbl_product_stock`.`tbl_company_idtbl_company`= ? AND `tbl_product_stock`.`tbl_company_branch_idtbl_company_branch`=? AND `tbl_product_stock`.`qty` > 0";
-            $respond=$this->db->query($sql, array($productId, 1, $fromlocation, $companyid, $branchid));
-        
-            echo json_encode($respond->result());
-        }
-
-
-        public function Getorderqtynoninvoice(){
-
-            $recordID=$this->input->post('recordID');
-            $orderid=$this->input->post('orderid');
-        
-             $this->db->select('tbl_customer_porder_detail.qty');
-             $this->db->from('tbl_customer_porder_detail');
-             $this->db->where('tbl_customer_porder_detail.tbl_product_idtbl_product', $recordID);
-             $this->db->where('tbl_customer_porder_detail.tbl_customer_porder_idtbl_customer_porder', $orderid);
-             $this->db->where('tbl_customer_porder_detail.status', 1);
-             $respond=$this->db->get();
-        
-             $zero=000;
-             
-             $obj=new stdClass();
-             $obj->orderqty=$respond->row(0)->qty;
-        
-             echo json_encode($obj); 
-            }
-
-            public function Getproductavalaibleqty() {
-                $product = $this->input->post('product');
-                $inserted_qty = $this->input->post('qty');
-                $location = $this->input->post('location');
-            
-                $this->db->select_sum('qty');
-                $this->db->from('tbl_product_stock');
-                $this->db->where('tbl_product_idtbl_product', $product);
-                $this->db->where('tbl_location_idtbl_location', $location);
-                $this->db->where('status', 1);
-                $respond = $this->db->get();
-            
-                $availableqty = 0; // Set default available quantity to 0
-            
-                if ($respond->num_rows() > 0) {
-                    $result = $respond->row();
-                    $availableqty = $result->qty;
-                }
-            
-                $obj = new stdClass();
-                if ($inserted_qty > $availableqty) {
-                    $qtyresult = 1;
-                } else {
-                    $qtyresult = 0;
-                }
-                $obj->checkqty = $qtyresult;
-                echo json_encode($obj);
-            }
-
-            public function Completestatusupdate($x, $y){
-                $this->db->trans_begin();
-
-                $userID=$_SESSION['userid'];
-                $recordID=$x;
-                $type=$y;
-                $updatedatetime=date('Y-m-d H:i:s');
-
-                if($type==1){
-                    $data = array(
-                        'completestatus' => '1',
-                        'updateuser'=> $userID, 
-                        'updatedatetime'=> $updatedatetime
-                    );
-
-                    $this->db->where('idtbl_customer_porder', $recordID);
-                    $this->db->set($data);
-                    $this->db->update('tbl_customer_porder');
-
-                    $this->db->trans_complete();
-
-                    if ($this->db->trans_status() === TRUE) {
-                        $this->db->trans_commit();
-                        
-                        $actionObj=new stdClass();
-                        $actionObj->icon='fas fa-check';
-                        $actionObj->title='';
-                        $actionObj->message='Record Lock Successfully';
-                        $actionObj->url='';
-                        $actionObj->target='_blank';
-                        $actionObj->type='success';
-
-                        $actionJSON=json_encode($actionObj);
-                        
-                        $this->session->set_flashdata('msg', $actionJSON);
-                        redirect('Directinvoice');                
-                    } 
-                }
-
-            }
+    }
 }
 
 
