@@ -589,91 +589,91 @@ include "include/topnavbar.php";
 
                     $('#tableorder tbody').empty();
 
-                    $.each(obj.recorddetaildata, function (i, item) {
+$.each(obj.recorddetaildata, function (i, item) {
 
-                        let currencyType = obj.recorddata.currencytype;
+    let currencyType = obj.recorddata.currencytype;
 
-                        let unitprice_lkr = 0,
-                            unitprice_usd = 0,
-                            discount_lkr = 0,
-                            discount_usd = 0;
+    let unitprice_lkr = 0,
+        unitprice_usd = 0,
+        discount_lkr = 0,
+        discount_usd = 0;
 
-                        // 🔥 Correct column mapping based on order currency
-                        if (currencyType == "1") { // LKR Order
+    // 🔥 Correct column mapping based on order currency
+    if (currencyType == "1") { // LKR Order
 
-                            unitprice_lkr = parseFloat(item.unitprice) || 0;
-                            unitprice_usd = parseFloat(item.unitpriceusd) || 0;
+        unitprice_lkr = parseFloat(item.unitprice) || 0;
+        unitprice_usd = parseFloat(item.unitpriceusd) || 0;
 
-                            discount_lkr = parseFloat(item.discount) || 0;
-                            discount_usd = parseFloat(item.discountusd) || 0;
+        discount_lkr = parseFloat(item.discount) || 0;
+        discount_usd = parseFloat(item.discountusd) || 0;
 
-                        } else if (currencyType == "2") { // USD Order
+    } else if (currencyType == "2") { // USD Order
 
-                            unitprice_usd = parseFloat(item.unitprice) || 0;
-                            unitprice_lkr = parseFloat(item.unitpriceusd) || 0;
+        unitprice_usd = parseFloat(item.unitprice) || 0;
+        unitprice_lkr = parseFloat(item.unitpriceusd) || 0;
 
-                            discount_usd = parseFloat(item.discount) || 0;
-                            discount_lkr = parseFloat(item.discountusd) || 0;
-                        }
+        discount_usd = parseFloat(item.discount) || 0;
+        discount_lkr = parseFloat(item.discountusd) || 0;
+    }
 
-                        let unitperctn = parseFloat(item.unitperctn) || 0;
-                        let ctn = parseFloat(item.ctn) || 0;
-                        let qty = parseFloat(item.qty) || 0;
+    let unitperctn = parseFloat(item.unitperctn) || 0;
+    let ctn = parseFloat(item.ctn) || 0;
+    let qty = parseFloat(item.qty) || 0;
 
-                        let total_lkr = (unitprice_lkr - discount_lkr) * qty;
-                        let total_usd = (unitprice_usd - discount_usd) * qty;
+    let total_lkr = (unitprice_lkr - discount_lkr) * qty;
+    let total_usd = (unitprice_usd - discount_usd) * qty;
 
-                        let product = item.materialname + ' / ' + item.materialinfocode;
+    let product = item.materialname + ' / ' + item.materialinfocode;
 
-                        $('#tableorder > tbody:last').append(`
-                            <tr class="pointer">
-                                <td>${product}</td>
-                                <td>${item.comment}</td>
-                                <td class="d-none">${item.tbl_material_info_idtbl_material_info}</td>
+    $('#tableorder > tbody:last').append(`
+        <tr class="pointer">
+            <td>${product}</td>
+            <td>${item.comment}</td>
+            <td class="d-none">${item.tbl_material_info_idtbl_material_info}</td>
 
-                                <td class="d-none unitprice_lkr">${unitprice_lkr}</td>
-                                <td class="d-none discount_lkr">${discount_lkr}</td>
-                                <td class="d-none unitprice_usd">${unitprice_usd}</td>
-                                <td class="d-none discount_usd">${discount_usd}</td>
+            <td class="d-none unitprice_lkr">${unitprice_lkr}</td>
+            <td class="d-none discount_lkr">${discount_lkr}</td>
+            <td class="d-none unitprice_usd">${unitprice_usd}</td>
+            <td class="d-none discount_usd">${discount_usd}</td>
 
-                                <td class="text-center">
-                                    ${currencyType == "1"
-                                        ? unitprice_lkr.toFixed(2)
-                                        : unitprice_usd.toFixed(2)}
-                                </td>
+            <td class="text-center">
+                ${currencyType == "1"
+                    ? unitprice_lkr.toFixed(2)
+                    : unitprice_usd.toFixed(2)}
+            </td>
 
-                                <td class="text-center">
-                                    ${currencyType == "1"
-                                        ? discount_lkr.toFixed(2)
-                                        : discount_usd.toFixed(2)}
-                                </td>
+            <td class="text-center">
+                ${currencyType == "1"
+                    ? discount_lkr.toFixed(2)
+                    : discount_usd.toFixed(2)}
+            </td>
 
-                                <td class="text-center">${unitperctn}</td>
-                                <td class="text-center">${ctn}</td>
-                                <td class="text-center">${qty}</td>
+            <td class="text-center">${unitperctn}</td>
+            <td class="text-center">${ctn}</td>
+            <td class="text-center">${qty}</td>
 
-                                <td class="d-none total_lkr">${total_lkr}</td>
-                                <td class="d-none total_usd">${total_usd}</td>
+            <td class="d-none total_lkr">${total_lkr}</td>
+            <td class="d-none total_usd">${total_usd}</td>
 
-                                <td class="text-right">
-                                    ${currencyType == "1"
-                                        ? total_lkr.toFixed(2)
-                                        : total_usd.toFixed(2)}
-                                </td>
-                            </tr>
-                        `);
-                    });
+            <td class="text-right">
+                ${currencyType == "1"
+                    ? total_lkr.toFixed(2)
+                    : total_usd.toFixed(2)}
+            </td>
+        </tr>
+    `);
+});
 
                     if (obj.recorddata.currencytype == "1") {
                         $('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
                         $('#divtotal').html('Rs. ' + parseFloat(obj.recorddata.nettotal).toFixed(2));
                     } else {
-                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
-                        $('#divtotal').html('$ ' + parseFloat(obj.recorddata.nettotal).toFixed(2));
+                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamountusd).toFixed(2));
+                        $('#divtotal').html('$ ' + parseFloat(obj.recorddata.nettotalusd).toFixed(2));
                     }
 
                     $('#hidetotalorder').val(parseFloat(obj.recorddata.nettotal));
-                    $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotal));
+                    $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotalusd));
 
                     $('.modal-title').text('Update Purchase Order');
                     $('#staticBackdrop').modal('show');

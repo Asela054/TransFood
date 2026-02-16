@@ -36,7 +36,7 @@ include "include/topnavbar.php";
                                                 <th>#</th>
                                                 <th>PO No.</th>
                                                 <th>Class</th>
-                                                Su
+                                                <th>Supplier</th>
                                                 <th>PO Date</th>
                                                 <th>Total</th>
                                                 <th>Confirm Status</th>
@@ -171,7 +171,6 @@ include "include/topnavbar.php";
                                 <button type="button" id="formsubmit" class="btn btn-primary btn-sm px-4" <?php if($addcheck==0){echo 'disabled';} ?>><i class="fas fa-plus"></i>&nbsp;Add to list</button>
                                 <input name="submitBtn" type="submit" value="Save" id="submitBtn" class="d-none">
                             </div>
-                            <input type="hidden" name="refillprice" id="refillprice" value="">
                             <input type="hidden" name="recordOption" id="recordOption" value="1">
                             <input type="hidden" name="recordID" id="recordID" value="">
                         </form>
@@ -201,7 +200,7 @@ include "include/topnavbar.php";
                         </table>
                         <div class="row">
                             <div class="col text-right">
-                                <h1 class="font-weight-600" id="divtotal">Rs. 0.00</h1>
+                                <h1 class="font-weight-600" id="divtotal">0.00</h1>
                             </div>
                             <input type="hidden" id="hidetotalorder" value="0">
                             <input type="hidden" id="hidetotalorderusd" value="0">
@@ -355,8 +354,8 @@ include "include/topnavbar.php";
         		$("#divtotal").text("$ " + newTotalUSD.toFixed(2));
         	}
 
-        	$("#hidetotalorder").val(newTotalLKR.toFixed(2));
-        	$("#hidetotalorderusd").val(newTotalUSD.toFixed(2));
+        	$("#hidetotalorder").val(newTotalLKR);
+        	$("#hidetotalorderusd").val(newTotalUSD);
         });
 
 
@@ -426,6 +425,9 @@ include "include/topnavbar.php";
                     "data": "class"
                 },
                 {
+                    "data": "suppliername"
+                },
+                {
                     "data": "orderdate"
                 },
                 {
@@ -437,11 +439,9 @@ include "include/topnavbar.php";
                         let curr = full['currencytype'];
                         let symbol = curr == 1 ? "Rs. " : "$ ";
 
-                        let total = curr == 1 
-                            ? full['nettotal'] 
-                            : full['nettotalusd'];
+                        let total = parseFloat(full['nettotal']) || 0;
 
-                        return symbol + addCommas(parseFloat(total).toFixed(2));
+                        return symbol + addCommas(total.toFixed(2));
                     }
                 },
                 {
@@ -476,7 +476,7 @@ include "include/topnavbar.php";
                     "render": function(data, type, full) {
                         var button='';
                         if(full['confirmstatus']<2){
-                            button += '<a href="<?php echo base_url() ?>Purchaseorder/Printpurchaseorder/' + full['idtbl_porder'] + '" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print PO" class="btn btn-danger btn-sm mr-1"><i class="fas fa-file-pdf"></i></a>';
+                            button += '<a href="<?php echo base_url() ?>Purchaseorder/Printpurchaseorder/' + full['idtbl_porder'] + '" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print PO" class="btn btn-primary btn-sm mr-1"><i class="fas fa-file-pdf"></i></a>';
                         }
                         button+='<button class="btn btn-dark btn-sm btnview mr-1" id="'+full['idtbl_porder']+'" po_no="' + full['po_no'] + '"><i class="fas fa-eye"></i></button>';
                         if(full['confirmstatus']==1 && statuscheck==1){
@@ -488,6 +488,9 @@ include "include/topnavbar.php";
                             if(editcheck==1){
                                 button+='<button class="btn btn-primary btn-sm btnEdit mr-1" id="'+full['idtbl_porder']+'"><i class="fas fa-pen"></i></button>';
                             }
+                        }
+                        if(deletecheck==1){
+                            button+='<button type="button" data-url="Purchaseorder/Purchaseorderdeletestatus/'+full['idtbl_porder']+'" class="btn btn-danger btn-sm text-light btntableaction"><i class="fas fa-trash-alt"></i></button>';
                         }
                         
                         return button;
@@ -588,10 +591,30 @@ include "include/topnavbar.php";
 
                     $.each(obj.recorddetaildata, function (i, item) {
 
-                        let unitprice_lkr = parseFloat(item.unitprice) || 0;
-                        let unitprice_usd = parseFloat(item.unitpriceusd) || 0;
-                        let discount_lkr = parseFloat(item.discount) || 0;
-                        let discount_usd = parseFloat(item.discountusd) || 0;
+                        let currencyType = obj.recorddata.currencytype;
+
+                        let unitprice_lkr = 0,
+                            unitprice_usd = 0,
+                            discount_lkr = 0,
+                            discount_usd = 0;
+
+                        // 🔥 Correct column mapping based on order currency
+                        if (currencyType == "1") { // LKR Order
+
+                            unitprice_lkr = parseFloat(item.unitprice) || 0;
+                            unitprice_usd = parseFloat(item.unitpriceusd) || 0;
+
+                            discount_lkr = parseFloat(item.discount) || 0;
+                            discount_usd = parseFloat(item.discountusd) || 0;
+
+                        } else if (currencyType == "2") { // USD Order
+
+                            unitprice_usd = parseFloat(item.unitprice) || 0;
+                            unitprice_lkr = parseFloat(item.unitpriceusd) || 0;
+
+                            discount_usd = parseFloat(item.discount) || 0;
+                            discount_lkr = parseFloat(item.discountusd) || 0;
+                        }
 
                         let unitperctn = parseFloat(item.unitperctn) || 0;
                         let ctn = parseFloat(item.ctn) || 0;
@@ -608,19 +631,19 @@ include "include/topnavbar.php";
                                 <td>${item.comment}</td>
                                 <td class="d-none">${item.tbl_material_info_idtbl_material_info}</td>
 
-                                <td class="d-none unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
-                                <td class="d-none discount_lkr">${discount_lkr.toFixed(2)}</td>
-                                <td class="d-none unitprice_usd">${unitprice_usd.toFixed(2)}</td>
-                                <td class="d-none discount_usd">${discount_usd.toFixed(2)}</td>
+                                <td class="d-none unitprice_lkr">${unitprice_lkr}</td>
+                                <td class="d-none discount_lkr">${discount_lkr}</td>
+                                <td class="d-none unitprice_usd">${unitprice_usd}</td>
+                                <td class="d-none discount_usd">${discount_usd}</td>
 
                                 <td class="text-center">
-                                    ${obj.recorddata.currencytype == "1"
+                                    ${currencyType == "1"
                                         ? unitprice_lkr.toFixed(2)
                                         : unitprice_usd.toFixed(2)}
                                 </td>
 
                                 <td class="text-center">
-                                    ${obj.recorddata.currencytype == "1"
+                                    ${currencyType == "1"
                                         ? discount_lkr.toFixed(2)
                                         : discount_usd.toFixed(2)}
                                 </td>
@@ -629,11 +652,11 @@ include "include/topnavbar.php";
                                 <td class="text-center">${ctn}</td>
                                 <td class="text-center">${qty}</td>
 
-                                <td class="d-none total_lkr">${total_lkr.toFixed(2)}</td>
-                                <td class="d-none total_usd">${total_usd.toFixed(2)}</td>
+                                <td class="d-none total_lkr">${total_lkr}</td>
+                                <td class="d-none total_usd">${total_usd}</td>
 
                                 <td class="text-right">
-                                    ${obj.recorddata.currencytype == "1"
+                                    ${currencyType == "1"
                                         ? total_lkr.toFixed(2)
                                         : total_usd.toFixed(2)}
                                 </td>
@@ -645,13 +668,14 @@ include "include/topnavbar.php";
                         $('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
                         $('#divtotal').html('Rs. ' + parseFloat(obj.recorddata.nettotal).toFixed(2));
                     } else {
-                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamountusd).toFixed(2));
-                        $('#divtotal').html('$ ' + parseFloat(obj.recorddata.nettotalusd).toFixed(2));
+                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
+                        $('#divtotal').html('$ ' + parseFloat(obj.recorddata.nettotal).toFixed(2));
                     }
 
-                    $('#hidetotalorder').val(parseFloat(obj.recorddata.nettotal).toFixed(2));
-                    $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotalusd).toFixed(2));
+                    $('#hidetotalorder').val(parseFloat(obj.recorddata.nettotal));
+                    $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotal));
 
+                    $('.modal-title').text('Update Purchase Order');
                     $('#staticBackdrop').modal('show');
                 }
             });
@@ -764,10 +788,10 @@ include "include/topnavbar.php";
                     <td>${comment}</td>
                     <td class="d-none">${productID}</td>
 
-                    <td class="d-none unitprice_lkr">${unitprice_lkr.toFixed(2)}</td>
-                    <td class="d-none discount_lkr">${discount_lkr.toFixed(2)}</td>
-                    <td class="d-none unitprice_usd">${unitprice_usd.toFixed(2)}</td>
-                    <td class="d-none discount_usd">${discount_usd.toFixed(2)}</td>
+                    <td class="d-none unitprice_lkr">${unitprice_lkr}</td>
+                    <td class="d-none discount_lkr">${discount_lkr}</td>
+                    <td class="d-none unitprice_usd">${unitprice_usd}</td>
+                    <td class="d-none discount_usd">${discount_usd}</td>
 
                     <td class="text-center">${currencyType == "1" ? unitprice_lkr.toFixed(2) : unitprice_usd.toFixed(2)}</td>
                     <td class="text-center">${discount.toFixed(2)}</td>
@@ -775,8 +799,8 @@ include "include/topnavbar.php";
                     <td class="text-center">${ctn}</td>
                     <td class="text-center">${newqty}</td>
 
-                    <td class="d-none total_lkr">${total_lkr.toFixed(2)}</td>
-                    <td class="d-none total_usd">${total_usd.toFixed(2)}</td>
+                    <td class="d-none total_lkr">${total_lkr}</td>
+                    <td class="d-none total_usd">${total_usd}</td>
 
                     <td class="text-right">${currencyType == "1" ? total_lkr.toFixed(2) : total_usd.toFixed(2)}</td>
                 </tr>
@@ -801,8 +825,8 @@ include "include/topnavbar.php";
         		grand_usd += parseFloat($(this).text()) || 0;
         	});
 
-        	$("#hidetotalorder").val(grand_lkr.toFixed(2));
-        	$("#hidetotalorderusd").val(grand_usd.toFixed(2));
+        	$("#hidetotalorder").val(grand_lkr);
+        	$("#hidetotalorderusd").val(grand_usd);
 
         	$("#divtotal").html(
         		currencyType == "1" ?
