@@ -3,14 +3,6 @@ include "include/header.php";
 
 include "include/topnavbar.php"; 
 ?>
-
-<style>
-    content-display {
-        display: none;
-    }
-</style>
-
-
 <div id="layoutSidenav">
     <div id="layoutSidenav_nav">
         <?php include "include/menubar.php"; ?>
@@ -24,7 +16,7 @@ include "include/topnavbar.php";
                             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                                 <h1 class="page-header-title">
                                     <div class="page-header-icon"><i class="fas fa-file-alt"></i></div>
-                                    <span>Sales Order Cost Count</span>
+                                    <span>Invoice Cost Sheet</span>
                                 </h1>
                             </div>
                         </div>
@@ -51,18 +43,19 @@ include "include/topnavbar.php";
                                                 <option value="">Select</option>
                                             </select>
             							</div>
-            							<!-- <div class="col-2">
-            								<label class="small font-weight-bold text-dark">Finish Good*</label>
-                                            <select class="form-control form-control-sm" name="costfinishgood" id="costfinishgood" required>
-                                                <option value="">Select</option>
-                                            </select>
+            							<div class="col-1">
+            								<label class="small font-weight-bold text-dark">Markup*</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control form-control-sm" name="costmarkup" id="costmarkup" min="0" max="100" step="0.01" placeholder="0.00" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="inputGroup-sizing-sm">%</span>
+                                                </div>
+                                            </div>
             							</div>
             							<div class="col-2">
-            								<label class="small font-weight-bold text-dark">BOM*</label>
-                                            <select class="form-control form-control-sm" name="costbom" id="costbom" required>
-                                                <option value="">Select</option>
-                                            </select>
-            							</div> -->
+            								<label class="small font-weight-bold text-dark">Conversion Rate*</label>
+                                            <input type="text" class="form-control form-control-sm" name="costconversionrate" id="costconversionrate" required>
+            							</div>
             							<div class="col-2">
             								<label class="small font-weight-bold text-dark">&nbsp;</label><br>
             								<button type="button" class="btn btn-primary btn-sm px-3" id="costsearch"><i class="fas fa-search mr-2"></i>Check Cost</button>
@@ -96,12 +89,12 @@ include "include/topnavbar.php";
         var editcheck='<?php echo $editcheck; ?>';
         var statuscheck='<?php echo $statuscheck; ?>';
         var deletecheck='<?php echo $deletecheck; ?>';
-        
+
         $('#costcustomer').select2({
             // placeholder: 'Select Customer',
             width: 'resolve',
             ajax: {
-                url: '<?php echo base_url()."Salesordercostcount/Getcustomerelist" ?>',
+                url: '<?php echo base_url()."Invoicecostsheet/Getcustomerelist" ?>',
                 type: "post",
                 dataType: 'json',
                 delay: 250,
@@ -120,14 +113,12 @@ include "include/topnavbar.php";
         });
         $('#costcustomer').change(function(){
             $('#costsalesorder').val(null).trigger('change');
-            $('#costfinishgood').val(null).trigger('change');
-            $('#costbom').val(null).trigger('change');
         });
         $('#costsalesorder').select2({
             // placeholder: 'Select Customer',
             width: 'resolve',
             ajax: {
-                url: '<?php echo base_url()."Salesordercostcount/Getsalesorder" ?>',
+                url: '<?php echo base_url()."Invoicecostsheet/Getsalesorder" ?>',
                 type: "post",
                 dataType: 'json',
                 delay: 250,
@@ -145,58 +136,6 @@ include "include/topnavbar.php";
                 cache: true
             }
         });
-        // $('#costsalesorder').change(function(){
-        //     $('#costfinishgood').val(null).trigger('change');
-        //     $('#costbom').val(null).trigger('change');
-        // });
-        // $('#costfinishgood').select2({
-        //     // placeholder: 'Select Customer',
-        //     width: 'resolve',
-        //     ajax: {
-        //         url: '<?php echo base_url()."Salesordercostcount/Getfglistaccosalesorder" ?>',
-        //         type: "post",
-        //         dataType: 'json',
-        //         delay: 250,
-        //         data: function (params) {
-        //             return {
-        //                 searchTerm: params.term, // search term
-        //                 salesorderid: $('#costsalesorder').val()
-        //             };
-        //         },
-        //         processResults: function (response) {
-        //             return {
-        //                 results: response
-        //             };
-        //         },
-        //         cache: true
-        //     }
-        // });
-        // $('#costfinishgood').change(function(){
-        //     $('#costbom').val(null).trigger('change');
-        // });
-        // $('#costbom').select2({
-        //     // placeholder: 'Select Customer',
-        //     width: 'resolve',
-        //     ajax: {
-        //         url: '<?php echo base_url()."Salesordercostcount/Getbomlist" ?>',
-        //         type: "post",
-        //         dataType: 'json',
-        //         delay: 250,
-        //         data: function (params) {
-        //             return {
-        //                 searchTerm: params.term, // search term
-        //                 finishgoodid: $('#costfinishgood').val()
-        //             };
-        //         },
-        //         processResults: function (response) {
-        //             return {
-        //                 results: response
-        //             };
-        //         },
-        //         cache: true
-        //     }
-        // });
-
         $('#costsearch').click(function(){
             $('#seperateamount').attr('type', 'number');
             if (!$("#searchReport")[0].checkValidity()) {
@@ -206,8 +145,8 @@ include "include/topnavbar.php";
             } else {
                 var customerud = $('#costcustomer').val();
                 var salesorderid =  $('#costsalesorder').val();
-                var finishgoodid =  $('#costfinishgood').val();
-                var bomid =  $('#costbom').val();
+                var costmarkup =  $('#costmarkup').val();
+                var costconversionrate =  $('#costconversionrate').val();
 
                 Swal.fire({
                     title: '',
@@ -228,10 +167,10 @@ include "include/topnavbar.php";
                             data: {
                                 customerud: customerud,
                                 salesorderid: salesorderid,
-                                finishgoodid: finishgoodid,
-                                bomid: bomid
+                                costmarkup: costmarkup,
+                                costconversionrate: costconversionrate
                             },
-                            url: 'Salesordercostcount/Getcostcountinfo',
+                            url: 'Invoicecostsheet/Getcostcountinfo',
                             success: function (result) { //alert(result);
                                 // console.log(result);
                                 Swal.close();
@@ -256,80 +195,15 @@ include "include/topnavbar.php";
                 });
             }
         });
-
-        // $('#btnconvert').click(function(){
-        //     var { jsPDF } = window.jspdf;
-        //     var doc = new jsPDF('l', 'pt', 'legal');
-        //     var title = 'Trans Food Lanka Sales Order Cost Sheet';
-        //     doc.setFontSize(12);
-        //     doc.text(title, 40, 30);
-
-        //     // Define table content
-        //     var table = document.getElementById("table_content");
-        //     var rows = [];
-
-        //     for (var i = 0, row; row = table.rows[i]; i++) {
-        //         var rowData = [];
-        //         for (var j = 0, col; col = row.cells[j]; j++) {                    
-        //             if(j<10){
-        //                 // rowData.push(col.innerText);
-        //                 if(row.cells.length==2){
-        //                     if(j==0){
-        //                         rowData.push({content: col.innerText, colSpan: 9, styles: {halign: 'left', fontStyle: 'bold'}});
-        //                     }
-        //                     else if(j==1){
-        //                         rowData.push({content: col.innerText, styles: {halign: 'right', fontStyle: 'bold'}});
-        //                     }
-        //                 }
-        //                 else{
-        //                     rowData.push(col.innerText);
-        //                 }
-        //             }
-        //         }
-        //         rows.push(rowData);
-        //     }
-
-        //     var head = [rows[0]];
-        //     var data = rows.slice(1);
-
-        //     doc.autoTable({
-        //         head: head,
-        //         body: data,
-        //         startY: 40,
-        //         theme: 'grid',
-        //         headStyles: { fillColor: [41, 128, 185], fontSize: 8, halign: 'left' }, 
-        //         styles: { cellPadding: 5, halign: 'left', fontSize: 8 }, 
-        //         columnStyles: {
-        //             8: { halign: 'right' }, 
-        //             9: { halign: 'right' }, 
-        //         }
-        //     });
-
-        //     doc.save("salesordercostcount.pdf");
-        // });
         $('#btnconvert').click(function() {
             var table_html = $('#table_content').html();
             
             // Create a temporary form to post the data
-            var form = $('<form action="Salesordercostcount/Exporttoexcel" method="post"></form>');
+            var form = $('<form action="Invoicecostsheet/Exporttoexcel" method="post"></form>');
             form.append($('<input type="hidden" name="table_data">').val(table_html));
             $('body').append(form);
             form.submit();
             form.remove();
         });
     });
-
-    function addCommas(nStr) {
-        nStr += '';
-        x = nStr.split('.');
-        x1 = x[0];
-        x2 = x.length > 1 ? '.' + x[1] : '';
-        var rgx = /(\d+)(\d{3})/;
-        while (rgx.test(x1)) {
-            x1 = x1.replace(rgx, '$1' + ',' + '$2');
-        }
-        return x1 + x2;
-    }
 </script>
-
-<?php include "include/footer.php"; ?>
