@@ -668,12 +668,12 @@ include "include/topnavbar.php";
                         $('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
                         $('#divtotal').html('Rs. ' + parseFloat(obj.recorddata.nettotal).toFixed(2));
                     } else {
-                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamount).toFixed(2));
-                        $('#divtotal').html('$ ' + parseFloat(obj.recorddata.nettotal).toFixed(2));
+                        $('#totaldiscount').val(parseFloat(obj.recorddata.discountamountusd).toFixed(2));
+                        $('#divtotal').html('$ ' + parseFloat(obj.recorddata.nettotalusd).toFixed(2));
                     }
 
                     $('#hidetotalorder').val(parseFloat(obj.recorddata.nettotal));
-                    $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotal));
+                    $('#hidetotalorderusd').val(parseFloat(obj.recorddata.nettotalusd));
 
                     $('.modal-title').text('Update Purchase Order');
                     $('#staticBackdrop').modal('show');
