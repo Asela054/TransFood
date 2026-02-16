@@ -474,6 +474,7 @@ $(document).ready(function () {
         var orderfinishgood = $('#orderfinishgood').val();
         var orderqty = $('#orderqty').val();
         var balanceqty = $('#balanceqty').val();
+        var productbomlist = $('#productbomlist').val();
 
         var emptybatch = 0;
         var tbody = $('#tablebomqtyinfo tbody');
@@ -502,6 +503,7 @@ $(document).ready(function () {
                     orderfinishgood: orderfinishgood,
                     orderqty: orderqty,
                     balanceqty: balanceqty,
+                    productbomlist: productbomlist,
                     tableData: jsonObj
                 },
                 url: '<?php echo base_url() ?>Productionorderview/Issuematerialforproduction',

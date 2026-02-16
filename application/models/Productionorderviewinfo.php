@@ -311,6 +311,7 @@ class Productionorderviewinfo extends CI_Model{
         $orderfinishgood=$this->input->post('orderfinishgood');
         $orderqty=$this->input->post('orderqty');
         $balanceqty=$this->input->post('balanceqty');
+        $productbomID=$this->input->post('productbomlist');
         $tableData=$this->input->post('tableData');
 
         $updatedatetime=date('Y-m-d H:i:s');
@@ -363,7 +364,8 @@ class Productionorderviewinfo extends CI_Model{
                 'tbl_user_idtbl_user'=> $userID, 
                 'tbl_production_order_idtbl_production_order'=> $productionorderID, 
                 'tbl_product_idtbl_product'=> $orderfinishgood, 
-                'tbl_material_info_idtbl_material_info'=> $materialID
+                'tbl_material_info_idtbl_material_info'=> $materialID,
+                'tbl_product_bom_info_idtbl_product_bom_info'=> $productbomID
             );
             $this->db->insert('tbl_production_material_issue', $data);
 

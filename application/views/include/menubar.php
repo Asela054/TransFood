@@ -460,6 +460,18 @@ else if($controllermenu=='Companybranch'){
     $statuscheck=checkprivilege($menuprivilegearray, 75, 3);
     $deletecheck=checkprivilege($menuprivilegearray, 75, 4);
 }
+else if($controllermenu=='Salesordercostcount'){
+    $addcheck=checkprivilege($menuprivilegearray, 76, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 76, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 76, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 76, 4);
+}
+else if($controllermenu=='Invoicecostsheet'){
+    $addcheck=checkprivilege($menuprivilegearray, 77, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 77, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 77, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 77, 4);
+}
 
 function checkprivilege($arraymenu, $menuID, $type){
     foreach($arraymenu as $array){
@@ -650,14 +662,14 @@ function checkprivilege($arraymenu, $menuID, $type){
                     <?php } ?>
                 </nav>
             </div>
-            <?php } if(menucheck($menuprivilegearray, 40)==1  | menucheck($menuprivilegearray, 51)==1 | menucheck($menuprivilegearray, 56)==1 | menucheck($menuprivilegearray, 66)==1| menucheck($menuprivilegearray, 68)==1 | menucheck($menuprivilegearray, 73)==1){ ?>
+            <?php } if(menucheck($menuprivilegearray, 40)==1  | menucheck($menuprivilegearray, 51)==1 | menucheck($menuprivilegearray, 56)==1 | menucheck($menuprivilegearray, 66)==1| menucheck($menuprivilegearray, 68)==1 | menucheck($menuprivilegearray, 73)==1 | menucheck($menuprivilegearray, 77)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse"
             	data-target="#collapseshopinfo" aria-expanded="false" aria-controls="collapseshopinfo">
             	<div class="nav-link-icon"><i class="fas fa-cash-register"></i></div>
             	Invoice
             	<div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse <?php if($controllermenu=="Directsale" | $controllermenu=="Directinvoice" | $controllermenu=="Invoiceview" | $controllermenu=="Returninvoice"| $controllermenu=="Invoicebank" | $controllermenu=="Returninvoiceview"){echo 'show';} ?>"
+            <div class="collapse <?php if($controllermenu=="Directsale" | $controllermenu=="Directinvoice" | $controllermenu=="Invoiceview" | $controllermenu=="Returninvoice"| $controllermenu=="Invoicebank" | $controllermenu=="Returninvoiceview" | $controllermenu=="Invoicecostsheet"){echo 'show';} ?>"
             	id="collapseshopinfo" data-parent="#accordionSidenav">
             	<nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
             		<?php if(menucheck($menuprivilegearray, 40)==1){ ?>
@@ -672,6 +684,8 @@ function checkprivilege($arraymenu, $menuID, $type){
                         <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Returninvoiceview'; ?>">View Return Invoice</a>
                     <?php } if(menucheck($menuprivilegearray, 68)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Invoicebank'; ?>">Invoice Bank</a>
+                    <?php } if(menucheck($menuprivilegearray, 77)==1){ ?>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Invoicecostsheet'; ?>">Invoice Cost Sheet</a> 
                     <?php } ?>
             	</nav>
             </div>
