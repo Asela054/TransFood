@@ -196,7 +196,7 @@ class GoodreceivePrintinfo extends CI_Model{
 
 			<div class="footer">
 				Received By : __________________________ <br><br>
-				Remark      : '.$remark.'
+				Remark      : '.$re.'
 			</div>
 		</body>
 		</html>';

@@ -12,7 +12,6 @@ class GoodreceivePrintinfo extends CI_Model{
 		$grn_data = $this->db->query($grn_sql, [$recordID])->row();
 
 		$po_number = "TRFL/PO-" . $grn_data->idtbl_porder;
-		$remark = $grn_data->remark;
 
 		$details_sql = "SELECT d.*, m.materialname, m.materialinfocode, u.unitname
 					FROM tbl_grndetail d
@@ -195,8 +194,7 @@ class GoodreceivePrintinfo extends CI_Model{
 			</table>
 
 			<div class="footer">
-				Received By : __________________________ <br><br>
-				Remark      : '.$remark.'
+				Received By : __________________________
 			</div>
 		</body>
 		</html>';

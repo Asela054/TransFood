@@ -90,6 +90,7 @@ class Goodreceiveinfo extends CI_Model{
             'invoicenum'=> $invoice, 
             'dispatchnum'=> $dispatch, 
             'approvestatus'=> '0', 
+            'remark'=> $remark, 
             'status'=> '1', 
             'insertdatetime'=> $updatedatetime, 
             'tbl_user_idtbl_user'=> $userID, 
