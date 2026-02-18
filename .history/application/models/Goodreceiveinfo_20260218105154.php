@@ -65,6 +65,8 @@ class Goodreceiveinfo extends CI_Model{
         $invoice=$this->input->post('invoice');
         $dispatch=$this->input->post('dispatch');
         $grntype=$this->input->post('grntype');
+        $currencytype=$this->input->post('currencytype');
+        $rate=$this->input->post('rate');
 
         $updatedatetime=date('Y-m-d H:i:s');
 
@@ -78,14 +80,17 @@ class Goodreceiveinfo extends CI_Model{
             }
 
         $data = array(
+            'currencytype'=> $currencytype,
             'grn_no'=> $i,
             'batchno'=> $batchno, 
             'grntype'=> '1', 
             'grndate'=> $grndate, 
             'total'=> $total, 
+            'conversion_rate'=> $rate, 
             'invoicenum'=> $invoice, 
             'dispatchnum'=> $dispatch, 
             'approvestatus'=> '0', 
+            'remark'=> $dispatch, 
             'status'=> '1', 
             'insertdatetime'=> $updatedatetime, 
             'tbl_user_idtbl_user'=> $userID, 
@@ -181,6 +186,19 @@ class Goodreceiveinfo extends CI_Model{
         $sql="SELECT `u`.*, `ua`.`suppliername`, `ua`.`primarycontactno`, `ua`.`secondarycontactno`, `ua`.`address`, `ua`.`email`, `ub`.`location`, `ub`.`phone`, `ub`.`address`, `ub`.`phone2`, `ub`.`email` AS `locemail` FROM `tbl_grn` AS `u` LEFT JOIN `tbl_supplier` AS `ua` ON (`ua`.`idtbl_supplier` = `u`.`tbl_supplier_idtbl_supplier`) LEFT JOIN `tbl_location` AS `ub` ON (`ub`.`idtbl_location` = `u`.`tbl_location_idtbl_location`) WHERE `u`.`status`=? AND `u`.`idtbl_grn`=?";
         $respond=$this->db->query($sql, array(1, $recordID));
 
+        $currencyType = $respond->row(0)->currencytype;
+        $currencySign = ($currencyType == 1) ? 'Rs. ' : '$ ';
+
+        $netTotal = ($currencyType == 1) 
+        ? $respond->row(0)->total 
+        : $respond->row(0)->total;
+
+        if ($currencyType == 1) {
+            $unitPriceField = 'unitprice';
+        } else {
+            $unitPriceField = 'unitprice';
+        }
+
         $this->db->select('tbl_grndetail.*, tbl_material_info.materialinfocode, tbl_material_info.materialname, tbl_unit.unitname');
         $this->db->from('tbl_grndetail');
         $this->db->join('tbl_material_info', 'tbl_material_info.idtbl_material_info = tbl_grndetail.tbl_material_info_idtbl_material_info', 'left');
@@ -220,15 +238,16 @@ class Goodreceiveinfo extends CI_Model{
                     </thead>
                     <tbody>';
                     foreach($responddetail->result() as $roworderinfo){
-                        $total=number_format(($roworderinfo->qty*$roworderinfo->unitprice), 2);
+                        $unitPrice = $roworderinfo->$unitPriceField;
+                        $total = $roworderinfo->qty * $unitPrice;
                         $html.='<tr>
                             <td>'.$roworderinfo->materialname.' / '.$roworderinfo->materialinfocode.'</td>
                             <td>'.$roworderinfo->unitname.'</td>
                             <td>'.$roworderinfo->unitperctn.'</td>
                             <td>'.$roworderinfo->ctn.'</td>
                             <td>'.$roworderinfo->qty.'</td>
-                            <td>'.number_format(($roworderinfo->unitprice), 2).'</td>
-                            <td class="text-right">'.$total.'</td>
+                            <td>'.$currencySign.number_format($unitPrice, 2).'</td>
+                            <td class="text-right">'.$currencySign.number_format($total, 2).'</td>
                         </tr>';
                     }
                     $html.='</tbody>
@@ -236,7 +255,7 @@ class Goodreceiveinfo extends CI_Model{
             </div>
         </div>
         <div class="row mt-3">
-            <div class="col-12 text-right"><h3 class="font-weight-bold">Rs. '.number_format(($respond->row(0)->total), 2).'</h3></div>
+            <div class="col-12 text-right"><h3 class="font-weight-bold">'.$currencySign.number_format($netTotal, 2).'</h3></div>
         </div>
         ';
 
@@ -299,16 +318,26 @@ class Goodreceiveinfo extends CI_Model{
         }
     }
     public function Getsupplieraccoporder(){
-        $recordID=$this->input->post('recordID');
 
-        $this->db->select('`tbl_supplier_idtbl_supplier`');
+        $recordID = $this->input->post('recordID');
+
+        $this->db->select('tbl_supplier_idtbl_supplier, currencytype, conversion_rate');
         $this->db->from('tbl_porder');
         $this->db->where('status', 1);
         $this->db->where('idtbl_porder', $recordID);
 
-        $respond=$this->db->get();
+        $respond = $this->db->get();
+        $row = $respond->row();
 
-        echo $respond->row(0)->tbl_supplier_idtbl_supplier;
+        if($row){
+            echo json_encode([
+                'supplier' => $row->tbl_supplier_idtbl_supplier,
+                'currencytype' => $row->currencytype,
+                'rate' => $row->conversion_rate
+            ]);
+        } else {
+            echo json_encode(['error' => 'No data found']);
+        }
     }
     public function Getproductaccoporder(){
         $recordID=$this->input->post('recordID');
@@ -609,7 +638,7 @@ class Goodreceiveinfo extends CI_Model{
             $this->db->where('idtbl_porder', $porderID);
             $this->db->update('tbl_porder', $dataporder);
 
-            $this->db->select('tbl_grn.batchno, tbl_grn.tbl_company_idtbl_company, tbl_grn.tbl_company_branch_idtbl_company_branch, tbl_grn.tbl_location_idtbl_location, tbl_grndetail.qty, tbl_grndetail.unitprice, tbl_grndetail.tbl_material_info_idtbl_material_info');
+            $this->db->select('tbl_grn.batchno, tbl_grn.currencytype, tbl_grn.conversion_rate, tbl_grn.tbl_company_idtbl_company, tbl_grn.tbl_company_branch_idtbl_company_branch, tbl_grn.tbl_location_idtbl_location, tbl_grndetail.qty, tbl_grndetail.unitprice, tbl_grndetail.tbl_material_info_idtbl_material_info');
             $this->db->from('tbl_grn');
             $this->db->join('tbl_grndetail', 'tbl_grn.idtbl_grn = tbl_grndetail.tbl_grn_idtbl_grn', 'left');
             $this->db->where('tbl_grn.status', 1);
@@ -619,6 +648,8 @@ class Goodreceiveinfo extends CI_Model{
             if ($respond->num_rows() > 0) {
                 foreach ($respond->result() as $row) {
                     $batchno = $row->batchno;
+                    $currencytype = $row->currencytype;
+                    $conversion_rate = $row->conversion_rate;
                     $location = $row->tbl_location_idtbl_location;
                     $qty = $row->qty;
                     $unitprice = $row->unitprice;
@@ -627,6 +658,8 @@ class Goodreceiveinfo extends CI_Model{
                     $branchid = $row->tbl_company_branch_idtbl_company_branch;
 
                     $stockData = array(
+                        'currencytype' => $currencytype,
+                        'conversion_rate' => $conversion_rate,
                         'batchno' => $batchno,
                         'qty' => $qty,
                         'unitprice' => $unitprice,

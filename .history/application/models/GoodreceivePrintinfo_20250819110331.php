@@ -12,7 +12,6 @@ class GoodreceivePrintinfo extends CI_Model{
 		$grn_data = $this->db->query($grn_sql, [$recordID])->row();
 
 		$po_number = "TRFL/PO-" . $grn_data->idtbl_porder;
-		$remark = $grn_data->remark;
 
 		$details_sql = "SELECT d.*, m.materialname, m.materialinfocode, u.unitname
 					FROM tbl_grndetail d
@@ -33,7 +32,6 @@ class GoodreceivePrintinfo extends CI_Model{
 			$items_html .= '<tr>
 				<td style="border: 1px solid black; padding: 8px;">'.$sn.'</td>
 				<td style="border: 1px solid black; padding: 8px;">'.$row->materialname.' ('.$row->materialinfocode.')</td>
-				<td style="border: 1px solid black; padding: 8px;">'.$row->comment.'</td>
 				<td style="border: 1px solid black; padding: 8px;">'.$row->unitname.'</td>
 				<td style="border: 1px solid black; padding: 8px;">'.$row->ctn.'</td>
 				<td style="border: 1px solid black; padding: 8px;">'.$row->qty.'</td>
@@ -177,7 +175,6 @@ class GoodreceivePrintinfo extends CI_Model{
 					<tr>
 						<th style="border: 1px solid black; padding: 8px;">SL#</th>
 						<th style="border: 1px solid black; padding: 8px;">ITEM DESCRIPTION</th>
-						<th style="border: 1px solid black; padding: 8px;">COMMENT</th>
 						<th style="border: 1px solid black; padding: 8px;">UNIT</th>
 						<th style="border: 1px solid black; padding: 8px;"># CTN.</th>
 						<th style="border: 1px solid black; padding: 8px;">QTY</th>
@@ -186,7 +183,7 @@ class GoodreceivePrintinfo extends CI_Model{
 				<tbody>
 					'.$items_html.'
 					<tr class="total-row">
-						<td colspan="3" style="border: 1px solid black; border-left: none; border-bottom: none; padding: 8px; text-align:right;">TOTAL</td>
+						<td colspan="2" style="border: 1px solid black; border-left: none; border-bottom: none; padding: 8px; text-align:right;">TOTAL</td>
 						<td style="border: 1px solid black; padding: 8px;"></td>
 						<td style="border: 1px solid black; padding: 8px;">'.$total_ctn.'</td>
 						<td style="border: 1px solid black; padding: 8px;">'.$total_qty.'</td>
@@ -195,8 +192,7 @@ class GoodreceivePrintinfo extends CI_Model{
 			</table>
 
 			<div class="footer">
-				Received By : __________________________ <br><br>
-				Remark      : '.$remark.'
+				Received By : __________________________
 			</div>
 		</body>
 		</html>';
