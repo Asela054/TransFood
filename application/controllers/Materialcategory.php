@@ -8,6 +8,7 @@ class Materialcategory extends CI_Controller {
         $this->load->model('Commeninfo');
         $this->load->model('Materialcategoryinfo');
 		$result['menuaccess']=$this->Commeninfo->Getmenuprivilege();
+		$result['maincategorylist']=$this->Materialcategoryinfo->Getmaincategorylist();
 		$this->load->view('materialcategory', $result);
 	}
     public function Materialcategoryinsertupdate(){

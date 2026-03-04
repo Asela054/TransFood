@@ -25,6 +25,15 @@ include "include/topnavbar.php";
                             <div class="col-3">
                                 <form action="<?php echo base_url() ?>Materialcategory/Materialcategoryinsertupdate" method="post" autocomplete="off">
                                     <div class="form-group mb-1">
+                                        <label class="small font-weight-bold">Material Main Category*</label>
+                                        <select class="form-control form-control-sm" name="maincategory" id="maincategory" required>
+                                            <option value="">Select</option>
+                                            <?php foreach($maincategorylist->result() as $row){ ?>
+                                                <option value="<?php echo $row->idtbl_material_main_category; ?>"><?php echo $row->main_category; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-1">
                                         <label class="small font-weight-bold">Material Category*</label>
                                         <input type="text" class="form-control form-control-sm" name="category" id="category" required>
                                     </div>
@@ -44,6 +53,7 @@ include "include/topnavbar.php";
                                     <thead>
                                         <tr>
                                             <th>#</th>
+                                            <th>Material Main Category</th>
                                             <th>Material Category</th>
                                             <th>Code</th>
                                             <th class="text-right">Actions</th>
@@ -104,6 +114,9 @@ include "include/topnavbar.php";
                     "data": "idtbl_material_category"
                 },
                 {
+                    "data": "main_category"
+                },
+                {
                     "data": "categoryname"
                 },
                 {
@@ -146,6 +159,7 @@ include "include/topnavbar.php";
                         $('#recordID').val(obj.id);
                         $('#category').val(obj.categoryname);                       
                         $('#code').val(obj.categorycode);                       
+                        $('#maincategory').val(obj.maincategory);                       
 
                         $('#recordOption').val('2');
                         $('#submitBtn').html('<i class="far fa-save"></i>&nbsp;Update');

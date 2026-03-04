@@ -32,6 +32,7 @@ $columns = array(
 	array( 'db' => '`u`.`idtbl_material_category`', 'dt' => 'idtbl_material_category', 'field' => 'idtbl_material_category' ),
 	array( 'db' => '`u`.`categoryname`', 'dt' => 'categoryname', 'field' => 'categoryname' ),
 	array( 'db' => '`u`.`categorycode`', 'dt' => 'categorycode', 'field' => 'categorycode' ),
+	array( 'db' => '`ua`.`main_category`', 'dt' => 'main_category', 'field' => 'main_category' ),
 	array( 'db' => '`u`.`status`', 'dt' => 'status', 'field' => 'status' )
 );
 
@@ -52,7 +53,7 @@ $sql_details = array(
 // require( 'ssp.class.php' );
 require('ssp.customized.class.php' );
 
-$joinQuery = "FROM `tbl_material_category` AS `u`";
+$joinQuery = "FROM `tbl_material_category` AS `u` LEFT JOIN `tbl_material_main_category` AS `ua` ON (`ua`.`idtbl_material_main_category` = `u`.`tbl_material_main_category_idtbl_material_main_category`)";
 
 $extraWhere = "`u`.`status` IN (1, 2)";
 

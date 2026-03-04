@@ -6,6 +6,7 @@ class Materialcategoryinfo extends CI_Model{
         $userID=$_SESSION['userid'];
 
         $category=$this->input->post('category');
+        $maincategory=$this->input->post('maincategory');
         $code=$this->input->post('code');
 
         $recordOption=$this->input->post('recordOption');
@@ -19,7 +20,8 @@ class Materialcategoryinfo extends CI_Model{
                 'categorycode'=> $code, 
                 'status'=> '1', 
                 'insertdatetime'=> $updatedatetime, 
-                'tbl_user_idtbl_user'=> $userID
+                'tbl_user_idtbl_user'=> $userID,
+                'tbl_material_main_category_idtbl_material_main_category'=> $maincategory
             );
 
             $this->db->insert('tbl_material_category', $data);
@@ -63,7 +65,8 @@ class Materialcategoryinfo extends CI_Model{
                 'categoryname'=> $category, 
                 'categorycode'=> $code, 
                 'updateuser'=> $userID, 
-                'updatedatetime' => $updatedatetime
+                'updatedatetime' => $updatedatetime,
+                'tbl_material_main_category_idtbl_material_main_category'=> $maincategory
             );
 
             $this->db->where('idtbl_material_category', $recordID);
@@ -259,7 +262,17 @@ class Materialcategoryinfo extends CI_Model{
         $obj->id=$respond->row(0)->idtbl_material_category;
         $obj->categoryname=$respond->row(0)->categoryname;
         $obj->categorycode=$respond->row(0)->categorycode;
+        $obj->maincategory=$respond->row(0)->tbl_material_main_category_idtbl_material_main_category;
 
         echo json_encode($obj);
+    }
+    public function Getmaincategorylist(){
+        $this->db->select('`idtbl_material_main_category`, `main_category`');
+        $this->db->from('tbl_material_main_category');
+        $this->db->where('status', 1);
+
+        $respond=$this->db->get();
+
+        return $respond;
     }
 }
