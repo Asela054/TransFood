@@ -720,7 +720,6 @@ include "include/topnavbar.php";
                 dataType: 'json',
                 success: function (response) {
                     $('#unitprice').val(response.unitprice);
-                    originalUnitPrice = parseFloat(response.unitprice) || 0;
                     $('#unitperctn').val(response.unitperctn);
                     
                     let unitDropdown = $('#unit');
@@ -735,7 +734,6 @@ include "include/topnavbar.php";
                 error: function (xhr, status, error) {
                     console.error("Error fetching unit price:", error);
                     $('#unitprice').val('0');
-                    originalUnitPrice = 0;
                     $('#unit').empty().append($('<option>').val('').text('Select'));
                 }
             });
@@ -888,7 +886,7 @@ include "include/topnavbar.php";
                 var currencytype = $('#currencytype').val();
                 var recordID = $('#recordID').val();
                 var recordOption = $('#recordOption').val();
-                var usdrate = $('#conversionrate').val();
+                var usdrate = $('#conversion').val();
                 // alert(orderdate);
                 $.ajax({
                     type: "POST",
