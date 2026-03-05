@@ -450,9 +450,8 @@ include "include/topnavbar.php";
 		var unitPerCtn = parseFloat($('#unitperctn').val()) || 0;
 		var ctn = parseFloat($(this).val()) || 0;
 		var totalQty = unitPerCtn * ctn;
-		var maxQty = parseFloat($('#newqty').attr('max')) || totalQty;
 
-		$('#newqty').val(Math.min(totalQty, maxQty));
+		$('#newqty').val(totalQty);
 	});
     $(document).on("click", "#submitBtn2", function () {
 
@@ -1020,11 +1019,9 @@ include "include/topnavbar.php";
     			success: function (result) { //alert(result);
     				var obj = JSON.parse(result);
     				$('#newqty').val(obj.qty);
-    				$('#newqty').attr('max', obj.qty);
     				$('#unitprice').val(obj.unitprice);
 					$('#unitperctn').val(obj.unitperctn);
 					$('#ctn').val(obj.ctn);
-					$('#ctn').attr('max', obj.ctn);
     				$('#comment').val(obj.comment);
     			}
     		});

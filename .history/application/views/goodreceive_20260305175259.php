@@ -446,14 +446,13 @@ include "include/topnavbar.php";
     	$('#totalcost').val(sum);
 
     });
-	$('#ctn').on('input', function () {
-		var unitPerCtn = parseFloat($('#unitperctn').val()) || 0;
-		var ctn = parseFloat($(this).val()) || 0;
-		var totalQty = unitPerCtn * ctn;
-		var maxQty = parseFloat($('#newqty').attr('max')) || totalQty;
+	        $('#ctn').on('input', function () {
+            var unitPerCtn = parseFloat($('#unitperctn').val()) || 0;
+            var ctn = parseFloat($(this).val()) || 0;
+            var totalQty = unitPerCtn * ctn;
 
-		$('#newqty').val(Math.min(totalQty, maxQty));
-	});
+            $('#newqty').val(totalQty);
+        });
     $(document).on("click", "#submitBtn2", function () {
 
     	var grnID = $('#grnid').val();
@@ -790,47 +789,41 @@ include "include/topnavbar.php";
     			var expdate = $('#expdate').val();
 				// $('.selecter2').select2();
 
-                // validate against remaining quantity
-                var maxQty = parseFloat($('#newqty').attr('max')) || newqty;
-                if (newqty > maxQty) {
-                    alert('Quantity exceeds remaining amount (' + maxQty + ').');
-                    return;
-                }
+    			var newtotal = parseFloat(unitprice * newqty);
 
-                var newtotal = parseFloat(unitprice * newqty);
-                var total = parseFloat(newtotal);
-                var showtotal = addCommas(parseFloat(total).toFixed(2));
+    			var total = parseFloat(newtotal);
+    			var showtotal = addCommas(parseFloat(total).toFixed(2));
 
-                $('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td>' + mfdate + '</td><td>' + expdate + '</td><td class="d-none">' + quater + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
+    			$('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td>' + mfdate + '</td><td>' + expdate + '</td><td class="d-none">' + quater + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
 
-                $('#product').val('').trigger('change');
-                $('#unitprice').val('');
-                $('#saleprice').val('');
-                $('#comment').val('');
-                $('#newqty').val('');
-                $('#quater').val('');
-                $('#expdate').val('');
+				$('#product').val('').trigger('change');
+    			$('#unitprice').val('');
+    			$('#saleprice').val('');
+    			$('#comment').val('');
+    			$('#newqty').val('');
+    			$('#quater').val('');
+    			$('#expdate').val('');
 
-                var sum = 0;
-                $(".total").each(function () {
-                    sum += parseFloat($(this).text());
-                });
+    			var sum = 0;
+    			$(".total").each(function () {
+    				sum += parseFloat($(this).text());
+    			});
 
-                var showsum = addCommas(parseFloat(sum).toFixed(2));
+    			var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-                var currencyValue = $('#currencytype').val();
-                var currencySymbol = '';
+				var currencyValue = $('#currencytype').val();
+				var currencySymbol = '';
 
-                if (currencyValue === '1') {
-                    currencySymbol = 'Rs. ';
-                } else if (currencyValue === '2') {
-                    currencySymbol = '$ ';
-                }
-
-                $('#divtotal').text(currencySymbol + showsum);
-                $('#hidetotalorder').val(sum);
-            }
-    });
+				if (currencyValue === '1') {
+					currencySymbol = 'Rs. ';
+				} else if (currencyValue === '2') {
+					currencySymbol = '$ ';
+				}
+				$('#divtotal').html(currencySymbol + showsum);
+    			$('#hidetotalorder').val(sum);
+    			$('#product').focus();
+    		}
+    	});
     	$('#tableorder').on('click', 'tr', function () {
     		var r = confirm("Are you sure, You want to remove this product ? ");
     		if (r == true) {
@@ -843,10 +836,7 @@ include "include/topnavbar.php";
 
     			var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-    			var currencyValue = $('#currencytype').val();
-    			var currencySymbol = (currencyValue === '1') ? 'Rs. ' : '$ ';
-
-    			$('#divtotal').html(currencySymbol + showsum);
+    			$('#divtotal').html('Rs. ' + showsum);
     			$('#hidetotalorder').val(sum);
     			$('#product').focus();
     		}
@@ -1020,11 +1010,9 @@ include "include/topnavbar.php";
     			success: function (result) { //alert(result);
     				var obj = JSON.parse(result);
     				$('#newqty').val(obj.qty);
-    				$('#newqty').attr('max', obj.qty);
     				$('#unitprice').val(obj.unitprice);
 					$('#unitperctn').val(obj.unitperctn);
 					$('#ctn').val(obj.ctn);
-					$('#ctn').attr('max', obj.ctn);
     				$('#comment').val(obj.comment);
     			}
     		});

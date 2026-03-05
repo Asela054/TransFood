@@ -450,9 +450,8 @@ include "include/topnavbar.php";
 		var unitPerCtn = parseFloat($('#unitperctn').val()) || 0;
 		var ctn = parseFloat($(this).val()) || 0;
 		var totalQty = unitPerCtn * ctn;
-		var maxQty = parseFloat($('#newqty').attr('max')) || totalQty;
 
-		$('#newqty').val(Math.min(totalQty, maxQty));
+		$('#newqty').val(totalQty);
 	});
     $(document).on("click", "#submitBtn2", function () {
 

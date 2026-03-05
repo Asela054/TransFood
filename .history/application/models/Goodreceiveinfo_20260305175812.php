@@ -395,7 +395,9 @@ class Goodreceiveinfo extends CI_Model{
     
         if ($porderID != "") {
             // determine remaining quantity for this material on the PO
-            $sql = "SELECT pd.unitperctn,
+            $sql = "SELECT pd.qty,
+                           pd.unitperctn,
+                           pd.ctn,
                            pd.unitprice,
                            pd.comment,
                            (pd.qty - IFNULL(
@@ -408,18 +410,7 @@ class Goodreceiveinfo extends CI_Model{
                                   WHERE g.tbl_porder_idtbl_porder = pd.tbl_porder_idtbl_porder
                                     AND gd.tbl_material_info_idtbl_material_info = pd.tbl_material_info_idtbl_material_info
                                     AND g.status = 1
-                                ),0)) AS qty,
-                           ((pd.qty - IFNULL(
-                                (
-                                  SELECT SUM(gd.qty)
-                                  FROM tbl_grn g
-                                  JOIN tbl_grndetail gd
-                                    ON gd.tbl_grn_idtbl_grn = g.idtbl_grn
-                                    AND gd.status = 1
-                                  WHERE g.tbl_porder_idtbl_porder = pd.tbl_porder_idtbl_porder
-                                    AND gd.tbl_material_info_idtbl_material_info = pd.tbl_material_info_idtbl_material_info
-                                    AND g.status = 1
-                                ),0)) / pd.unitperctn) AS ctn
+                                ),0)) AS qty
                     FROM tbl_porder_detail pd
                     WHERE pd.status = 1
                       AND pd.tbl_material_info_idtbl_material_info = ?
