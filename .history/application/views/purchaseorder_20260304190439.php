@@ -142,25 +142,18 @@ include "include/topnavbar.php";
                                     <label class="small font-weight-bold text-dark">Unit Per Ctn*</label>
                                     <input type="text" id="unitperctn" name="unitperctn" class="form-control form-control-sm" value="0" required>
                                 </div>
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Ctn*</label>
-                                    <input type="text" id="ctn" name="ctn" class="form-control form-control-sm" required>
-                                </div>
+                                
                             </div>
                             <div class="form-row mb-1">
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Total Qty*</label>
                                     <input type="text" id="newqty" name="newqty" class="form-control form-control-sm" required>
                                 </div>
-                                <div class="col">
-                                    <label class="small font-weight-bold text-dark">Unit Price</label>
-                                    <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
-                                </div>
                             </div>
                             <div class="form-row mb-1">
                                 <div class="col">
-                                    <label class="small font-weight-bold text-dark">Conversion Rate</label>
-                                    <input type="text" id="conversionrate" name="conversionrate" class="form-control form-control-sm">
+                                    <label class="small font-weight-bold text-dark">Unit Price</label>
+                                    <input type="text" id="unitprice" name="unitprice" class="form-control form-control-sm" value="0">
                                 </div>
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Discount Amount</label>
@@ -336,7 +329,7 @@ include "include/topnavbar.php";
 
         	let discount = parseFloat($(this).val()) || 0;
         	let currencyType = $("#currencytype").val();
-        	let usdRate = parseFloat($("#conversionrate").val()) || 1;
+        	let usdRate = parseFloat($("#gcw_valFL0GridDR1").val()) || 1;
 
         	let newTotalLKR = 0;
         	let newTotalUSD = 0;
@@ -720,7 +713,6 @@ include "include/topnavbar.php";
                 dataType: 'json',
                 success: function (response) {
                     $('#unitprice').val(response.unitprice);
-                    originalUnitPrice = parseFloat(response.unitprice) || 0;
                     $('#unitperctn').val(response.unitperctn);
                     
                     let unitDropdown = $('#unit');
@@ -735,7 +727,6 @@ include "include/topnavbar.php";
                 error: function (xhr, status, error) {
                     console.error("Error fetching unit price:", error);
                     $('#unitprice').val('0');
-                    originalUnitPrice = 0;
                     $('#unit').empty().append($('<option>').val('').text('Select'));
                 }
             });
@@ -748,7 +739,7 @@ include "include/topnavbar.php";
         	}
 
         	let currencyType = $("#currencytype").val();
-        	let usdRate = parseFloat($("#conversionrate").val()) || 1;
+        	let usdRate = parseFloat($("#gcw_valFL0GridDR1").val()) || 1;
 
         	let productID = $("#product").val();
         	let product = $("#product option:selected").text();
@@ -888,7 +879,7 @@ include "include/topnavbar.php";
                 var currencytype = $('#currencytype').val();
                 var recordID = $('#recordID').val();
                 var recordOption = $('#recordOption').val();
-                var usdrate = $('#conversionrate').val();
+                var usdrate = $('#gcw_valFL0GridDR1').val();
                 // alert(orderdate);
                 $.ajax({
                     type: "POST",

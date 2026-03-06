@@ -450,9 +450,8 @@ include "include/topnavbar.php";
 		var unitPerCtn = parseFloat($('#unitperctn').val()) || 0;
 		var ctn = parseFloat($(this).val()) || 0;
 		var totalQty = unitPerCtn * ctn;
-		var maxQty = parseFloat($('#newqty').attr('max')) || totalQty;
 
-		$('#newqty').val(Math.min(totalQty, maxQty));
+		$('#newqty').val(totalQty);
 	});
     $(document).on("click", "#submitBtn2", function () {
 
@@ -828,9 +827,16 @@ include "include/topnavbar.php";
                 }
 
                 $('#divtotal').text(currencySymbol + showsum);
-                $('#hidetotalorder').val(sum);
             }
-    });
+					currencySymbol = 'Rs. ';
+				/* } else if (currencyValue === '2') {
+					currencySymbol = '$ ';
+				}
+				$('#divtotal').html(currencySymbol + showsum);
+    			$('#hidetotalorder').val(sum);
+    			$('#product').focus();
+    		}
+    	});
     	$('#tableorder').on('click', 'tr', function () {
     		var r = confirm("Are you sure, You want to remove this product ? ");
     		if (r == true) {
@@ -843,10 +849,7 @@ include "include/topnavbar.php";
 
     			var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-    			var currencyValue = $('#currencytype').val();
-    			var currencySymbol = (currencyValue === '1') ? 'Rs. ' : '$ ';
-
-    			$('#divtotal').html(currencySymbol + showsum);
+    			$('#divtotal').html('Rs. ' + showsum);
     			$('#hidetotalorder').val(sum);
     			$('#product').focus();
     		}
@@ -1020,11 +1023,9 @@ include "include/topnavbar.php";
     			success: function (result) { //alert(result);
     				var obj = JSON.parse(result);
     				$('#newqty').val(obj.qty);
-    				$('#newqty').attr('max', obj.qty);
     				$('#unitprice').val(obj.unitprice);
 					$('#unitperctn').val(obj.unitperctn);
 					$('#ctn').val(obj.ctn);
-					$('#ctn').attr('max', obj.ctn);
     				$('#comment').val(obj.comment);
     			}
     		});

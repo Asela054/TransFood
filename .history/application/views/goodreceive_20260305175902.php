@@ -90,7 +90,7 @@ include "include/topnavbar.php";
                                     <select class="form-control form-control-sm" name="porder" id="porder">
                                         <option value="">Select</option>
                                         <?php foreach($porderlist->result() as $rowporderlist){ ?>
-                                        <option value="<?php echo $rowporderlist->idtbl_porder ?>"><?php echo 'TRFL/PO-'.$rowporderlist->idtbl_porder ?></option>
+                                        <option value="<?php echo $rowporderlist->idtbl_porder ?>"><?php echo 'TRFL/PO-'.$rowporderlist->po_no ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
@@ -104,14 +104,25 @@ include "include/topnavbar.php";
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group mb-1">
-                                <label class="small font-weight-bold text-dark">GRN Type*</label>
-                                <select class="form-control form-control-sm" name="grntype" id="grntype" required>
-                                    <option value="">Select</option>
-                                    <?php foreach($ordertypelist->result() as $rowordertypelist){ ?>
-                                    <option value="<?php echo $rowordertypelist->idtbl_order_type ?>"><?php echo $rowordertypelist->type ?></option>
-                                    <?php } ?>
-                                </select>
+                            <div class="form-row mb-1">
+								<div class="col">
+									<label class="small font-weight-bold text-dark">GRN Type*</label>
+									<select class="form-control form-control-sm" name="grntype" id="grntype" required>
+										<option value="">Select</option>
+										<?php foreach($ordertypelist->result() as $rowordertypelist){ ?>
+										<option value="<?php echo $rowordertypelist->idtbl_order_type ?>"><?php echo $rowordertypelist->type ?></option>
+										<?php } ?>
+									</select>
+								</div>
+								<div class="col">
+									<label class="small font-weight-bold text-dark">Currency Type*</label>
+                                    <select class="form-control form-control-sm" name="currencytype" id="currencytype" required>
+                                        <option value="">Select</option>
+                                        <option value="1">LKR</option>
+                                        <option value="2">USD</option>
+                                    </select>
+								</div>
+								<input type="hidden" class="form-control form-control-sm" name="rate" id="rate">
                             </div>
                             <div class="form-row mb-1">
                                 <div class="col">
@@ -213,7 +224,7 @@ include "include/topnavbar.php";
                         </div>
                         <div class="row">
                             <div class="col text-right">
-                                <h1 class="font-weight-600" id="divtotal">Rs. 0.00</h1>
+                                <h1 class="font-weight-600" id="divtotal">0.00</h1>
                             </div>
                             <input type="hidden" id="hidetotalorder" value="0">
                         </div>
@@ -435,6 +446,13 @@ include "include/topnavbar.php";
     	$('#totalcost').val(sum);
 
     });
+	$('#ctn').on('input', function () {
+		var unitPerCtn = parseFloat($('#unitperctn').val()) || 0;
+		var ctn = parseFloat($(this).val()) || 0;
+		var totalQty = unitPerCtn * ctn;
+
+		$('#newqty').val(totalQty);
+	});
     $(document).on("click", "#submitBtn2", function () {
 
     	var grnID = $('#grnid').val();
@@ -557,7 +575,13 @@ include "include/topnavbar.php";
                     "className": 'text-right',
                     "data": null,
                     "render": function(data, type, full) {
-                        return addCommas(parseFloat(full['total']).toFixed(2));
+
+                        let curr = full['currencytype'];
+                        let symbol = curr == 1 ? "Rs. " : "$ ";
+
+                        let total = parseFloat(full['total']) || 0;
+
+                        return symbol + addCommas(total.toFixed(2));
                     }
                 },
                 {
@@ -765,29 +789,26 @@ include "include/topnavbar.php";
     			var expdate = $('#expdate').val();
 				// $('.selecter2').select2();
 
-    			var newtotal = parseFloat(unitprice * newqty);
+                // validate against remaining quantity
+                var maxQty = parseFloat($('#newqty').attr('max')) || newqty;
+                if (newqty > maxQty) {
+                    alert('Quantity exceeds remaining amount (' + maxQty + ').');
+                    return;
+                }
 
-    			var total = parseFloat(newtotal);
-    			var showtotal = addCommas(parseFloat(total).toFixed(2));
-
-    			$('#tableorder > tbody:last').append('<tr class="pointer"><td>' + product + '</td><td>' + comment + '</td><td>' + mfdate + '</td><td>' + expdate + '</td><td class="d-none">' + quater + '</td><td class="d-none">' + productID + '</td><td class="d-none">' + unitprice + '</td><td class="text-center">' + unitperctn + '</td><td class="text-center">' + ctn + '</td><td class="text-center">' + newqty + '</td><td class="total d-none">' + total + '</td><td class="text-right">' + showtotal + '</td></tr>');
-
-				$('#product').val('').trigger('change');
-    			$('#unitprice').val('');
-    			$('#saleprice').val('');
-    			$('#comment').val('');
-    			$('#newqty').val('');
-    			$('#quater').val('');
-    			$('#expdate').val('');
-
-    			var sum = 0;
-    			$(".total").each(function () {
-    				sum += parseFloat($(this).text());
     			});
 
     			var showsum = addCommas(parseFloat(sum).toFixed(2));
 
-    			$('#divtotal').html('Rs. ' + showsum);
+				var currencyValue = $('#currencytype').val();
+				var currencySymbol = '';
+
+				if (currencyValue === '1') {
+					currencySymbol = 'Rs. ';
+				} else if (currencyValue === '2') {
+					currencySymbol = '$ ';
+				}
+				$('#divtotal').html(currencySymbol + showsum);
     			$('#hidetotalorder').val(sum);
     			$('#product').focus();
     		}
@@ -850,6 +871,8 @@ include "include/topnavbar.php";
     			var invoice = $('#invoice').val();
     			var dispatch = $('#dispatch').val();
     			var grntype = $('#grntype').val();
+				var currencytype = $('#currencytype').val();
+				var rate = $('#rate').val();
     			var transportcost = $('#transportcost').val();
     			var unloadcost = $('#unloadcost').val();
     			// alert(orderdate);
@@ -867,6 +890,8 @@ include "include/topnavbar.php";
     					dispatch: dispatch,
     					batchno: batchno,
     					grntype: grntype,
+						currencytype: currencytype,
+						rate: rate,
     					transportcost: transportcost,
     					unloadcost: unloadcost
     				},
@@ -887,22 +912,48 @@ include "include/topnavbar.php";
     	$('#porder').change(function () {
     		var porderID = $(this).val();
 
-    		$.ajax({
-    			type: "POST",
-    			data: {
-    				recordID: porderID
-    			},
-    			url: 'Goodreceive/Getsupplieraccoporder',
-    			success: function (result) { //alert(result);
-    				$('#supplier').val(result);
-    				$('#supplier option').each(function () {
-    					if (!this.selected) {
-    						$(this).attr('disabled', true);
-    					}
-    				});
-    				getbatchno();
-    			}
-    		});
+			$.ajax({
+				type: "POST",
+				dataType: "json",
+				data: {
+					recordID: porderID
+				},
+				url: 'Goodreceive/Getsupplieraccoporder',
+				success: function (result) {
+					if(result.error){
+						alert(result.error);
+						return;
+					}
+					
+					$('#supplier').val(result.supplier);
+					$('#supplier option').each(function () {
+						if (!this.selected) {
+							$(this).attr('disabled', true);
+						}
+					});
+					
+					$('#currencytype').val(result.currencytype);
+					$('#currencytype option').each(function () {
+						if (!this.selected) {
+							$(this).attr('disabled', true);
+						}
+					});
+					
+					$('#rate').val(result.rate);
+					getbatchno();
+
+					var totalAmount = result.total || 0.00;
+					var currencySymbol = '';
+					
+					if (result.currencytype === '1') {
+						currencySymbol = 'Rs. ';
+					} else if (result.currencytype === '2') {
+						currencySymbol = '$ ';
+					}
+					
+					$('#divtotal').text(currencySymbol + parseFloat(totalAmount).toFixed(2));
+				}
+			});
 
     		$.ajax({
     			type: "POST",
