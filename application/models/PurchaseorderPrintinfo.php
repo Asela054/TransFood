@@ -193,17 +193,13 @@ class PurchaseorderPrintinfo extends CI_Model{
                     <td style="text-align: right;"><img src="'.base_url().'images/logo.png" style="width: 140px; height: 80px; margin-right: 20px;"></td>
                     <td style="font-size: 12px;">
                         <h3 style="color: #FF0000;font-size: 25px;font-weight: bold;margin: 0;">Transfood Lanka (Pvt) Ltd.</h3>
-                        17/A, Vihara Mawatha, Katunayake, Sri Lanka<br>
+                        17A/1, 2 Vihara Mawatha, Kolonnawa<br>
                         Tel/Fax: +94 11-2254441 Email: info@tflanka.com<br>
                         www.transfoodlanka.com or www.tflanka.com
                     </td>
                 </tr>
             </table>
         </header>
-        <footer>
-            For questions concerning this Purchase Order, Please Contact<br>
-            M M Mohamed | 077 25 30 961 | tf.cspme@tflanka.com
-        </footer>
 
         <table style="width:100%;border-collapse: collapse;">
             <tr>
@@ -312,32 +308,50 @@ class PurchaseorderPrintinfo extends CI_Model{
                 <td colspan="3">&nbsp;</td>
             </tr>
             <tr>
-                <td colspan="3">
-                    <table style="border-collapse: collapse; text-align: center; width: 300px;">
+                <td style="vertical-align: top;">
+                    <table style="border-collapse: collapse; text-align: center; width: 100%;">
                         <tr>
-                            <th style="background-color: #97d197; border: 1px solid #000;">Notes and instructions</th>
+                            <th style="background-color: #97d197; border: 1px solid #000;">
+                                Notes and Instructions
+                            </th>
                         </tr>
                         <tr>
-                            <td style="border: 1px solid #000; height: 50px;">'.$respond->row(0)->remark.'</td>
+                            <td style="border: 1px solid #000; height: 80px;">
+                                '.$respond->row(0)->remark.'
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td style="width: 10%;"></td>
+                <td style="vertical-align: top;">
+                    <table style="border-collapse: collapse; text-align: center; width: 100%;">
+                        <tr>
+                            <td style="background-color: #97d197; border: 1px solid #000;">
+                                Authorized By
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-bottom: 1px dotted; height: 80px;">
+                                <img src="images/Abdullah Sign.png" style="height: 50px;">
+                            </td>
                         </tr>
                     </table>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">&nbsp;</td>
-                <td>
-                    <table style="border-collapse: collapse; text-align: center; width: 100%;">
-                        <tr>
-                            <td style="background-color: #97d197; border: 1px solid #000;">Authorized By</td>
-                        </tr>
-                        <tr>
-                            <td style="border-bottom: 1px dotted; border-left: none; border-right: none; border-top: none; height: 30px;"><img src="images/Abdullah Sign.png" alt="Signature" style="height: 50px; margin-top: 5px;"></td>
-                        </tr>
-                    </table>
+                <td colspan="3" style="padding-top: 30px; text-align: center;">
+                    
+                    <div style="width: 100%; margin: auto; border-top: 1px dotted #000;"></div>
+
+                    <div style="margin-top: 5px; font-size: 10px;">
+                        For questions concerning this Purchase Order, Please Contact<br>
+                        SP Abdullah | 076 363 8662 | tfl.bdm@tflanka.com
+                    </div>
+
                 </td>
-            </tr>
+             </tr>
         </table>
-        <img src="images/TFL-Office-Seal.png" alt="Signature" style="height: 150px; margin-top: 50px; float: right;">
+        <!--<img src="images/TFL-Office-Seal.png" alt="Signature" style="height: 150px; margin-top: 50px; float: right;">-->
         <!--<div style="width: 100%;">
             <div class="row"
                 style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; font-size: 13px; margin-bottom: 10px;">
@@ -391,7 +405,7 @@ class PurchaseorderPrintinfo extends CI_Model{
     $this->load->library('pdf');
     $this->pdf->loadHtml($html);
     $this->pdf->render();
-    $this->pdf->stream( "MULTI OFFSET PRINTERS-PURCHASE ORDER- ".$recordID.".pdf", array("Attachment"=>0));
+    $this->pdf->stream( "Trans Food Lanka-PURCHASE ORDER- ".$recordID.".pdf", array("Attachment"=>0));
 }
 
 }
