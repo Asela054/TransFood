@@ -394,4 +394,4 @@ class PurchaseorderPrintinfo extends CI_Model{
     $this->pdf->stream( "MULTI OFFSET PRINTERS-PURCHASE ORDER- ".$recordID.".pdf", array("Attachment"=>0));
 }
 
-}
+} 
