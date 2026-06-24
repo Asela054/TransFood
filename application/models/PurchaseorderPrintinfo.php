@@ -24,7 +24,7 @@ class PurchaseorderPrintinfo extends CI_Model{
     WHERE `tbl_porder_detail`.`status` = '1' AND `tbl_porder`.`idtbl_porder` = '$recordID'";
     $respond2=$this->db->query($sql2, array(1, $recordID));
 
-    $po_number = "TRFL/PO-" . $respond->row(0)->idtbl_porder;
+    $po_number = "TRFL/PO-" . $respond->row(0)->po_no;
     
     $items_html = '';
     $sn = 1;
