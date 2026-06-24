@@ -719,17 +719,28 @@ include "include/topnavbar.php";
                 url: 'Purchaseorder/Getunitpriceaccomaterial',
                 dataType: 'json',
                 success: function (response) {
-                    $('#unitprice').val(response.unitprice);
-                    originalUnitPrice = parseFloat(response.unitprice) || 0;
+                    let currencyType = $('#currencytype').val(); 
+
+                    let priceToUse = (currencyType == "2") 
+                        ? response.unitprice_usd 
+                        : response.unitprice_lkr;
+
+                    $('#unitprice').val(priceToUse);
+                    originalUnitPrice = parseFloat(priceToUse) || 0;
+
+                    if (!$('#conversionrate').val() && response.conversion_rate > 0) {
+                        $('#conversionrate').val(response.conversion_rate);
+                    }
+
                     $('#unitperctn').val(response.unitperctn);
-                    
+
                     let unitDropdown = $('#unit');
                     unitDropdown.empty();
                     unitDropdown.append($('<option>').val('').text('Select'));
-                    
+
                     if (response.unit_id && response.unitname) {
                         unitDropdown.append($('<option>').val(response.unit_id).text(response.unitname));
-                        unitDropdown.val(response.unit_id); 
+                        unitDropdown.val(response.unit_id);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -739,6 +750,12 @@ include "include/topnavbar.php";
                     $('#unit').empty().append($('<option>').val('').text('Select'));
                 }
             });
+        });
+        $('#currencytype').change(function () {
+            let productID = $('#product').val();
+            if (productID) {
+                $('#product').trigger('change'); // re-run the price lookup with new currency
+            }
         });
         $("#formsubmit").click(function () {
 
