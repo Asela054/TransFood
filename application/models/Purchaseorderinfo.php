@@ -28,6 +28,8 @@ class Purchaseorderinfo extends CI_Model{
 
         $sql = "SELECT 
                     s.unitprice,
+                    s.currencytype,
+                    s.conversion_rate,
                     m.unitperctn,
                     u.idtbl_unit,
                     u.unitname
@@ -47,8 +49,24 @@ class Purchaseorderinfo extends CI_Model{
 
             $row = $query->row();
 
+            $rate = (!empty($row->conversion_rate) && $row->conversion_rate > 0) 
+                        ? $row->conversion_rate 
+                        : 1;
+
+            // Normalize to both currencies based on how the stock row was actually stored
+            if ($row->currencytype == 2) { // last GRN was in USD
+                $unitprice_usd = $row->unitprice;
+                $unitprice_lkr = $row->unitprice * $rate;
+            } else { // last GRN was in LKR (or unset/legacy rows)
+                $unitprice_lkr = $row->unitprice;
+                $unitprice_usd = $rate > 0 ? $row->unitprice / $rate : 0;
+            }
+
             echo json_encode(array(
-                'unitprice'  => $row->unitprice,
+                'unitprice_lkr' => round($unitprice_lkr, 2),
+                'unitprice_usd' => round($unitprice_usd, 4),
+                'source_currencytype' => $row->currencytype,
+                'conversion_rate' => $rate,
                 'unitperctn' => $row->unitperctn,
                 'unit_id'    => $row->idtbl_unit,
                 'unitname'   => $row->unitname
@@ -57,7 +75,10 @@ class Purchaseorderinfo extends CI_Model{
         } else {
 
             echo json_encode(array(
-                'unitprice'  => 0,
+                'unitprice_lkr' => 0,
+                'unitprice_usd' => 0,
+                'source_currencytype' => 0,
+                'conversion_rate' => 1,
                 'unitperctn' => 0,
                 'unit_id'    => 0,
                 'unitname'   => ''
