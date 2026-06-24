@@ -408,4 +408,4 @@ class PurchaseorderPrintinfo extends CI_Model{
     $this->pdf->stream( "Trans Food Lanka-PURCHASE ORDER- ".$recordID.".pdf", array("Attachment"=>0));
 }
 
-}
+} 
