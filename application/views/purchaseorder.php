@@ -403,26 +403,19 @@ include "include/topnavbar.php";
                     }
                 },
                 {
-                    "data": "idtbl_porder",
+                    "data": "po_no",
                     "render": function(data, type, full) {
-                        var orderDate = new Date(full['orderdate']);
-                        var cutoffDate = new Date("2024-12-10");
-                        
+
                         var companyId = sessionStorage.getItem("companyid");
-                        
+
                         var prefix = "UNKNOWN/PO";
                         if (companyId == 1) {
                             prefix = "TRFL/PO";
                         } else if (companyId == 2) {
                             prefix = "TRFL/PO";
                         }
-                        
-                        if (orderDate >= cutoffDate) {
-                                return prefix + "-" + full['po_no']; 
-                        
-                        } else {
-                                return prefix + "-" + data;
-                        }
+
+                        return prefix + "-" + data;
                     }
                 },
                 {
