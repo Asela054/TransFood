@@ -11,7 +11,7 @@ class GoodreceivePrintinfo extends CI_Model{
 					WHERE g.idtbl_grn = ?";
 		$grn_data = $this->db->query($grn_sql, [$recordID])->row();
 
-		$po_number = "TRFL/PO-" . $grn_data->idtbl_porder;
+		$po_number = "TRFL/PO-" . $grn_data->po_no;
 		$remark = $grn_data->remark;
 
 		$details_sql = "SELECT d.*, m.materialname, m.materialinfocode, u.unitname
