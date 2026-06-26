@@ -26,20 +26,34 @@ class Purchaseorderinfo extends CI_Model{
 
         $recordID = $this->input->post('recordID');
 
+        // $sql = "SELECT 
+        //             s.unitprice,
+        //             s.currencytype,
+        //             s.conversion_rate,
+        //             m.unitperctn,
+        //             u.idtbl_unit,
+        //             u.unitname
+        //         FROM tbl_stock s
+        //         LEFT JOIN tbl_material_info m 
+        //             ON m.idtbl_material_info = s.tbl_material_info_idtbl_material_info
+        //         LEFT JOIN tbl_unit u 
+        //             ON u.idtbl_unit = m.tbl_unit_idtbl_unit
+        //         WHERE s.status = ?
+        //         AND s.tbl_material_info_idtbl_material_info = ?
+        //         ORDER BY s.idtbl_stock DESC
+        //         LIMIT 1";
         $sql = "SELECT 
                     s.unitprice,
-                    s.currencytype,
-                    s.conversion_rate,
                     m.unitperctn,
                     u.idtbl_unit,
                     u.unitname
-                FROM tbl_stock s
-                LEFT JOIN tbl_material_info m 
-                    ON m.idtbl_material_info = s.tbl_material_info_idtbl_material_info
+                FROM tbl_material_info m
+                LEFT JOIN tbl_stock s 
+                    ON s.tbl_material_info_idtbl_material_info = m.idtbl_material_info
                 LEFT JOIN tbl_unit u 
                     ON u.idtbl_unit = m.tbl_unit_idtbl_unit
-                WHERE s.status = ?
-                AND s.tbl_material_info_idtbl_material_info = ?
+                WHERE m.status = ?
+                AND m.idtbl_material_info = ?
                 ORDER BY s.idtbl_stock DESC
                 LIMIT 1";
 
