@@ -160,16 +160,21 @@ class GoodreceivePrintinfo extends CI_Model{
 					<td style="border-bottom:1px solid #000;">'.$grn_data->dispatchnum.'</td>
 				</tr>
 				<tr>
+					<td style="padding:4px; font-weight:bold; vertical-align:top; white-space:nowrap;">GRN Number</td>
+					<td style="white-space:nowrap;">:</td>
+					<td style="border-bottom:1px solid #000;">TRFL/GRN-'.$grn_data->grn_no.'</td>
+					<td style="padding:4px; font-weight:bold; vertical-align:top; white-space:nowrap;">&nbsp;Invoice No</td>
+					<td style="white-space:nowrap;">:</td>
+					<td style="border-bottom:1px solid #000; white-space:nowrap; padding-left:4px; padding-right:4px;">'.($grn_data->invoicenum !== null && $grn_data->invoicenum !== '' ? $grn_data->invoicenum : '&nbsp;').'</td>
+				</tr>
+				<tr>
 					<td style="padding: 20px 4px; font-weight:bold; vertical-align:top; white-space:nowrap;">Charging Details</td>
 					<td style="white-space:nowrap;">:</td>
-					<td style="padding:4px 0; white-space:nowrap;">
+					<td colspan="4" style="padding:4px 0; white-space:nowrap;">
 						<label style="margin-right:15px;">Full Order <input type="checkbox" name="option1" style="margin-top:5px;" '.($grn_data->grntype == 'full' ? 'checked' : '').'></label>
 						<label style="margin-right:15px;">Partial Order <input type="checkbox" name="option1" style="margin-top:5px;" '.($grn_data->grntype == 'partial' ? 'checked' : '').'></label>
 						<label>DO Attached <input type="checkbox" name="option1" style="margin-top:5px;" '.($grn_data->dispatchnum ? 'checked' : '').'></label>
 					</td>
-					<td style="padding: 20px 4px; font-weight:bold; vertical-align:top; white-space:nowrap;">&nbsp;Invoice No</td>
-					<td style="white-space:nowrap;">:</td>
-					<td style="border-bottom:1px solid #000; white-space:nowrap; padding-left:4px; padding-right:4px;">'.$grn_data->invoicenum.'</td>
 				</tr>
 			</table>
 			<table class="item-table" style="border-collapse: collapse; width: 100%;">
