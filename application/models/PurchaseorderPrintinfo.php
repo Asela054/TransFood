@@ -289,8 +289,8 @@ class PurchaseorderPrintinfo extends CI_Model{
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">UNIT PER CTN</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">CTNS</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">TOTAL QTY</th>
-                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:5px;">PRICE PER UNIT ($)</th>
-                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:5px;">TOTAL AMOUNT ($)</th>
+                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:10px;">PRICE PER UNIT ('.$currencySign.')</th>
+                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:10px;">TOTAL AMOUNT ('.$currencySign.')</th>
                         </tr>
                         '.$items_html.'
                         <tr>

@@ -473,7 +473,7 @@ include "include/topnavbar.php";
                     "render": function(data, type, full) {
                         var button='';
                         if(full['confirmstatus']<2){
-                            button += '<a href="<?php echo base_url() ?>Purchaseorder/Printpurchaseorder/' + full['idtbl_porder'] + '" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print PO" class="btn btn-primary btn-sm mr-1"><i class="fas fa-file-pdf"></i></a>';
+                            button += '<a href="<?php echo base_url() ?>Purchaseorder/Printpurchaseorder/' + full['idtbl_porder'] + '" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Print PO" class="btn btn-danger btn-sm mr-1"><i class="fas fa-file-pdf"></i></a>';
                         }
                         button+='<button class="btn btn-dark btn-sm btnview mr-1" id="'+full['idtbl_porder']+'" po_no="' + full['po_no'] + '"><i class="fas fa-eye"></i></button>';
                         if(full['confirmstatus']==1 && statuscheck==1){
