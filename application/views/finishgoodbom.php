@@ -328,17 +328,23 @@ include "include/topnavbar.php";
         var r = await Otherconfirmation("You want to remove this ? ");
         if (r == true) {
             var id = $(this).attr('id');
-            // alert(id);
+            var bomid = $('#exampleModalCenter').data('bomid');
             $.ajax({
                 type: "POST",
                 data: {
                     recordID: id
                 },
                 url: '<?php echo base_url() ?>Finishgoodbom/Finishgoodbomdelete',
-                success: function (result) { //alert(result);
-                    $('#exampleModalCenter').modal('hide');
-                    // alert("Record Delete Successfully");
-
+                success: function (result) {
+                    // Reload the BOM detail rows so deleted row disappears immediately
+                    $.ajax({
+                        type: "POST",
+                        data: { recordID: bomid },
+                        url: '<?php echo base_url() ?>Finishgoodbom/Finishgoodbomdetails',
+                        success: function(rows) {
+                            $('#bomrecords').html(rows);
+                        }
+                    });
                 }
             });
         }
@@ -480,6 +486,8 @@ include "include/topnavbar.php";
                         $('#bomrecords').html(result);
                         $('#procode').html(td);
                         $('#exampleModalCenter').modal('show');
+                        // Store current BOM info ID so delete can refresh the list
+                        $('#exampleModalCenter').data('bomid', id);
                     }
                 });
         });

@@ -59,7 +59,7 @@ $joinQuery = "FROM `tbl_product` AS `u`
 LEFT JOIN `tbl_product_bom` AS `ud` ON (`ud`.`tbl_product_idtbl_product` = `u`.`idtbl_product`)
 LEFT JOIN `tbl_product_bom_info` AS `ue` ON (`ue`.`idtbl_product_bom_info` = `ud`.`tbl_product_bom_info_idtbl_product_bom_info`)";
 
-$extraWhere = "`u`.`status` IN (1, 2) AND `u`.`idtbl_product`=`ud`.`tbl_product_idtbl_product`";
+$extraWhere = "`u`.`status` IN (1, 2) AND `u`.`idtbl_product`=`ud`.`tbl_product_idtbl_product` AND `ue`.`status` != 3";
 
 $groupBy ="`ud`.`tbl_product_bom_info_idtbl_product_bom_info`";
 
