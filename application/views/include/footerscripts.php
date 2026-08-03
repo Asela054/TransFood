@@ -58,7 +58,8 @@
             else if(obj.type=='danger'){icon='error'; title=obj.message;}
 
             Swal.fire({
-                position: "top-end",
+                // position: "top-end",
+                position: "center",
                 icon: icon,
                 title: title,
                 showConfirmButton: false,
@@ -78,7 +79,8 @@
             else if(obj.type=='danger'){icon='error'; title=obj.message;}
 
             Swal.fire({
-                position: "top-end",
+                // position: "top-end",
+                position: "center",
                 icon: icon,
                 title: title,
                 showConfirmButton: false,
