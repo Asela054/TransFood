@@ -38,8 +38,11 @@ include "include/topnavbar.php";
                                                 <th>GRN No</th>
                                                 <th>Batch No</th>
                                                 <th>Supplier</th>
+                                                <th>PO No.</th>
+                                                <th>Class</th>
                                                 <th>Total</th>
                                                 <th>Approved Status</th>
+                                                <th>Receive Type</th>
                                                 <th class="text-right">Actions</th>
                                             </tr>
                                         </thead>
@@ -124,6 +127,16 @@ include "include/topnavbar.php";
 								</div>
 								<input type="hidden" class="form-control form-control-sm" name="rate" id="rate">
                             </div>
+                            <div class="form-row mb-1">
+								<div class="col">
+									<label class="small font-weight-bold text-dark">Receive Type*</label>
+									<select class="form-control form-control-sm" name="receivetype" id="receivetype" required>
+										<option value="">Select</option>
+										<option value="1">Partial Receive</option>
+										<option value="2">Full Receive</option>
+									</select>
+								</div>
+							</div>
                             <div class="form-row mb-1">
                                 <div class="col">
                                     <label class="small font-weight-bold text-dark">Product*</label>
@@ -572,6 +585,21 @@ include "include/topnavbar.php";
                     "data": "suppliername"
                 },
                 {
+                    "data": "po_no",
+                    "render": function(data, type, full) {
+                        if (!data || data === '') return '<span class="text-muted">—</span>';
+                        var companyId = sessionStorage.getItem("companyid");
+                        var prefix = companyId == 1 || companyId == 2 ? "TRFL/PO" : "UNKNOWN/PO";
+                        return prefix + "-" + data;
+                    }
+                },
+                {
+                    "data": "class",
+                    "render": function(data, type, full) {
+                        return data ? data : '<span class="text-muted">—</span>';
+                    }
+                },
+                {
                     "targets": -1,
                     "className": 'text-right',
                     "data": null,
@@ -592,6 +620,17 @@ include "include/topnavbar.php";
                     "render": function(data, type, full) {
                         if(full['approvestatus']==1){return '<i class="fas fa-check text-success mr-2"></i>Approved GRN';}
                         else{return 'Not Approved GRN';}
+                    }
+                },
+                {
+                    "targets": -1,
+                    "className": '',
+                    "data": null,
+                    "render": function(data, type, full) {
+                        var rt = full['receivetype'];
+                        if (rt == 1) { return '<span class="badge badge-warning">Partial</span>'; }
+                        else if (rt == 2) { return '<span class="badge badge-success">Full</span>'; }
+                        else { return '<span class="text-muted">—</span>'; }
                     }
                 },
                 {
@@ -896,6 +935,7 @@ include "include/topnavbar.php";
 				var rate = $('#rate').val();
     			var transportcost = $('#transportcost').val();
     			var unloadcost = $('#unloadcost').val();
+				var receivetype = $('#receivetype').val();
     			// alert(orderdate);
     			$.ajax({
     				type: "POST",
@@ -914,7 +954,8 @@ include "include/topnavbar.php";
 						currencytype: currencytype,
 						rate: rate,
     					transportcost: transportcost,
-    					unloadcost: unloadcost
+    					unloadcost: unloadcost,
+						receivetype: receivetype
     				},
     				url: 'Goodreceive/Goodreceiveinsertupdate',
     				success: function (result) { //alert(result);
