@@ -216,6 +216,19 @@ include "include/topnavbar.php";
                                 <input name="totaldiscount" id="totaldiscount" class="form-control form-control-sm">
                             </div>
                         </div>
+                        <div class="form-row mt-1">
+                            <div class="col-6">
+                                <label class="small font-weight-bold text-dark">VAT %</label>
+                                <input type="number" min="0" step="0.01" name="vatpercent" id="vatpercent" class="form-control form-control-sm" value="0">
+                            </div>
+                            <div class="col-6 d-flex align-items-end">
+                                <div class="w-100">
+                                    <label class="small font-weight-bold text-dark">VAT Amount</label>
+                                    <div class="form-control form-control-sm bg-light text-right" id="divvatamount">0.00</div>
+                                    <input type="hidden" id="hidevatamount" value="0">
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label class="small font-weight-bold text-dark">Notes and Instructions</label>
                             <textarea name="remark" id="remark" class="form-control form-control-sm"></textarea>
@@ -360,6 +373,38 @@ include "include/topnavbar.php";
 
         	$("#hidetotalorder").val(newTotalLKR);
         	$("#hidetotalorderusd").val(newTotalUSD);
+
+        	// Re-apply VAT after discount changes
+        	recalcVAT();
+        });
+
+        function recalcVAT() {
+        	let vatPct = parseFloat($("#vatpercent").val()) || 0;
+        	let currencyType = $("#currencytype").val();
+        	let usdRate = parseFloat($("#conversionrate").val()) || 1;
+
+        	let afterDiscountLKR = parseFloat($("#hidetotalorder").val()) || 0;
+        	let afterDiscountUSD = parseFloat($("#hidetotalorderusd").val()) || 0;
+
+        	let vatAmountLKR = afterDiscountLKR * vatPct / 100;
+        	let vatAmountUSD = afterDiscountUSD * vatPct / 100;
+
+        	let finalLKR = afterDiscountLKR + vatAmountLKR;
+        	let finalUSD = afterDiscountUSD + vatAmountUSD;
+
+        	if (currencyType == "1") {
+        		$("#divvatamount").text("Rs. " + vatAmountLKR.toFixed(2));
+        		$("#divtotal").text("Rs. " + finalLKR.toFixed(2));
+        	} else if (currencyType == "2") {
+        		$("#divvatamount").text("$ " + vatAmountUSD.toFixed(2));
+        		$("#divtotal").text("$ " + finalUSD.toFixed(2));
+        	}
+
+        	$("#hidevatamount").val(currencyType == "2" ? vatAmountUSD : vatAmountLKR);
+        }
+
+        $("#vatpercent").on("input", function () {
+        	recalcVAT();
         });
 
 
@@ -572,6 +617,9 @@ include "include/topnavbar.php";
                     $('#orderdate').val(obj.recorddata.orderdate);
                     $('#duedate').val(obj.recorddata.duedate);
                     $('#location').val(obj.recorddata.tbl_location_idtbl_location);
+                    $('#vatpercent').val(obj.recorddata.vatpercent || 0);
+                    $('#hidevatamount').val(obj.recorddata.vatamount || 0);
+                    $('#divvatamount').text(parseFloat(obj.recorddata.vatamount || 0).toFixed(2));
 
                     var newOptionSupp = new Option(
                         obj.recorddata.suppliername,
@@ -889,6 +937,8 @@ include "include/topnavbar.php";
                 var poclass = $('#poclass').val();
                 var duedate = $('#duedate').val();
                 var totaldiscount = $('#totaldiscount').val();
+                var vatpercent = $('#vatpercent').val();
+                var vatamount = $('#hidevatamount').val();
                 var remark = $('#remark').val();
                 var total = $('#hidetotalorder').val();
                 var totalusd = $('#hidetotalorderusd').val();
@@ -909,6 +959,8 @@ include "include/topnavbar.php";
                         duedate: duedate,
                         total: total,
                         totaldiscount: totaldiscount,
+                        vatpercent: vatpercent,
+                        vatamount: vatamount,
                         remark: remark,
                         supplier: supplier,
                         location: location,
