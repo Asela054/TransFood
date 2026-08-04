@@ -34,6 +34,30 @@ class Materialdetailinfo extends CI_Model{
         $recordOption=$this->input->post('recordOption');
         if(!empty($this->input->post('recordID'))){$recordID=$this->input->post('recordID');}
 
+        // Check for duplicate Primary/Material Info Code
+        if(!empty($materialcode)){
+            $this->db->where('materialinfocode', trim($materialcode));
+            $this->db->where('status', 1);
+            if($recordOption == 2 && !empty($recordID)){
+                $this->db->where('idtbl_material_info !=', $recordID);
+            }
+            $dupQuery = $this->db->get('tbl_material_info');
+            if($dupQuery->num_rows() > 0){
+                $actionObj = new stdClass();
+                $actionObj->icon = 'fas fa-exclamation-triangle';
+                $actionObj->title = '';
+                $actionObj->message = 'Warning: Duplicate Code! Material/Primary Code (' . htmlspecialchars($materialcode) . ') already exists.';
+                $actionObj->url = '';
+                $actionObj->target = '_blank';
+                $actionObj->type = 'warning';
+
+                $actionJSON = json_encode($actionObj);
+                $this->session->set_flashdata('msg', $actionJSON);
+                redirect('Materialdetail');
+                return;
+            }
+        }
+
         $updatedatetime=date('Y-m-d H:i:s');  
 
         if($recordOption==1){
