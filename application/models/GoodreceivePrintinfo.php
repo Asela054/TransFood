@@ -46,166 +46,133 @@ class GoodreceivePrintinfo extends CI_Model{
 
 		$html = '
 		<!DOCTYPE html>
-		<html>
+		<html lang="en">
 		<head>
 			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title>Goods Receiving Notes - Transfood Lanka</title>
 			<style>
-				body {
-					font-family: Arial, sans-serif;
-					font-size: 12px;
-					margin: 20px;
-				}
-				.header {
-					display: flex;
-					justify-content: space-between;
-					align-items: flex-start;
-					border-bottom: 2px solid #000;
-					padding-bottom: 10px;
-				}
-				.logo {
-					width: 120px;
-					filter: grayscale(100%);
-				}
-				.company-section {
-					display: flex;
-					align-items: flex-start;
-				}
-				.company-info {
-					margin-left: 140px;
-				}
-				.company-info h2 {
-					margin: 0;
-					font-size: 18px;
-				}
-				.company-info p {
-					margin: 2px 0;
-					font-size: 12px;
-				}
-				.title {
-					font-weight: bold;
-					font-size: 18px;
-					text-align: right;
-				}
-				.checkbox-group {
-					display: flex;
-					gap: 20px;
-					margin-top: 5px;
-				}
-				.checkbox-group span {
-					display: flex;
-					align-items: center;
-				}
-				.checkbox {
-					width: 10px;
-					height: 10px;
-					border: 1px solid #000;
-					margin-left: 5px;
-				}
-				table.item-table {
-					width: 100%;
-					border-collapse: collapse;
-					margin-top: 10px;
-					font-size: 12px;
-				}
-				table.item-table th,
-				table.item-table td {
-					border: 1px solid #000;
-					padding: 4px;
-					text-align: center;
-				}
-				table.item-table th {
-					background: #000;
-					color: #fff;
-				}
-				.total-row td {
-					font-weight: bold;
-				}
-				.footer {
-					margin-top: 20px;
-				}
+				@page { size: 210mm 297mm; margin: 5mm 5mm 5mm 5mm; font-family: Arial, sans-serif; }
+				body { font-family: Arial, sans-serif; line-height: 1.5; text-align: left; margin-top: 110px; font-size: 11px; }
+				header { position: fixed; top: 0px; left: 0px; right: 0px; height: 110px; }
+				footer { position: fixed; bottom: 12px; left: 0px; right: 0px; height: 20px; border-top: 1px dotted #000; text-align: center; font-size: 9px; }
 			</style>
 		</head>
 		<body>
-			<div class="header">
-				<div class="company-section">
-					<div class="logo">
-						<img src="'.base_url().'images/logobw.png" width="130">
-					</div>
-					<div class="company-info">
-						<h2>TRANSFOOD LANKA (PVT) LTD.</h2>
-						<p>No. 58/E, Majeediya Estate, Gothatuwa, Sri Lanka.</p>
-						<p>T/F: +94 11 2534411 E: tflankasp@gmail.com</p>
-					</div>
-				</div>
-				<div class="title">
-					GOODS RECEIVING NOTES
-				</div>
-			</div>
-			<table style="width:100%; border-collapse:collapse; margin-top:-80px; font-family:Arial, sans-serif; font-size:12px;">
+			<header>
+				<table style="width:100%;border-collapse:collapse;">
+					<tr>
+						<td style="text-align:right;"><img src="'.base_url().'images/logo.png" style="width:140px;height:80px;margin-right:20px;"></td>
+						<td style="font-size:12px;">
+							<h3 style="color:#FF0000;font-size:25px;font-weight:bold;margin:0;">Transfood Lanka (Pvt) Ltd.</h3>
+							17A/1, 2 Vihara Mawatha, Kolonnawa<br>
+							Tel/Fax: +94 11-2254441 Email: info@tflanka.com<br>
+							www.transfoodlanka.com or www.tflanka.com
+						</td>
+					</tr>
+				</table>
+			</header>
+
+			<table style="width:100%;border-collapse:collapse;">
 				<tr>
-					<td style="width:12%; padding:4px; font-weight:bold; vertical-align:top; white-space:nowrap;">Supplier</td>
-					<td style="width:2%; white-space:nowrap;">:</td>
-					<td style="width:40%; border-bottom:1px solid #000;">'.htmlspecialchars($grn_data->suppliername).'</td>
-					<td style="width:12%; padding:4px; font-weight:bold; vertical-align:top; white-space:nowrap;">&nbsp;Date</td>
-					<td style="width:2%; white-space:nowrap;">:</td>
-					<td style="width:30%; border-bottom:1px solid #000;">'.$grn_date.'</td>
+					<td colspan="3" style="border:1px solid #000;font-size:16px;font-weight:bold;letter-spacing:2px;text-align:center;">GOODS RECEIVING NOTES</td>
+				</tr>
+				<tr><td colspan="3">&nbsp;</td></tr>
+				<tr>
+					<td style="vertical-align:top;">
+						<table style="width:100%;border-collapse:collapse;">
+							<tr>
+								<th style="border:1px solid #000;background-color:#97d197;text-align:center;">SUPPLIER</th>
+							</tr>
+							<tr>
+								<td style="border:1px solid #000;text-align:center;padding:4px;">'.htmlspecialchars($grn_data->suppliername).'</td>
+							</tr>
+						</table>
+					</td>
+					<td width="20%"></td>
+					<td style="text-align:right;">
+						<table style="border-collapse:collapse;width:100%;text-align:center;">
+							<tr>
+								<td style="width:25%;background-color:#97d197;border:1px solid #000;font-weight:bold;">GRN NUMBER</td>
+								<td style="width:25%;background-color:#97d197;border:1px solid #000;font-weight:bold;">DATE</td>
+								<td style="width:25%;background-color:#97d197;border:1px solid #000;font-weight:bold;">PO NUMBER</td>
+								<td style="width:25%;background-color:#97d197;border:1px solid #000;font-weight:bold;">DO NUMBER</td>
+							</tr>
+							<tr>
+								<td style="border:1px solid #000;padding:4px;">TRFL/GRN-'.$grn_data->grn_no.'</td>
+								<td style="border:1px solid #000;padding:4px;">'.$grn_date.'</td>
+								<td style="border:1px solid #000;padding:4px;">'.$po_number.'</td>
+								<td style="border:1px solid #000;padding:4px;">'.($grn_data->dispatchnum ? $grn_data->dispatchnum : '&nbsp;').'</td>
+							</tr>
+							<tr><td colspan="4">&nbsp;</td></tr>
+							<tr>
+								<td colspan="2" style="background-color:#97d197;border:1px solid #000;font-weight:bold;">INVOICE NO</td>
+								<td colspan="2" style="background-color:#97d197;border:1px solid #000;font-weight:bold;">CHARGING DETAILS</td>
+							</tr>
+							<tr>
+								<td colspan="2" style="border:1px solid #000;padding:4px;">'.($grn_data->invoicenum !== null && $grn_data->invoicenum !== '' ? $grn_data->invoicenum : '&nbsp;').'</td>
+								<td colspan="2" style="border:1px solid #000;padding:4px;text-align:left;">
+									Full Order <input type="checkbox" '.($grn_data->grntype == 'full' ? 'checked' : '').'>&nbsp;&nbsp;
+									Partial <input type="checkbox" '.($grn_data->grntype == 'partial' ? 'checked' : '').'>&nbsp;&nbsp;
+									DO Attached <input type="checkbox" '.($grn_data->dispatchnum ? 'checked' : '').'>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr><td colspan="3">&nbsp;</td></tr>
+				<tr>
+					<td colspan="3">
+						<table style="border-collapse:collapse;width:100%;">
+							<thead>
+								<tr>
+									<th style="background-color:#97d197;border:1px solid #000;text-align:center;padding:6px;">SL#</th>
+									<th style="background-color:#97d197;border:1px solid #000;text-align:center;padding:6px;">ITEM DESCRIPTION</th>
+									<th style="background-color:#97d197;border:1px solid #000;text-align:center;padding:6px;">COMMENT</th>
+									<th style="background-color:#97d197;border:1px solid #000;text-align:center;padding:6px;">UNIT</th>
+									<th style="background-color:#97d197;border:1px solid #000;text-align:center;padding:6px;"># CTN.</th>
+									<th style="background-color:#97d197;border:1px solid #000;text-align:center;padding:6px;">QTY</th>
+								</tr>
+							</thead>
+							<tbody>
+								'.$items_html.'
+							</tbody>
+							<tfoot>
+								<tr>
+									<td colspan="3" style="border:1px solid #000;background-color:#97d197;text-align:right;padding:6px;font-weight:bold;">TOTAL</td>
+									<td style="border:1px solid #000;background-color:#97d197;padding:6px;"></td>
+									<td style="border:1px solid #000;background-color:#97d197;text-align:center;padding:6px;font-weight:bold;">'.$total_ctn.'</td>
+									<td style="border:1px solid #000;background-color:#97d197;text-align:center;padding:6px;font-weight:bold;">'.$total_qty.'</td>
+								</tr>
+							</tfoot>
+						</table>
+					</td>
 				</tr>
 				<tr>
-					<td style="padding:4px; font-weight:bold; vertical-align:top; white-space:nowrap;">PO Number</td>
-					<td style="white-space:nowrap;">:</td>
-					<td style="border-bottom:1px solid #000;">'.$po_number.'</td>
-					<td style="padding:4px; font-weight:bold; vertical-align:top; white-space:nowrap;">&nbsp;DO Number</td>
-					<td style="white-space:nowrap;">:</td>
-					<td style="border-bottom:1px solid #000;">'.$grn_data->dispatchnum.'</td>
+					<td colspan="3" style="padding-top:20px;">
+						<table style="width:100%;border-collapse:collapse;">
+							<tr>
+								<td style="background-color:#97d197;border:1px solid #000;font-weight:bold;padding:4px;width:20%;">Remark</td>
+								<td style="border:1px solid #000;padding:4px;">'.$remark.'</td>
+							</tr>
+							<tr>
+								<td style="background-color:#97d197;border:1px solid #000;font-weight:bold;padding:4px;">Received By</td>
+								<td style="border:1px solid #000;padding:4px;height:30px;"></td>
+							</tr>
+						</table>
+					</td>
 				</tr>
 				<tr>
-					<td style="padding:4px; font-weight:bold; vertical-align:top; white-space:nowrap;">GRN Number</td>
-					<td style="white-space:nowrap;">:</td>
-					<td style="border-bottom:1px solid #000;">TRFL/GRN-'.$grn_data->grn_no.'</td>
-					<td style="padding:4px; font-weight:bold; vertical-align:top; white-space:nowrap;">&nbsp;Invoice No</td>
-					<td style="white-space:nowrap;">:</td>
-					<td style="border-bottom:1px solid #000; white-space:nowrap; padding-left:4px; padding-right:4px;">'.($grn_data->invoicenum !== null && $grn_data->invoicenum !== '' ? $grn_data->invoicenum : '&nbsp;').'</td>
-				</tr>
-				<tr>
-					<td style="padding: 20px 4px; font-weight:bold; vertical-align:top; white-space:nowrap;">Charging Details</td>
-					<td style="white-space:nowrap;">:</td>
-					<td colspan="4" style="padding:4px 0; white-space:nowrap;">
-						<label style="margin-right:15px;">Full Order <input type="checkbox" name="option1" style="margin-top:5px;" '.($grn_data->grntype == 'full' ? 'checked' : '').'></label>
-						<label style="margin-right:15px;">Partial Order <input type="checkbox" name="option1" style="margin-top:5px;" '.($grn_data->grntype == 'partial' ? 'checked' : '').'></label>
-						<label>DO Attached <input type="checkbox" name="option1" style="margin-top:5px;" '.($grn_data->dispatchnum ? 'checked' : '').'></label>
+					<td colspan="3" style="padding-top:30px;text-align:center;">
+						<div style="width:100%;margin:auto;border-top:1px dotted #000;"></div>
+						<div style="margin-top:5px;font-size:10px;">
+							For questions concerning this GRN, Please Contact Transfood Lanka (Pvt) Ltd. | info@tflanka.com
+						</div>
 					</td>
 				</tr>
 			</table>
-			<table class="item-table" style="border-collapse: collapse; width: 100%;">
-				<thead>
-					<tr>
-						<th style="border: 1px solid black; padding: 8px;">SL#</th>
-						<th style="border: 1px solid black; padding: 8px;">ITEM DESCRIPTION</th>
-						<th style="border: 1px solid black; padding: 8px;">COMMENT</th>
-						<th style="border: 1px solid black; padding: 8px;">UNIT</th>
-						<th style="border: 1px solid black; padding: 8px;"># CTN.</th>
-						<th style="border: 1px solid black; padding: 8px;">QTY</th>
-					</tr>
-				</thead>
-				<tbody>
-					'.$items_html.'
-					<tr class="total-row">
-						<td colspan="3" style="border: 1px solid black; border-left: none; border-bottom: none; padding: 8px; text-align:right;">TOTAL</td>
-						<td style="border: 1px solid black; padding: 8px;"></td>
-						<td style="border: 1px solid black; padding: 8px;">'.$total_ctn.'</td>
-						<td style="border: 1px solid black; padding: 8px;">'.$total_qty.'</td>
-					</tr>
-				</tbody>
-			</table>
-
-			<div class="footer">
-				Received By : __________________________ <br><br>
-				Remark      : '.$remark.'
-			</div>
 		</body>
 		</html>';
-
 		$this->load->library('pdf');
 		$this->pdf->loadHtml($html);
 		$this->pdf->render();
