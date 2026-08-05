@@ -550,7 +550,7 @@ class Purchaseorderinfo extends CI_Model{
         $respond=$this->db->query($sql, array(1, $recordID));
 
         $currencyType = $respond->row(0)->currencytype;
-        $currencySign = ($currencyType == 1) ? 'Rs. ' : '$ ';
+        $currencySign = ($currencyType == 1) ? 'Rs.' : '$';
 
         $netTotal = ($currencyType == 1) 
         ? $respond->row(0)->nettotal 
@@ -607,8 +607,8 @@ class Purchaseorderinfo extends CI_Model{
                             <td>'.$roworderinfo->ctn.'</td>
                             <td>'.$roworderinfo->qty.'</td>
 
-                            <td>'.$currencySign.number_format($unitPrice, 2).'</td>
-                            <td class="text-right">'.$currencySign.number_format($total, 2).'</td>
+                            <td>'.number_format($unitPrice, 2).'</td>
+                            <td class="text-right">'.number_format($total, 2).'</td>
                         </tr>';
                     }
                     $html.='</tbody>

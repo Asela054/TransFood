@@ -31,7 +31,7 @@ class PurchaseorderPrintinfo extends CI_Model{
     $subtotal = 0;
 
     $currencyType = $respond->row(0)->currencytype; // 1 = LKR, 2 = USD
-    $currencySign = ($currencyType == 1) ? "Rs. " : "$ ";
+    $currencySign = ($currencyType == 1) ? "Rs." : "$";
 
     $subtotalField = ($currencyType == 1) ? "subtotal" : "subtotal";
     $netTotalField = ($currencyType == 1) ? "nettotal" : "nettotal";
@@ -51,8 +51,8 @@ class PurchaseorderPrintinfo extends CI_Model{
             <td style="border: 1px solid #000; text-align: center;">'.$row->ctn.'</td>
             <td style="border: 1px solid #000; text-align: center;">'.$row->qty.'</td>
 
-            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.$currencySign.number_format($unitPrice, 2).'</td>
-            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.$currencySign.number_format($totalAmount, 2).'</td>
+            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($unitPrice, 2).'</td>
+            <td style="padding: 5px; border: 1px solid #000; text-align: right;">'.number_format($totalAmount, 2).'</td>
         </tr>';
         
         $sn++;
@@ -289,8 +289,8 @@ class PurchaseorderPrintinfo extends CI_Model{
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">UNIT PER CTN</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">CTNS</th>
                             <th style="background-color: #97d197; border: 1px solid #000; text-align: center;">TOTAL QTY</th>
-                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:10px;">PRICE PER UNIT</th>
-                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:10px;">TOTAL AMOUNT </th> 
+                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:10px;">PRICE PER UNIT ('.$currencySign.')</th>
+                            <th style="background-color: #97d197; border: 1px solid #000; text-align: right;padding-right:10px;">TOTAL AMOUNT ('.$currencySign.')</th> 
                         </tr>
                         '.$items_html.'
                         <tr>
