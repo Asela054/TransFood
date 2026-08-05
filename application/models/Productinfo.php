@@ -18,6 +18,30 @@ class Productinfo extends CI_Model{
         $recordOption=$this->input->post('recordOption');
         if(!empty($this->input->post('recordID'))){$recordID=$this->input->post('recordID');}
 
+        // Check for duplicate Product Code
+        if(!empty($productcode)){
+            $this->db->where('productcode', trim($productcode));
+            $this->db->where('status', 1);
+            if($recordOption == 2 && !empty($recordID)){
+                $this->db->where('idtbl_product !=', $recordID);
+            }
+            $dupQuery = $this->db->get('tbl_product');
+            if($dupQuery->num_rows() > 0){
+                $actionObj = new stdClass();
+                $actionObj->icon = 'fas fa-exclamation-triangle';
+                $actionObj->title = '';
+                $actionObj->message = 'Warning: Duplicate Code! Product Code (' . htmlspecialchars($productcode) . ') already exists.';
+                $actionObj->url = '';
+                $actionObj->target = '_blank';
+                $actionObj->type = 'warning';
+
+                $actionJSON = json_encode($actionObj);
+                $this->session->set_flashdata('msg', $actionJSON);
+                redirect('Product');
+                return;
+            }
+        }
+
         $updatedatetime=date('Y-m-d H:i:s');
 
         $imagePath = '';

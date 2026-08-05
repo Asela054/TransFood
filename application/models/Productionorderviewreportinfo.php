@@ -52,179 +52,111 @@ class Productionorderviewreportinfo extends CI_Model{
 
     $html = '
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-        <title>Unistar - By Erav Technology</title>
-        <link rel="icon" type="image/x-icon" href="assets/img/favicon.png" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Packing Order - Transfood Lanka</title>
         <style>
-            body {
-                margin: 0;
-                padding: 0;
+            @page {
+                size: 210mm 297mm;
+                margin: 5mm 5mm 5mm 5mm;
                 font-family: Arial, sans-serif;
-                font-size: 12px;
-                box-sizing: border-box;
             }
-    
-            .container {
-                max-width: 794px;
-                margin: 20px auto;
-                padding: 0 30px;
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.5;
+                text-align: left;
+                margin-top: 110px;
+                font-size: 11px;
             }
-    
-            .logo {
-                display: inline-block;
-                float: left;
-                margin-top: 10px;
-            }
-    
-            .logo img {
-                width: 160px;
+            header {
+                position: fixed;
+                top: 0px; left: 0px; right: 0px;
                 height: 110px;
             }
-    
-            .logo2 {
-                display: inline-block;
-                float: right;
-                margin-top: 20px;
-            }
-    
-            .logo2 img {
-                width: 170px;
-                height: 100px;
-            }
-    
-            .address {
-                display: inline-block;
-                margin-top: 10px;
-                margin-left: 380px;
-            }
-    
-            .address h3 {
-                margin: 0;
-                padding: 0;
-                text-decoration: underline;
-                font-size: 14px;
-            }
-            .address2 {
-                display: inline-block;
-                margin-top: 10px;
-                margin-left: 350px;
-            }
-    
-            .address2 h3 {
-                margin: 0;
-                padding: 0;
-                text-decoration: underline;
-                font-size: 14px;
-            }
-    
-            h1 {
-                margin-top: 30px;
-                font-size: 18px;
+            footer {
+                position: fixed;
+                bottom: 12px; left: 0px; right: 0px;
+                height: 20px;
+                border-top: 1px dotted #000;
                 text-align: center;
-             }
-    
-            .invoice-table {
-                margin-top: 10px;
-                table-layout: fixed;
-                width: 100%;
-                border-collapse: collapse;
-            }
-    
-            .invoice-table th,
-            .invoice-table td {
-                padding: 3px;
-                border: 1px solid #000;
-                text-align: left;
-                font-size: 12px;
-            }
-    
-            .invoice-table th {
-                background-color: #70ad47;
-                color: #fff;
-                font-weight: bold;
-                font-size: 12px;
-            }
-    
-            .invoice-table tbody {
-                background-color: #c5e0b3;
-            }
-    
-            .invoice-table tfoot th {
-                text-align: right;
-                font-weight: bold;
-                font-size: 12px;
-            }
-            
-            .customer-details {
-                margin-top: 30px;
-                font-size: 12px;
-            }
-            
-            .payment-terms {
-                margin-top: 20px;
-                font-size: 12px;
-                text-align: right;
+                font-size: 9px;
             }
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="logo">
-                <img src="'.base_url().'images/Ch.jpg" alt="">
-            </div>
-            <div class="address">
-                <h3>HEAD OFFICE</h3>
-                <b>Unistar International Pvt Ltd</b><br>
-                <b>No -</b> 53, 3rd Lane, Ratmalana, Sri Lanka <br>
-                <b>TEL -</b> +94 112635 185<br>
-                <b>MOBILE -</b> +94 77 966 2165 / +94 77 888 1631<br>
-                <b>Email -</b> admin@unistar-international.com<br>
-                <br>
-                <br>
-                <h3 style="margin-bottom:5px;">SHOWROOM</h3>
-                <b>CEYLONZ HARVEST</b><br>
-                <b>No -</b> 63, Jaya Mawatha, Ratmalana <br>
-                <b>TEL -</b> 077 966 2165 / +94 77 888 1631<br>
-			<b>Web -</b> www.admin@unistar-international.com
-		</div>
-		<h1><b>Packing Order Details</b></h1>
-		<div class="">
-			<b>Date -</b> '.$prodate.' <br>
-		</div>
-		<table class="invoice-table">
-			<thead>
-				<tr>
-					<th style="text-align: center;" scope="col">#</th>
-                    <th style="text-align: center;" scope="col">Item</th>
-                    <th style="text-align: center;" scope="col">Quantity</th>
-					<th style="text-align: center;" scope="col">Packing Order Code</th>
-					<th style="text-align: center;" scope="col">Packing Order Date</th>
-                    <th style="text-align: center;" scope="col">Packing Start Date</th>
-                    <th style="text-align: center;" scope="col">Packing End Date</th>
-				</tr>
-			</thead>
-			<tbody>
-				'.$tblproduction.'
-			</tbody>
-			<tfoot>
-				<tr>
-					<th colspan="1"></th>
-					<th style="text-align: left;">TOTAL:</th>
-                    <th style="text-align: center;"><label>'.$qty.'</label></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    				</tr>
-			</tfoot>
-		</table>
-    <div class="logo2">
-    <img src="'.base_url().'images/unistarimg.jpeg" class="img-fluid" alt="">
-</div>
-	</div>
-</body>
-</html>
+        <header>
+            <table style="width:100%;border-collapse:collapse;">
+                <tr>
+                    <td style="text-align:right;"><img src="'.base_url().'images/logo.png" style="width:140px;height:80px;margin-right:20px;"></td>
+                    <td style="font-size:12px;">
+                        <h3 style="color:#FF0000;font-size:25px;font-weight:bold;margin:0;">Transfood Lanka (Pvt) Ltd.</h3>
+                        17A/1, 2 Vihara Mawatha, Kolonnawa<br>
+                        Tel/Fax: +94 11-2254441 Email: info@tflanka.com<br>
+                        www.transfoodlanka.com or www.tflanka.com
+                    </td>
+                </tr>
+            </table>
+        </header>
+
+        <table style="width:100%;border-collapse:collapse;">
+            <tr>
+                <td style="border:1px solid #000;font-size:16px;font-weight:bold;letter-spacing:2px;text-align:center;">PACKING ORDER DETAILS</td>
+            </tr>
+            <tr>
+                <td>
+                    <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+                        <tr>
+                            <td style="background-color:#97d197;border:1px solid #000;font-weight:bold;padding:4px;">Date</td>
+                            <td style="border:1px solid #000;padding:4px;">'.$prodate.'</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr><td>&nbsp;</td></tr>
+            <tr>
+                <td>
+                    <table style="border-collapse:collapse;width:100%;">
+                        <thead>
+                            <tr>
+                                <th style="background-color:#97d197;border:1px solid #000;text-align:center;">#</th>
+                                <th style="background-color:#97d197;border:1px solid #000;text-align:center;">Item</th>
+                                <th style="background-color:#97d197;border:1px solid #000;text-align:center;">Quantity</th>
+                                <th style="background-color:#97d197;border:1px solid #000;text-align:center;">Packing Order Code</th>
+                                <th style="background-color:#97d197;border:1px solid #000;text-align:center;">Packing Order Date</th>
+                                <th style="background-color:#97d197;border:1px solid #000;text-align:center;">Packing Start Date</th>
+                                <th style="background-color:#97d197;border:1px solid #000;text-align:center;">Packing End Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            '.$tblproduction.'
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th style="border:1px solid #000;background-color:#97d197;"></th>
+                                <th style="border:1px solid #000;background-color:#97d197;text-align:left;">TOTAL:</th>
+                                <th style="border:1px solid #000;background-color:#97d197;text-align:center;">'.$qty.'</th>
+                                <th style="border:1px solid #000;background-color:#97d197;"></th>
+                                <th style="border:1px solid #000;background-color:#97d197;"></th>
+                                <th style="border:1px solid #000;background-color:#97d197;"></th>
+                                <th style="border:1px solid #000;background-color:#97d197;"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-top:30px;text-align:center;">
+                    <div style="width:100%;margin:auto;border-top:1px dotted #000;"></div>
+                    <div style="margin-top:5px;font-size:10px;">
+                        For queries, contact Transfood Lanka (Pvt) Ltd. | info@tflanka.com
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </body>
+    </html>
 ';
 
 // echo $html;

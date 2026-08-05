@@ -87,6 +87,8 @@ class Goodreceiveinfo extends CI_Model{
         $grntype=$this->input->post('grntype');
         $currencytype=$this->input->post('currencytype');
         $rate=$this->input->post('rate');
+        $receivetype=$this->input->post('receivetype');
+        if(empty($receivetype)) $receivetype = 0;
 
         $updatedatetime=date('Y-m-d H:i:s');
 
@@ -110,6 +112,7 @@ class Goodreceiveinfo extends CI_Model{
             'invoicenum'=> $invoice, 
             'dispatchnum'=> $dispatch, 
             'approvestatus'=> '0', 
+            'receivetype'=> $receivetype,
             'remark'=> $remark, 
             'status'=> '1', 
             'insertdatetime'=> $updatedatetime, 

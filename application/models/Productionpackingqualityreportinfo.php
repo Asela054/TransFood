@@ -78,30 +78,18 @@ class Productionpackingqualityreportinfo extends CI_Model{
 			<body>
 
 				<table style="width:100%; border: 2px solid;">
-					<tr>
-						<td><img src="'.base_url().'images/unistarimg.jpeg" class="img-fluid" alt=""
-								style="width: 180px; height: 120px;">
-						</td>
-						<td>
-							<address style="font-size:9px; font-weight:bold; margin-left:145px;">
-								<h3><u>HEAD OFFICE</u></h3>
-								UNISTAR INTERNATIONAL PVT LTD<br>
-								53, 3rd LANE, RATMALANA<br>
-								0112635185, 0779662165<br>
-								0112635185, 0779662165<br>
-							</address>
-						</td>
-						<td>
-							<address style="font-size:9px; font-weight:bold; margin-left:20px;">
-								<h3><u>SHOWROOM</u></h3>
-								CEYLON`Z HARVEST<br>
-								63, JAYA MAWATHA,<br>
-								RATMALANA<br>
-								0112635185, 0779662165<br>
-							</address>
-						</td>
-					</tr>
-				</table>
+				<tr>
+					<td style="width: 130px; vertical-align: top; padding: 5px;">
+						<img src="'.base_url().'images/logobw.png" class="img-fluid" alt=""
+							style="width: 120px; height: 80px;">
+					</td>
+					<td style="font-family: Arial, sans-serif; font-size: 12px; vertical-align: middle; padding-left: 15px;">
+						<strong style="font-size: 16px;">TRANSFOOD LANKA (PVT) LTD.</strong><br>
+						No. 58/E, Majeediya Estate, Gothatuwa, Sri Lanka.<br>
+						T/F: +94 11 2534411 &nbsp;&nbsp; E: tflankasp@gmail.com
+					</td>
+				</tr>
+			</table>
 				<table style="width:100%; border: 1px solid">
 					<tr>
 						<td style=" background-color:#000; color:#fff; width=50%">

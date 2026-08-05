@@ -111,6 +111,8 @@ class Purchaseorderinfo extends CI_Model{
         $total=$this->input->post('total');
         $remark=$this->input->post('remark');
         $totaldiscount=$this->input->post('totaldiscount');
+        $vatpercent=$this->input->post('vatpercent');
+        $vatamount=$this->input->post('vatamount');
         $supplier=$this->input->post('supplier');
         $location=$this->input->post('location');
         $ordertype=$this->input->post('ordertype');
@@ -131,6 +133,13 @@ class Purchaseorderinfo extends CI_Model{
         $finalTotal = (!empty($finalTotal) && $finalTotal != '') ? $finalTotal : 0;
         $finalDiscount = (!empty($finalDiscount) && $finalDiscount != '') ? $finalDiscount : 0;
         $usdrate = (!empty($usdrate) && $usdrate != '') ? str_replace(',', '', $usdrate) : 0;
+
+        // VAT
+        $vatpercent = (!empty($vatpercent) && $vatpercent != '') ? floatval($vatpercent) : 0;
+        $vatamount  = (!empty($vatamount)  && $vatamount  != '') ? floatval(str_replace(',', '', $vatamount)) : 0;
+        // nettotal = subtotal - discount + vat
+        $finalNetTotal = $finalTotal - $finalDiscount + $vatamount;
+        if ($finalNetTotal < 0) $finalNetTotal = 0;
 
         if($recordOption==1): // insert
             $this->db->trans_begin();
@@ -153,7 +162,9 @@ class Purchaseorderinfo extends CI_Model{
                 'subtotal'=> $finalTotal, 
                 'discount'=> '0', 
                 'discountamount'=> $finalDiscount,
-                'nettotal'=> $finalTotal, 
+                'vatpercent'=> $vatpercent,
+                'vatamount'=> $vatamount,
+                'nettotal'=> $finalNetTotal, 
                 'conversion_rate'=> $usdrate, 
                 'confirmstatus'=> '0', 
                 'grnconfirm'=> '0', 
@@ -376,7 +387,9 @@ class Purchaseorderinfo extends CI_Model{
                     'duedate'=> $duedate, 
                     'subtotal'=> $finalTotal, 
                     'discountamount'=> $finalDiscount,
-                    'nettotal'=> $finalTotal, 
+                    'vatpercent'=> $vatpercent,
+                    'vatamount'=> $vatamount,
+                    'nettotal'=> $finalNetTotal, 
                     'conversion_rate'=> $usdrate, 
                     'remark'=> $remark, 
                     'updateuser'=> $userID, 
@@ -732,7 +745,7 @@ class Purchaseorderinfo extends CI_Model{
     public function Purchaseorderedit(){
         $recordID=$this->input->post('recordID');
 
-        $this->db->select('`tbl_porder`.`idtbl_porder`, `tbl_porder`.`currencytype`, `tbl_porder`.`class`, `tbl_porder`.`orderdate`, `tbl_porder`.`duedate`, `tbl_porder`.`subtotal`, `tbl_porder`.`discount`, `tbl_porder`.`discountamount`, `tbl_porder`.`nettotal`, `tbl_porder`.`tbl_location_idtbl_location`, `tbl_porder`.`tbl_order_type_idtbl_order_type`, `tbl_supplier`.`idtbl_supplier`, `tbl_supplier`.`suppliername`');
+        $this->db->select('`tbl_porder`.`idtbl_porder`, `tbl_porder`.`currencytype`, `tbl_porder`.`class`, `tbl_porder`.`orderdate`, `tbl_porder`.`duedate`, `tbl_porder`.`subtotal`, `tbl_porder`.`discount`, `tbl_porder`.`discountamount`, `tbl_porder`.`vatpercent`, `tbl_porder`.`vatamount`, `tbl_porder`.`nettotal`, `tbl_porder`.`tbl_location_idtbl_location`, `tbl_porder`.`tbl_order_type_idtbl_order_type`, `tbl_supplier`.`idtbl_supplier`, `tbl_supplier`.`suppliername`');
         $this->db->from('tbl_porder');
         $this->db->join('tbl_supplier', 'tbl_supplier.idtbl_supplier = tbl_porder.tbl_supplier_idtbl_supplier', 'left');
         $this->db->where('tbl_porder.idtbl_porder', $recordID);
