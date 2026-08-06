@@ -242,6 +242,7 @@ class Goodreceiveinfo extends CI_Model{
                 <h6>Invoice No : '.$respond->row(0)->invoicenum.'</h6>
                 <h6>Dispatch No : '.$respond->row(0)->dispatchnum.'</h6>
                 <h6>Batch No : '.$respond->row(0)->batchno.'</h6>
+                <h6>Receive Type : '.($respond->row(0)->receivetype == 2 ? 'Full Receive' : ($respond->row(0)->receivetype == 1 ? 'Partial Receive' : 'N/A')).'</h6>
             </div>
         </div>
         <div class="row">
