@@ -16,7 +16,7 @@ class Customerporderinfo extends CI_Model{
         }
         else{            
             if(!empty($searchTerm)){
-                $sql="SELECT `idtbl_product`, `productcode`, `prodcutname` FROM `tbl_product` WHERE `status`=? AND `productcode` LIKE '%$searchTerm%'";
+                $sql="SELECT `idtbl_product`, `productcode`, `prodcutname` FROM `tbl_product` WHERE `status`=? AND `prodcutname` LIKE '%$searchTerm%'";
                 $respond=$this->db->query($sql, array(1));    
             }
             else{
